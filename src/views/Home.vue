@@ -400,6 +400,7 @@ export default {
   text-align: center;
 }
 .welcome {
+  margin-top: 1rem;
   img {
     height: 160px;
     width: 200px;
