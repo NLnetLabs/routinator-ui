@@ -11,11 +11,7 @@
             <h3 v-if="firstSearch">
               Welcome to Routinator 3000.
             </h3>
-            <el-form
-              :inline="true"
-              :model="searchForm"
-              @submit.prevent.native="validateAnnouncement"
-            >
+            <el-form :inline="true" :model="searchForm">
               <el-form-item label="Origin ASN">
                 <el-input
                   v-model="searchForm.asn"
@@ -36,6 +32,7 @@
                 <el-button type="primary" @click="validateAnnouncement">Validate</el-button>
               </el-form-item>
             </el-form>
+            <el-tag size="mini" type="danger" v-if="error">{{ error }}</el-tag>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
         </el-col>
@@ -287,6 +284,7 @@ import APIService from "@/services/APIService.js";
 import router from "@/router";
 import Tal from "@/components/Tal";
 import ValidityTable from "@/components/ValidityTable";
+const cidrRegex = require("cidr-regex");
 
 export default {
   components: {
@@ -304,6 +302,7 @@ export default {
         asn: "",
         prefix: ""
       },
+      error: "",
       rsync: [],
       rrdp: []
     };
@@ -382,18 +381,41 @@ export default {
       return false;
     },
     validatePrefix() {
-      // TODO: add validation
-      this.loadingRoute = true;
-      this.firstSearch = false;
-      APIService.checkValidity(this.searchForm.asn, this.searchForm.prefix).then(response => {
-        this.loadingRoute = false;
-        if (response.data && response.data.validated_route) {
-          this.validation = response.data.validated_route;
-        }
-      });
-      router
-        .push("/" + this.searchForm.asn + "/" + encodeURIComponent(this.searchForm.prefix))
-        .catch(() => {});
+      let asValid = false;
+      let asValue = this.searchForm.asn;
+      if (asValue && asValue.toLowerCase().indexOf("as") === 0) {
+        asValue = asValue.substr(2) * 1;
+      }
+      if (asValue >= 0 && asValue <= 4294967295) {
+        asValid = true;
+        this.error = "";
+      } else {
+        this.error = "Please enter a valid ASN";
+        return;
+      }
+      let prefixValid = false;
+      let prefixValue = this.searchForm.prefix;
+      if (cidrRegex({ exact: true }).test(prefixValue)) {
+        prefixValid = true;
+        this.error = "";
+      } else {
+        this.error = "Please enter a valid prefix";
+        return;
+      }
+
+      if (asValid && prefixValid) {
+        this.loadingRoute = true;
+        this.firstSearch = false;
+        APIService.checkValidity(this.searchForm.asn, this.searchForm.prefix).then(response => {
+          this.loadingRoute = false;
+          if (response.data && response.data.validated_route) {
+            this.validation = response.data.validated_route;
+          }
+        });
+        router
+          .push("/" + this.searchForm.asn + "/" + encodeURIComponent(this.searchForm.prefix))
+          .catch(() => {});
+      }
     },
     validateAnnouncement() {
       this.validatePrefix();
