@@ -96,7 +96,11 @@
           </el-col>
           <el-col :span="20">
             <el-table :data="rrdp" style="width: 100%" stripe height="250">
-              <el-table-column prop="url" label="URL"> </el-table-column>
+              <el-table-column label="URL">
+                <template slot-scope="scope"
+                  ><a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a></template
+                >
+              </el-table-column>
               <el-table-column prop="status" label="Status"> </el-table-column>
               <el-table-column label="Duration"
                 ><template slot-scope="scope">

@@ -152,4 +152,11 @@ body {
     padding: 0.2rem;
   }
 }
+
+a {
+  color: #001f6d;
+  &:hover {
+    color: #000028;
+  }
+}
 </style>
