@@ -47,9 +47,43 @@
     </el-container>
     <el-drawer title="Routinator Help" :visible.sync="showHelp" :with-header="false">
       <div class="help">
-        <h4>Welcome to Routinator!</h4>
+        <h3>Introduction</h3>
         <div>
-          Help text here.
+          This page displays statistics from the last validation run Routinator has performed.
+          <br /><br />
+          You can also use this page to verify the RPKI origin validation status of an AS Number and
+          IP Prefix combination. You can enter an existing BGP announcement or an ASN and prefix of
+          your choice, for example for an announcement you're planning to do.<br /><br />
+          The returned RPKI validity state will be Valid, Invalid or Not Found and is based on the
+          current set of Validated ROA Payloads (VRPs) in the cache. Routinator will provide an
+          overview of all VRPs that led to the result, along with the reason for the outcome.
+        </div>
+        <h3>Quick Glossary</h3>
+        <div>
+          This overview provides a quick definition of the terms used in this user interface. For a
+          complete overview, please refer to the full
+          <a href="https://rpki.readthedocs.io/en/latest/routinator/" target="_blank"
+            >Routinator documentation</a
+          >.
+          <h4>Route Origin Attestation (ROA)</h4>
+          A cryptographically signed statement authorising one or more prefixes to be originated
+          from a specific Autonomous System.
+          <h4>Validated ROA Payload (VRP)</h4>
+          A verified object that contains a single IP prefix, a maximum prefix length, and an origin
+          AS number. When comparing the total set of VRPs to a BGP announcement, it can be RPKI
+          Valid, Invalid or NotFound.
+          <h4>Unsafe VRP</h4>
+          VRPs that have IP address prefixes overlapping with resources of rejected Certificate
+          Authorities (CAs)
+          <h4>Stale Object</h4>
+          An object is considered stale if the time given in their next-update field is in the past,
+          indicating that an update to the object was scheduled but didn’t happen.
+          <h4>RPKI Repository Delta Protocol (RRDP)</h4>
+          A retrieval mechanism that relies on snapshot and delta files which are can be retrieved
+          using HTTPS. It is designed to replace the original transport used for RPKI, rsync.
+          <h4>RPKI to Router (RTR) Protocol</h4>
+          A protocol to deliver VRPs to a router in a lightweight manner. This is done via plain TCP
+          using serial numbers and session-ids.
         </div>
       </div>
     </el-drawer>
@@ -143,13 +177,19 @@ body {
 }
 
 .help {
+  font-size: 0.9rem;
   line-height: 1.4rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  padding-bottom: 1rem;
   color: #666;
-  code {
-    background: #e4f7ae;
-    padding: 0.2rem;
+  h3 {
+    margin-bottom: 0.5rem;
+  }
+  h4 {
+    margin-bottom: 0.4rem;
+    font-weight: 400;
+    color: #999;
   }
 }
 

@@ -9,21 +9,31 @@
             </div>
 
             <h3 v-if="firstSearch">
-              Welcome to Routinator 3000, the RPKI Relying Party software.
+              Welcome to Routinator 3000.
             </h3>
-            <el-form :inline="true" :model="searchForm">
+            <el-form
+              :inline="true"
+              :model="searchForm"
+              @submit.prevent.native="validateAnnouncement"
+            >
               <el-form-item label="Origin ASN">
-                <el-input v-model="searchForm.asn" placeholder="ie. 1234" clearable></el-input>
+                <el-input
+                  v-model="searchForm.asn"
+                  placeholder="e.g. 64511"
+                  clearable
+                  @keyup.enter.native="validateAnnouncement"
+                ></el-input>
               </el-form-item>
               <el-form-item label="Prefix">
                 <el-input
                   v-model="searchForm.prefix"
-                  placeholder="ie. 0.0.0.0/24"
+                  placeholder="e.g. 192.0.2.0/24"
                   clearable
+                  @keyup.enter.native="validateAnnouncement"
                 ></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="queryAnnouncement">Query</el-button>
+                <el-button type="primary" @click="validateAnnouncement">Validate</el-button>
               </el-form-item>
             </el-form>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
@@ -38,7 +48,7 @@
 
       <div v-if="validation && validation.route">
         <h4 class="header validation-header">
-          Results for ASN {{ validation.route.origin_asn }} - Prefix {{ validation.route.prefix }}
+          Results for {{ validation.route.origin_asn }} - {{ validation.route.prefix }}
           <el-tag type="success" v-if="validation.validity.state === 'valid'">Valid</el-tag>
           <el-tag type="warning" v-if="validation.validity.state === 'invalid'"
             >Invalid {{ validation.validity.reason }}</el-tag
@@ -71,24 +81,17 @@
     </div>
 
     <el-row v-if="status && status.tals" class="airy">
-      <el-col :span="4">
-        <tal label="Afrinic" image="afrinic.svg" :data="status.tals.afrinic" />
-      </el-col>
-      <el-col :span="4" :offset="1">
-        <tal label="Apnic" image="apnic.svg" :data="status.tals.apnic" />
-      </el-col>
-      <el-col :span="4" :offset="1">
-        <tal label="ARIN" image="arin.svg" :data="status.tals.arin" />
-      </el-col>
-      <el-col :span="4" :offset="1">
-        <tal label="Lacnic" image="lacnic.svg" :data="status.tals.lacnic" />
-      </el-col>
-      <el-col :span="4" :offset="1">
-        <tal label="RIPE NCC" image="ripencc.svg" :data="status.tals.ripe" />
+      <el-col
+        :span="4"
+        v-for="(tal, index) in Object.keys(status.tals)"
+        :key="index"
+        :offset="index % 5 !== 0 ? 1 : 0"
+      >
+        <tal :label="tal" :data="status.tals[tal]" />
       </el-col>
     </el-row>
 
-    <el-collapse v-if="status && status.serial" class="airy stats">
+    <el-collapse v-if="status && status.serial !== null" class="airy stats">
       <el-collapse-item title="Extra stats">
         <el-row>
           <el-col :span="4">
@@ -172,7 +175,7 @@
 
         <el-row>
           <el-col :span="4">
-            VRPS Added Locally
+            VRPs Added Locally
           </el-col>
           <el-col :span="20">
             {{ status.vrpsAddedLocally }}
@@ -188,7 +191,7 @@
           </el-col>
         </el-row>
 
-        <el-row>
+        <el-row v-if="status.rtr">
           <el-col :span="4">
             RTR
           </el-col>
@@ -227,7 +230,7 @@
             </el-row>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="status.http">
           <el-col :span="4">
             HTTP
           </el-col>
@@ -392,7 +395,7 @@ export default {
         .push("/" + this.searchForm.asn + "/" + encodeURIComponent(this.searchForm.prefix))
         .catch(() => {});
     },
-    queryAnnouncement() {
+    validateAnnouncement() {
       this.validatePrefix();
     }
   }

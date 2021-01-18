@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="tal">
     <el-card shadow="never">
       <div slot="header" class="clearfix">
         <h4>
-          <img :src="require('@/assets/images/' + image)" class="rir" />
+          <img :src="getImage(label)" class="rir" />
           {{ label }}
         </h4>
       </div>
@@ -14,22 +14,22 @@
       </div>
 
       <div class="group">
-        <strong>Final VRPS</strong>
+        <strong>Final VRPs</strong>
         <div class="value">{{ data.vrpsFinal }}</div>
       </div>
 
       <div class="group">
-        <strong>Unsafe VRPS</strong>
+        <strong>Unsafe VRPs</strong>
         <div class="value">{{ data.vrpsUnsafe }}</div>
       </div>
 
       <div class="group">
-        <strong>VRPS Filtered Locally</strong>
+        <strong>VRPs Filtered Locally</strong>
         <div class="value">{{ data.vrpsFilteredLocally }}</div>
       </div>
 
       <div class="group">
-        <strong>Duplicate VRPS</strong>
+        <strong>Duplicate VRPs</strong>
         <div class="value">{{ data.vrpsDuplicate }}</div>
       </div>
     </el-card>
@@ -39,15 +39,38 @@
 <script>
 export default {
   name: "Tal",
-  props: ["image", "label", "data"],
+  props: ["label", "data"],
   data() {
     return {};
   },
-  methods: {}
+  methods: {
+    getImage(label) {
+      let image = "blue.svg";
+      if (label.toLowerCase().indexOf("afrinic") > -1) {
+        image = "afrinic.svg";
+      }
+      if (label.toLowerCase().indexOf("arin") > -1) {
+        image = "arin.svg";
+      }
+      if (label.toLowerCase().indexOf("apnic") > -1) {
+        image = "apnic.svg";
+      }
+      if (label.toLowerCase().indexOf("ripe") > -1) {
+        image = "ripencc.svg";
+      }
+      if (label.toLowerCase().indexOf("lacnic") > -1) {
+        image = "lacnic.svg";
+      }
+      return require("@/assets/images/" + image);
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+.tal {
+  margin-top: 1rem;
+}
 h4 {
   margin: 0;
   text-transform: uppercase;
