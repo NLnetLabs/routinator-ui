@@ -1,0 +1,17 @@
+{
+  "common": {
+    "readthedocs": "Read the Docs",
+    "report": "Report a problem",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "error": "Error",
+    "success": "Success!",
+    "copy": "Copy to clipboard",
+    "download": "Download",
+    "newversion": "New version available!",
+    "supportcontracts": "Support contracts",
+    "warning": "Warning",
+    "idle": "You have been logged out because of inactivity."
+  }
+}
