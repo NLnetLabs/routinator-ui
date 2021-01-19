@@ -77,7 +77,17 @@
       Loading...
     </div>
 
-    <el-row v-if="status && status.tals" class="airy">
+    <el-row class="airy">
+      <el-col :span="24">
+        <div v-if="status && status.lastUpdateDone" class="last-update">
+          Validation run done at {{ getTimestamp(status.lastUpdateDone) }} ({{
+            fromNow(status.lastUpdateDone)
+          }})
+        </div>
+      </el-col>
+    </el-row>
+
+    <el-row v-if="status && status.tals">
       <el-col
         :span="4"
         v-for="(tal, index) in Object.keys(status.tals)"
@@ -285,6 +295,7 @@ import router from "@/router";
 import Tal from "@/components/Tal";
 import ValidityTable from "@/components/ValidityTable";
 const cidrRegex = require("cidr-regex");
+import * as moment from "moment";
 
 export default {
   components: {
@@ -419,6 +430,12 @@ export default {
     },
     validateAnnouncement() {
       this.validatePrefix();
+    },
+    getTimestamp(timestamp) {
+      return moment.utc(timestamp).format() + " UTC";
+    },
+    fromNow(timestamp) {
+      return moment.utc(timestamp).fromNow();
     }
   }
 };
@@ -469,5 +486,10 @@ h4.header {
     margin-left: 1rem;
     text-transform: uppercase;
   }
+}
+.last-update {
+  font-size: 0.8rem;
+  text-align: center;
+  color: #999;
 }
 </style>
