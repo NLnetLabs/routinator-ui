@@ -38,7 +38,15 @@
             <span v-if="version">- Version {{ version }}</span>
           </el-col>
           <el-col :span="12" class="text-right">
-            <a href="https://github.com/NLnetLabs/routinator-ui/issues/new" target="_blank">{{
+            <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
+              $t("common.supportcontracts")
+            }}</a>
+            -
+            <a href="https://rpki.readthedocs.io/en/latest/routinator/index.html" target="_blank">{{
+              $t("common.readthedocs")
+            }}</a>
+            -
+            <a href="https://github.com/NLnetLabs/routinator/issues/new" target="_blank">{{
               $t("common.report")
             }}</a>
           </el-col>
@@ -76,13 +84,13 @@
           VRPs that have IP address prefixes overlapping with resources of rejected Certificate
           Authorities (CAs)
           <h4>Stale Object</h4>
-          An object is considered stale if the time given in their 'next-update' field is in the 
+          An object is considered stale if the time given in their 'next-update' field is in the
           past, indicating that an update to the object was scheduled but didn’t happen.
           <h4>RPKI Repository Delta Protocol (RRDP)</h4>
-          A retrieval mechanism that relies on snapshot and delta files which are retrieved
-          using HTTPS. It is designed to replace the original transport used for RPKI, rsync.
+          A retrieval mechanism that relies on snapshot and delta files which are retrieved using
+          HTTPS. It is designed to replace the original transport used for RPKI, rsync.
           <h4>RPKI to Router (RTR) Protocol</h4>
-          A protocol to deliver VRPs to a router in a lightweight manner. 
+          A protocol to deliver VRPs to a router in a lightweight manner.
         </div>
       </div>
     </el-drawer>
