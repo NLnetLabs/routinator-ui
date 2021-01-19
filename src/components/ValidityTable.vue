@@ -24,12 +24,15 @@ export default {
 .validity-table {
   margin-top: 2rem;
   .el-table {
-    border-left: 4px solid #f0f9eb;
+    border-left: 2px solid #e1f3d8;
   }
   &.warning {
     .el-table {
-      border-color: #fdf6ec;
+      border-color: #faecd8;
     }
+  }
+  .el-tag {
+    border-bottom-left-radius: 0;
   }
 }
 </style>
