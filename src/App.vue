@@ -61,7 +61,7 @@
         <h3>Quick Glossary</h3>
         <div>
           This overview provides a quick definition of the terms used in this user interface. For a
-          complete overview, please refer to the full
+          complete overview, please refer to the
           <a href="https://rpki.readthedocs.io/en/latest/routinator/" target="_blank"
             >Routinator documentation</a
           >.
@@ -76,14 +76,13 @@
           VRPs that have IP address prefixes overlapping with resources of rejected Certificate
           Authorities (CAs)
           <h4>Stale Object</h4>
-          An object is considered stale if the time given in their next-update field is in the past,
-          indicating that an update to the object was scheduled but didn’t happen.
+          An object is considered stale if the time given in their 'next-update' field is in the 
+          past, indicating that an update to the object was scheduled but didn’t happen.
           <h4>RPKI Repository Delta Protocol (RRDP)</h4>
-          A retrieval mechanism that relies on snapshot and delta files which are can be retrieved
+          A retrieval mechanism that relies on snapshot and delta files which are retrieved
           using HTTPS. It is designed to replace the original transport used for RPKI, rsync.
           <h4>RPKI to Router (RTR) Protocol</h4>
-          A protocol to deliver VRPs to a router in a lightweight manner. This is done via plain TCP
-          using serial numbers and session-ids.
+          A protocol to deliver VRPs to a router in a lightweight manner. 
         </div>
       </div>
     </el-drawer>
