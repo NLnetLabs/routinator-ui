@@ -2,9 +2,9 @@
   <div :class="{ 'validity-table': true, warning: !isValid }">
     <el-tag :type="isValid ? 'success' : 'warning'" size="small">{{ label }}</el-tag>
     <el-table :data="data" style="width: 100%" stripe>
-      <el-table-column prop="asn" label="ASN"> </el-table-column>
-      <el-table-column prop="prefix" label="Prefix"> </el-table-column>
-      <el-table-column prop="max_length" label="Max Length"> </el-table-column>
+      <el-table-column prop="asn" :label="$t('common.asn')"> </el-table-column>
+      <el-table-column prop="prefix" :label="$t('common.prefix')"> </el-table-column>
+      <el-table-column prop="max_length" :label="$t('common.maxlength')"> </el-table-column>
     </el-table>
   </div>
 </template>

@@ -35,7 +35,9 @@
         <el-row>
           <el-col :span="12">
             &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs
-            <span v-if="version">- Version {{ version }}</span>
+            <span v-if="version">- {{
+              $t("common.version")
+            }} {{ version }}</span>
           </el-col>
           <el-col :span="12" class="text-right">
             <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{

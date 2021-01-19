@@ -9,27 +9,27 @@
       </div>
 
       <div class="group">
-        <strong>Valid ROAs</strong>
+        <strong>{{ $t("tal.valid") }}</strong>
         <div class="value">{{ data.validROAs }}</div>
       </div>
 
       <div class="group">
-        <strong>Final VRPs</strong>
+        <strong>{{ $t("tal.final") }}</strong>
         <div class="value">{{ data.vrpsFinal }}</div>
       </div>
 
       <div class="group">
-        <strong>Unsafe VRPs</strong>
+        <strong>{{ $t("tal.unsafe") }}</strong>
         <div class="value">{{ data.vrpsUnsafe }}</div>
       </div>
 
       <div class="group">
-        <strong>VRPs Filtered Locally</strong>
+        <strong>{{ $t("tal.filtered") }}</strong>
         <div class="value">{{ data.vrpsFilteredLocally }}</div>
       </div>
 
       <div class="group">
-        <strong>Duplicate VRPs</strong>
+        <strong>{{ $t("tal.duplicate") }}</strong>
         <div class="value">{{ data.vrpsDuplicate }}</div>
       </div>
     </el-card>

@@ -9,10 +9,10 @@
             </div>
 
             <h3 v-if="firstSearch">
-              Welcome to Routinator 3000.
+              {{ $t("home.welcome") }}
             </h3>
             <el-form :inline="true" :model="searchForm">
-              <el-form-item label="Origin ASN">
+              <el-form-item :label="$t('home.origin')">
                 <el-input
                   v-model="searchForm.asn"
                   placeholder="e.g. 64511"
@@ -20,7 +20,7 @@
                   @keyup.enter.native="validateAnnouncement"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="Prefix">
+              <el-form-item :label="$t('common.prefix')">
                 <el-input
                   v-model="searchForm.prefix"
                   placeholder="e.g. 192.0.2.0/24"
@@ -29,7 +29,9 @@
                 ></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="validateAnnouncement">Validate</el-button>
+                <el-button type="primary" @click="validateAnnouncement">{{
+                  $t("home.validate")
+                }}</el-button>
               </el-form-item>
             </el-form>
             <el-tag size="mini" type="danger" v-if="error">{{ error }}</el-tag>
@@ -40,33 +42,36 @@
 
       <div v-if="loadingRoute" class="loading">
         <i class="el-icon-loading"></i>
-        Loading...
+        {{ $t("home.loading") }}
       </div>
 
       <div v-if="validation && validation.route">
         <h4 class="header validation-header">
-          Results for {{ validation.route.origin_asn }} - {{ validation.route.prefix }}
-          <el-tag type="success" v-if="validation.validity.state === 'valid'">Valid</el-tag>
+          {{ $t("home.resultsfor") }} {{ validation.route.origin_asn }} -
+          {{ validation.route.prefix }}
+          <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
+            $t("home.valid")
+          }}</el-tag>
           <el-tag type="warning" v-if="validation.validity.state === 'invalid'"
-            >Invalid {{ validation.validity.reason }}</el-tag
+            >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
           >
         </h4>
         <div class="validation-description">{{ validation.validity.description }}</div>
 
         <validity-table
           v-if="validation.validity.VRPs && validation.validity.VRPs.matched.length"
-          label="Matched VRPs"
+          :label="$t('home.matched')"
           :isValid="true"
           :data="validation.validity.VRPs.matched"
         />
         <validity-table
           v-if="validation.validity.VRPs && validation.validity.VRPs.unmatched_as.length"
-          label="Unmatched VRPs - ASN"
+          :label="$t('home.unmatchedasn')"
           :data="validation.validity.VRPs.unmatched_as"
         />
         <validity-table
           v-if="validation.validity.VRPs && validation.validity.VRPs.unmatched_length.length"
-          label="Unmatched VRPs - Length"
+          :label="$t('home.unmatchedlength')"
           :data="validation.validity.VRPs.unmatched_length"
         />
       </div>
@@ -74,13 +79,13 @@
 
     <div v-if="loadingStatus" class="loading">
       <i class="el-icon-loading"></i>
-      Loading...
+      {{ $t("home.loading") }}
     </div>
 
     <el-row class="airy">
       <el-col :span="24">
         <div v-if="status && status.lastUpdateDone" class="last-update">
-          Validation run done at {{ getTimestamp(status.lastUpdateDone) }} ({{
+          {{ $t("home.runat") }} {{ getTimestamp(status.lastUpdateDone) }} ({{
             fromNow(status.lastUpdateDone)
           }})
         </div>
@@ -99,7 +104,7 @@
     </el-row>
 
     <el-collapse v-if="status && status.serial !== null" class="airy stats">
-      <el-collapse-item title="Extra stats">
+      <el-collapse-item :title="$t('home.extrastats')">
         <el-row>
           <el-col :span="4">
             RRDP
@@ -111,8 +116,8 @@
                   ><a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a></template
                 >
               </el-table-column>
-              <el-table-column prop="status" label="Status"> </el-table-column>
-              <el-table-column label="Duration"
+              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
+              <el-table-column :label="$t('home.duration')"
                 ><template slot-scope="scope">
                   <el-progress
                     :text-inside="true"
@@ -133,8 +138,8 @@
           <el-col :span="20">
             <el-table :data="rsync" style="width: 100%" stripe height="250">
               <el-table-column prop="url" label="URL"> </el-table-column>
-              <el-table-column prop="status" label="Status"> </el-table-column>
-              <el-table-column label="Duration"
+              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
+              <el-table-column :label="$t('home.duration')"
                 ><template slot-scope="scope">
                   <el-progress
                     :text-inside="true"
@@ -151,7 +156,7 @@
 
         <el-row>
           <el-col :span="4">
-            Serial
+            {{ $t("home.serial") }}
           </el-col>
           <el-col :span="20">
             {{ status.serial }}
@@ -159,7 +164,7 @@
         </el-row>
         <el-row>
           <el-col :span="4">
-            Last Update Start
+            {{ $t("home.lastupdatestart") }}
           </el-col>
           <el-col :span="20">
             {{ status.lastUpdateStart }}
@@ -167,7 +172,7 @@
         </el-row>
         <el-row>
           <el-col :span="4">
-            Last Update End
+            {{ $t("home.lastupdateend") }}
           </el-col>
           <el-col :span="20">
             {{ status.lastUpdateDone }}
@@ -175,14 +180,14 @@
         </el-row>
         <el-row>
           <el-col :span="4">
-            Last Update Duration
+            {{ $t("home.lastupdateduration") }}
           </el-col>
-          <el-col :span="20"> {{ status.lastUpdateDuration }} seconds </el-col>
+          <el-col :span="20"> {{ status.lastUpdateDuration }} {{ $t("home.seconds") }} </el-col>
         </el-row>
 
         <el-row>
           <el-col :span="4">
-            VRPs Added Locally
+            {{ $t("home.vrpsaddedlocally") }}
           </el-col>
           <el-col :span="20">
             {{ status.vrpsAddedLocally }}
@@ -191,7 +196,7 @@
 
         <el-row>
           <el-col :span="4">
-            Stale Object
+            {{ $t("home.staleobject") }}
           </el-col>
           <el-col :span="20">
             {{ status.staleObjects }}
@@ -205,7 +210,7 @@
           <el-col :span="20">
             <el-row>
               <el-col :span="4">
-                Total Connections
+                {{ $t("home.totalconnections") }}
               </el-col>
               <el-col :span="20">
                 {{ status.rtr.totalConnections }}
@@ -213,7 +218,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Current Connections
+                {{ $t("home.currentconnections") }}
               </el-col>
               <el-col :span="20">
                 {{ status.rtr.currentConnections }}
@@ -221,7 +226,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Bytes Read
+                {{ $t("home.bytesread") }}
               </el-col>
               <el-col :span="20">
                 {{ status.rtr.bytesRead }}
@@ -229,7 +234,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Bytes Written
+                {{ $t("home.byteswritten") }}
               </el-col>
               <el-col :span="20">
                 {{ status.rtr.bytesWritten }}
@@ -244,7 +249,7 @@
           <el-col :span="20">
             <el-row>
               <el-col :span="4">
-                Total Connections
+                {{ $t("home.totalconnections") }}
               </el-col>
               <el-col :span="20">
                 {{ status.http.totalConnections }}
@@ -252,7 +257,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Current Connections
+                {{ $t("home.currentconnections") }}
               </el-col>
               <el-col :span="20">
                 {{ status.http.currentConnections }}
@@ -260,7 +265,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Requests
+                {{ $t("home.requests") }}
               </el-col>
               <el-col :span="20">
                 {{ status.http.requests }}
@@ -268,7 +273,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Bytes Read
+                {{ $t("home.bytesread") }}
               </el-col>
               <el-col :span="20">
                 {{ status.http.bytesRead }}
@@ -276,7 +281,7 @@
             </el-row>
             <el-row>
               <el-col :span="4">
-                Bytes Written
+                {{ $t("home.byteswritten") }}
               </el-col>
               <el-col :span="20">
                 {{ status.http.bytesWritten }}
@@ -401,7 +406,7 @@ export default {
         asValid = true;
         this.error = "";
       } else {
-        this.error = "Please enter a valid ASN";
+        this.error = this.$t("home.validasn");
         return;
       }
       let prefixValid = false;
@@ -410,7 +415,7 @@ export default {
         prefixValid = true;
         this.error = "";
       } else {
-        this.error = "Please enter a valid prefix";
+        this.error = this.$t("home.validprefix");
         return;
       }
 
