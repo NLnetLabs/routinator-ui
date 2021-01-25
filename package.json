@@ -8,17 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "cidr-regex": "^3.1.1",
     "dotenv": "^8.2.0",
     "element-ui": "^2.9.1",
-    "is-ip": "^3.1.0",
     "moment": "^2.29.1",
     "typeface-lato": "^0.0.54",
-    "typeface-source-code-pro": "^0.0.71",
     "vue": "^2.5.21",
     "vue-i18n": "^8.11.2",
-    "vue-matomo": "^3.14.0-0",
     "vue-router": "^3.0.6",
     "webpack": "^4.33.0"
   },
@@ -43,7 +40,7 @@
     "**/**/eslint-utils": "^1.4.1",
     "**/**/serialize-javascript": "^3.1.0",
     "**/**/browserslist": "4.8.3",
-    "**/**/caniuse-lite": "1.0.30001020",
+    "**/**/caniuse-lite": "1.0.30001179",
     "**/**/acorn": "^6.4.1",
     "**/**/minimist": "^1.2.2",
     "**/**/kind-of": "^6.0.3",

@@ -4,10 +4,10 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import PageNotFound from "./views/404.vue";
 
-
 Vue.use(Router);
 
 const router = new Router({
+  base: "/ui/",
   routes: [
     {
       path: "/",
