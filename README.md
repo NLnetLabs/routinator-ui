@@ -25,6 +25,7 @@ Useful during development to instantaneously see the changes on screen
 ```
 yarn run serve
 ```
+and then open [http://localhost:8080/ui](http://localhost:8080/ui)
 
 ### Compiles and minifies for production
 To get everything compiled and minified in the "dist" folder
