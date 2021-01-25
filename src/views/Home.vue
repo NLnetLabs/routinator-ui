@@ -399,10 +399,10 @@ export default {
     validatePrefix() {
       let asValid = false;
       let asValue = this.searchForm.asn;
-      if (asValue && asValue.toLowerCase().indexOf("as") === 0) {
+      if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
         asValue = asValue.substr(2) * 1;
       }
-      if (asValue >= 0 && asValue <= 4294967295) {
+      if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
         asValid = true;
         this.error = "";
       } else {
