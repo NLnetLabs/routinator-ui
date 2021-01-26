@@ -4,8 +4,8 @@
       <el-header>
         <el-row>
           <el-col :span="4">
-            <router-link :to="{ name: 'home' }">
-              <div class="logo">
+            <router-link :to="{ name: 'home' }" custom v-slot="{ navigate }">
+              <div class="logo" @click="navigate" @keypress.enter="navigate" role="link">
                 <img src="@/assets/images/routinator_logo_white.svg" />
               </div>
             </router-link>
@@ -139,16 +139,12 @@ body {
 }
 
 .logo {
+  cursor: pointer;
   line-height: 10px;
   img {
     width: 180px;
     margin-top: 12px;
   }
-}
-
-.logout {
-  margin-left: 2rem;
-  cursor: pointer;
 }
 
 .toolbar,
