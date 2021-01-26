@@ -4,7 +4,7 @@ const apiClient = axios.create();
 
 export default {
   getStatus() {
-    return apiClient.get("api/v1/status");
+    return apiClient.get("/api/v1/status");
   },
   checkValidity(asn, prefix) {
     return apiClient.get("/api/v1/validity/" + asn + "/" + prefix);
