@@ -9,4 +9,7 @@ export default {
   checkValidity(asn, prefix) {
     return apiClient.get("/api/v1/validity/" + asn + "/" + prefix);
   },
+  getROAs() {
+    return apiClient.get("/json");
+  }
 };

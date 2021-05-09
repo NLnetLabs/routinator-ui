@@ -6,7 +6,9 @@
     "version": "Version",
     "asn": "ASN",
     "prefix": "Prefix",
-    "maxlength": "Max Length"
+    "maxlength": "Max Length",
+    "ta": "TA",
+    "nodata": "No data"
   },
   "tal": {
     "ROAs": "ROAs",
@@ -93,5 +95,8 @@
       "invalidGBRs": "Invalid GBRs",
       "otherObjects": "Other Objects"
     }
+  },
+  "roas": {
+    "loading": "Loading ROAs, this might take a while..."
   }
 }

@@ -10,11 +10,24 @@
               </div>
             </router-link>
           </el-col>
-          <el-col :span="18"> &nbsp;</el-col>
+          <el-col :span="18"
+            ><el-menu
+              :router="true"
+              :default-active="activeIndex"
+              mode="horizontal"
+              background-color="#001f6d"
+              text-color="#fff"
+              active-text-color="#fff"
+            >
+              <el-menu-item index="0" :route="{ name: 'home' }"> Status </el-menu-item>
+              <el-menu-item index="1" :route="{ name: 'roas' }"> ROAs </el-menu-item>
+            </el-menu>
+            &nbsp;</el-col
+          >
           <el-col :span="2">
             <el-menu
               mode="horizontal"
-              background-color="#000028"
+              background-color="#001f6d"
               text-color="#fff"
               active-text-color="#fff"
               default-active=""
@@ -35,9 +48,7 @@
         <el-row>
           <el-col :span="12">
             &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs
-            <span v-if="version">- {{
-              $t("common.version")
-            }} {{ version }}</span>
+            <span v-if="version">- {{ $t("common.version") }} {{ version }}</span>
           </el-col>
           <el-col :span="12" class="text-right">
             <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
@@ -104,14 +115,26 @@ export default {
   data() {
     return {
       showHelp: false,
-      version: ""
+      version: "",
+      activeIndex: "0",
     };
   },
+  watch: {
+    $route(to) {
+      this.activeIndex = this.getActiveIndex(to.name);
+    },
+  },
+  mounted: function () {
+    this.activeIndex = this.getActiveIndex(this.$route.name);
+  },
   methods: {
+    getActiveIndex(path) {
+      return "" + (["roas"].indexOf(path) + 1);
+    },
     updateVersion(version) {
       this.version = version;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -129,7 +152,7 @@ body {
 }
 
 .el-header {
-  background: linear-gradient(45deg, #001f6d, #000028);
+  background: linear-gradient(45deg, #001f6d, #001f6d);
   color: #ffffff;
   z-index: 3;
 }
