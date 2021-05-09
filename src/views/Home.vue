@@ -93,31 +93,197 @@
     </el-row>
 
     <el-row v-if="status && status.tals">
-      <el-col
-        :span="4"
-        v-for="(tal, index) in Object.keys(status.tals)"
-        :key="index"
-        :offset="index % 5 !== 0 ? 1 : 0"
-      >
+      <el-col :span="8" v-for="(tal, index) in Object.keys(status.tals)" :key="index">
         <tal :label="tal" :data="status.tals[tal]" />
       </el-col>
     </el-row>
 
     <el-collapse v-if="status && status.serial !== null" class="airy stats">
+      <el-collapse-item :title="$t('home.repositories')">
+        <el-table :data="repositories" style="width: 100%" height="250">
+          <el-table-column fixed :label="$t('home.repotable.repository')" width="250">
+            <template slot-scope="scope">
+              <a :href="scope.row.repo" target="_blank">{{ scope.row.repo }}</a>
+            </template>
+          </el-table-column>
+          <el-table-column prop="type" :label="$t('home.repotable.type')" width="150" sortable>
+          </el-table-column>
+          <el-table-column
+            prop="vrpsTotal"
+            :label="$t('home.repotable.vrpsTotal')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="vrpsUnsafe"
+            :label="$t('home.repotable.vrpsUnsafe')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="vrpsLocallyFiltered"
+            :label="$t('home.repotable.vrpsLocallyFiltered')"
+            width="180"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="vrpsDuplicate"
+            :label="$t('home.repotable.vrpsDuplicate')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="vrpsFinal"
+            :label="$t('home.repotable.vrpsFinal')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validPublicationPoints"
+            :label="$t('home.repotable.validPublicationPoints')"
+            width="200"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="rejectedPublicationPoints"
+            :label="$t('home.repotable.rejectedPublicationPoints')"
+            width="220"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validManifests"
+            :label="$t('home.repotable.validManifests')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="invalidManifests"
+            :label="$t('home.repotable.invalidManifests')"
+            width="180"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="staleManifests"
+            :label="$t('home.repotable.staleManifests')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="missingManifests"
+            :label="$t('home.repotable.missingManifests')"
+            width="180"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validCRLs"
+            :label="$t('home.repotable.validCRLs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="invalidCRLs"
+            :label="$t('home.repotable.invalidCRLs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="staleCRLs"
+            :label="$t('home.repotable.staleCRLs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="strayCRLs"
+            :label="$t('home.repotable.strayCRLs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validCACerts"
+            :label="$t('home.repotable.validCACerts')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validEECerts"
+            :label="$t('home.repotable.validEECerts')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="invalidCerts"
+            :label="$t('home.repotable.invalidCerts')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validROAs"
+            :label="$t('home.repotable.validROAs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="invalidROAs"
+            :label="$t('home.repotable.invalidROAs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="validGBRs"
+            :label="$t('home.repotable.validGBRs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="invalidGBRs"
+            :label="$t('home.repotable.invalidGBRs')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+          <el-table-column
+            prop="otherObjects"
+            :label="$t('home.repotable.otherObjects')"
+            width="150"
+            sortable
+          >
+          </el-table-column>
+        </el-table>
+      </el-collapse-item>
       <el-collapse-item :title="$t('home.extrastats')">
         <el-row>
-          <el-col :span="4">
-            RRDP
-          </el-col>
+          <el-col :span="4"> RRDP </el-col>
           <el-col :span="20">
             <el-table :data="rrdp" style="width: 100%" stripe height="250">
-              <el-table-column label="URL">
+              <el-table-column fixed label="URL" width="300">
                 <template slot-scope="scope"
                   ><a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a></template
                 >
               </el-table-column>
-              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
-              <el-table-column :label="$t('home.duration')"
+              <el-table-column prop="status" :label="$t('home.status')" width="150">
+              </el-table-column>
+              <el-table-column :label="$t('home.duration')" width="150"
                 ><template slot-scope="scope">
                   <el-progress
                     :text-inside="true"
@@ -125,21 +291,36 @@
                     :percentage="(scope.row.duration / rrdpMax) * 100"
                   ></el-progress> </template
               ></el-table-column>
-              <el-table-column label="">
+              <el-table-column label="" width="150">
                 <template slot-scope="scope"> {{ scope.row.duration }}s </template>
+              </el-table-column>
+              <el-table-column prop="notifyStatus" :label="$t('home.notifyStatus')" width="150">
+              </el-table-column>
+              <el-table-column prop="payloadStatus" :label="$t('home.payloadStatus')" width="150">
+              </el-table-column>
+              <el-table-column prop="serial" :label="$t('home.serial')" width="150">
+              </el-table-column>
+              <el-table-column prop="delta" :label="$t('home.delta')" width="150">
+              </el-table-column>
+              <el-table-column
+                prop="snapshot_reason"
+                :label="$t('home.snapshotReason')"
+                width="150"
+              >
+              </el-table-column>
+              <el-table-column prop="session" :label="$t('home.session')" width="350">
               </el-table-column>
             </el-table>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="4">
-            RSYNC
-          </el-col>
+          <el-col :span="4"> RSYNC </el-col>
           <el-col :span="20">
             <el-table :data="rsync" style="width: 100%" stripe height="250">
-              <el-table-column prop="url" label="URL"> </el-table-column>
-              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
-              <el-table-column :label="$t('home.duration')"
+              <el-table-column prop="url" label="URL" width="300"> </el-table-column>
+              <el-table-column prop="status" :label="$t('home.status')" width="150">
+              </el-table-column>
+              <el-table-column :label="$t('home.duration')" width="150"
                 ><template slot-scope="scope">
                   <el-progress
                     :text-inside="true"
@@ -194,19 +375,8 @@
           </el-col>
         </el-row>
 
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.staleobject") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.staleObjects }}
-          </el-col>
-        </el-row>
-
         <el-row v-if="status.rtr">
-          <el-col :span="4">
-            RTR
-          </el-col>
+          <el-col :span="4"> RTR </el-col>
           <el-col :span="20">
             <el-row>
               <el-col :span="4">
@@ -243,9 +413,7 @@
           </el-col>
         </el-row>
         <el-row v-if="status.http">
-          <el-col :span="4">
-            HTTP
-          </el-col>
+          <el-col :span="4"> HTTP </el-col>
           <el-col :span="20">
             <el-row>
               <el-col :span="4">
@@ -305,7 +473,7 @@ import * as moment from "moment";
 export default {
   components: {
     Tal,
-    ValidityTable
+    ValidityTable,
   },
   data() {
     return {
@@ -316,11 +484,12 @@ export default {
       validation: {},
       searchForm: {
         asn: "",
-        prefix: ""
+        prefix: "",
       },
       error: "",
       rsync: [],
-      rrdp: []
+      rrdp: [],
+      repositories: [],
     };
   },
   created() {
@@ -330,13 +499,13 @@ export default {
   watch: {
     $route() {
       this.loadRoute();
-    }
+    },
   },
   computed: {
     rrdpMax() {
       return Math.max.apply(
         Math,
-        this.rrdp.map(function(u) {
+        this.rrdp.map(function (u) {
           return u.duration;
         })
       );
@@ -344,11 +513,11 @@ export default {
     rsyncMax() {
       return Math.max.apply(
         Math,
-        this.rsync.map(function(u) {
+        this.rsync.map(function (u) {
           return u.duration;
         })
       );
-    }
+    },
   },
   methods: {
     loadRoute() {
@@ -364,7 +533,7 @@ export default {
     },
     loadStatus() {
       this.loadingStatus = true;
-      APIService.getStatus().then(response => {
+      APIService.getStatus().then((response) => {
         this.status = response.data;
         this.loadingStatus = false;
         if (this.status && this.status.version) {
@@ -372,25 +541,34 @@ export default {
         }
         if (this.status.rsync) {
           let rsync = [];
-          Object.keys(this.status.rsync).forEach(k => {
+          Object.keys(this.status.rsync).forEach((k) => {
             rsync.push({
               duration: this.status.rsync[k].duration,
               status: this.status.rsync[k].status,
-              url: k
+              url: k,
             });
           });
           this.rsync = rsync;
         }
         if (this.status.rrdp) {
           let rrdp = [];
-          Object.keys(this.status.rrdp).forEach(k => {
+          Object.keys(this.status.rrdp).forEach((k) => {
             rrdp.push({
-              duration: this.status.rrdp[k].duration,
-              status: this.status.rrdp[k].status,
-              url: k
+              ...this.status.rrdp[k],
+              url: k,
             });
           });
           this.rrdp = rrdp;
+        }
+        if (this.status.repositories) {
+          let repos = [];
+          Object.keys(this.status.repositories).forEach((k) => {
+            repos.push({
+              repo: k,
+              ...this.status.repositories[k],
+            });
+          });
+          this.repositories = repos;
         }
       });
 
@@ -422,7 +600,7 @@ export default {
       if (asValid && prefixValid) {
         this.loadingRoute = true;
         this.firstSearch = false;
-        APIService.checkValidity(this.searchForm.asn, this.searchForm.prefix).then(response => {
+        APIService.checkValidity(this.searchForm.asn, this.searchForm.prefix).then((response) => {
           this.loadingRoute = false;
           if (response.data && response.data.validated_route) {
             this.validation = response.data.validated_route;
@@ -441,8 +619,8 @@ export default {
     },
     fromNow(timestamp) {
       return moment.utc(timestamp).fromNow();
-    }
-  }
+    },
+  },
 };
 </script>
 
