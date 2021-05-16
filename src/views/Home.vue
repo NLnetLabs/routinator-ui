@@ -42,7 +42,7 @@
 
       <div v-if="loadingRoute" class="loading">
         <i class="el-icon-loading"></i>
-        {{ $t("home.loading") }}
+        {{ $t("common.loading") }}
       </div>
 
       <div v-if="validation && validation.route">
@@ -79,7 +79,7 @@
 
     <div v-if="loadingStatus" class="loading">
       <i class="el-icon-loading"></i>
-      {{ $t("home.loading") }}
+      {{ $t("common.loading") }}
     </div>
 
     <el-row class="airy">
@@ -99,198 +99,10 @@
         :key="index"
         :offset="index % 5 !== 0 ? 1 : 0"
       >
-        <tal :label="tal" :data="status.tals[tal]" />
+        <tal :label="tal" :data="status.tals[tal]" :detailed="false" />
       </el-col>
     </el-row>
 
-    <el-collapse v-if="status && status.serial !== null" class="airy stats">
-      <el-collapse-item :title="$t('home.extrastats')">
-        <el-row>
-          <el-col :span="4">
-            RRDP
-          </el-col>
-          <el-col :span="20">
-            <el-table :data="rrdp" style="width: 100%" stripe height="250">
-              <el-table-column label="URL">
-                <template slot-scope="scope"
-                  ><a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a></template
-                >
-              </el-table-column>
-              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
-              <el-table-column :label="$t('home.duration')"
-                ><template slot-scope="scope">
-                  <el-progress
-                    :text-inside="true"
-                    :stroke-width="3"
-                    :percentage="(scope.row.duration / rrdpMax) * 100"
-                  ></el-progress> </template
-              ></el-table-column>
-              <el-table-column label="">
-                <template slot-scope="scope"> {{ scope.row.duration }}s </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4">
-            RSYNC
-          </el-col>
-          <el-col :span="20">
-            <el-table :data="rsync" style="width: 100%" stripe height="250">
-              <el-table-column prop="url" label="URL"> </el-table-column>
-              <el-table-column prop="status" :label="$t('home.status')"> </el-table-column>
-              <el-table-column :label="$t('home.duration')"
-                ><template slot-scope="scope">
-                  <el-progress
-                    :text-inside="true"
-                    :stroke-width="3"
-                    :percentage="(scope.row.duration / rsyncMax) * 100"
-                  ></el-progress> </template
-              ></el-table-column>
-              <el-table-column label="">
-                <template slot-scope="scope"> {{ scope.row.duration }}s </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.serial") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.serial }}
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.lastupdatestart") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.lastUpdateStart }}
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.lastupdateend") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.lastUpdateDone }}
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.lastupdateduration") }}
-          </el-col>
-          <el-col :span="20"> {{ status.lastUpdateDuration }} {{ $t("home.seconds") }} </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.vrpsaddedlocally") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.vrpsAddedLocally }}
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="4">
-            {{ $t("home.staleobject") }}
-          </el-col>
-          <el-col :span="20">
-            {{ status.staleObjects }}
-          </el-col>
-        </el-row>
-
-        <el-row v-if="status.rtr">
-          <el-col :span="4">
-            RTR
-          </el-col>
-          <el-col :span="20">
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.totalconnections") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.rtr.totalConnections }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.currentconnections") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.rtr.currentConnections }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.bytesread") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.rtr.bytesRead }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.byteswritten") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.rtr.bytesWritten }}
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-        <el-row v-if="status.http">
-          <el-col :span="4">
-            HTTP
-          </el-col>
-          <el-col :span="20">
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.totalconnections") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.http.totalConnections }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.currentconnections") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.http.currentConnections }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.requests") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.http.requests }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.bytesread") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.http.bytesRead }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
-                {{ $t("home.byteswritten") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.http.bytesWritten }}
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-      </el-collapse-item>
-    </el-collapse>
   </div>
 </template>
 
@@ -318,9 +130,7 @@ export default {
         asn: "",
         prefix: ""
       },
-      error: "",
-      rsync: [],
-      rrdp: []
+      error: ""
     };
   },
   created() {
@@ -330,24 +140,6 @@ export default {
   watch: {
     $route() {
       this.loadRoute();
-    }
-  },
-  computed: {
-    rrdpMax() {
-      return Math.max.apply(
-        Math,
-        this.rrdp.map(function(u) {
-          return u.duration;
-        })
-      );
-    },
-    rsyncMax() {
-      return Math.max.apply(
-        Math,
-        this.rsync.map(function(u) {
-          return u.duration;
-        })
-      );
     }
   },
   methods: {
@@ -369,28 +161,6 @@ export default {
         this.loadingStatus = false;
         if (this.status && this.status.version) {
           this.$emit("update-version", this.status.version);
-        }
-        if (this.status.rsync) {
-          let rsync = [];
-          Object.keys(this.status.rsync).forEach(k => {
-            rsync.push({
-              duration: this.status.rsync[k].duration,
-              status: this.status.rsync[k].status,
-              url: k
-            });
-          });
-          this.rsync = rsync;
-        }
-        if (this.status.rrdp) {
-          let rrdp = [];
-          Object.keys(this.status.rrdp).forEach(k => {
-            rrdp.push({
-              duration: this.status.rrdp[k].duration,
-              status: this.status.rrdp[k].status,
-              url: k
-            });
-          });
-          this.rrdp = rrdp;
         }
       });
 
@@ -469,12 +239,6 @@ h4.header {
 .airy {
   margin-top: 4rem;
   margin-bottom: 3rem;
-}
-.stats {
-  .el-row {
-    color: #999 !important;
-    margin-bottom: 1rem;
-  }
 }
 .loading {
   padding: 3rem;
