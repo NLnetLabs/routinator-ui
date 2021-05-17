@@ -93,7 +93,7 @@
     "staleCRLs": "Stale CRLs",
     "strayCRLs": "Stray CRLs",
     "validCACerts": "Valid CACerts",
-    "validEECerts": "Valid Router Certs",
+    "validEECerts": "Router Certs",
     "invalidCerts": "Invalid Certs",
     "validROAs": "Valid ROAs",
     "invalidROAs": "Invalid ROAs",
