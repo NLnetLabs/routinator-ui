@@ -35,7 +35,7 @@
     "stray": "Stray",
     "certs": "Certs",
     "validCA": "Valid CA",
-    "validEE": "Valid EE",
+    "validEE": "Valid Router",
     "GBRs": "GBRs",
     "otherObjects": "Other Objects"
   },
@@ -93,7 +93,7 @@
     "staleCRLs": "Stale CRLs",
     "strayCRLs": "Stray CRLs",
     "validCACerts": "Valid CACerts",
-    "validEECerts": "Valid EECerts",
+    "validEECerts": "Valid Router Certs",
     "invalidCerts": "Invalid Certs",
     "validROAs": "Valid ROAs",
     "invalidROAs": "Invalid ROAs",
