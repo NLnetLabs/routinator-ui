@@ -115,14 +115,6 @@
           <el-col :span="20">
             <el-row>
               <el-col :span="4">
-                {{ $t("connections.totalconnections") }}
-              </el-col>
-              <el-col :span="20">
-                {{ status.rtr.totalConnections }}
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="4">
                 {{ $t("connections.currentconnections") }}
               </el-col>
               <el-col :span="20">
