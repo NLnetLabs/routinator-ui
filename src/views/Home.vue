@@ -112,7 +112,7 @@ import router from "@/router";
 import Tal from "@/components/Tal";
 import ValidityTable from "@/components/ValidityTable";
 const cidrRegex = require("cidr-regex");
-import * as moment from "moment";
+import { DateTime } from "luxon";
 
 export default {
   components: {
@@ -207,10 +207,10 @@ export default {
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
-      return moment.utc(timestamp).format() + " UTC";
+      return DateTime.fromISO(timestamp, { zone: "utc"}).toFormat('yyyy-MM-dd TTT');
     },
     fromNow(timestamp) {
-      return moment.utc(timestamp).fromNow();
+      return DateTime.fromISO(timestamp, { zone: "utc"}).toRelative();
     }
   }
 };
