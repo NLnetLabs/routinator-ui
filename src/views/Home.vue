@@ -19,11 +19,6 @@
                   clearable
                   @keyup.enter.native="validateAnnouncement"
                 ></el-input>
-                <div>
-                  <el-popover placement="bottom-start" width="400" trigger="click">
-                    <el-link slot="reference">or compare with bgp</el-link></el-popover
-                  >
-                </div>
               </el-form-item>
               <el-form-item :label="$t('common.prefix')">
                 <el-input
