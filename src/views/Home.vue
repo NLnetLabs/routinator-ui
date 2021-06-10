@@ -19,6 +19,11 @@
                   clearable
                   @keyup.enter.native="validateAnnouncement"
                 ></el-input>
+                <div>
+                  <el-popover placement="bottom-start" width="400" trigger="click">
+                    <el-link slot="reference">or compare with bgp</el-link></el-popover
+                  >
+                </div>
               </el-form-item>
               <el-form-item :label="$t('common.prefix')">
                 <el-input
@@ -102,7 +107,6 @@
         <tal :label="tal" :data="status.tals[tal]" :detailed="false" />
       </el-col>
     </el-row>
-    
   </div>
 </template>
 
@@ -211,10 +215,10 @@ export default {
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
-      return moment.utc(timestamp).format() + " UTC";
+      return DateTime.fromISO(timestamp, { zone: "utc" }).toFormat("yyyy-MM-dd TTT");
     },
     fromNow(timestamp) {
-      return moment.utc(timestamp).fromNow();
+      return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     }
   }
 };
