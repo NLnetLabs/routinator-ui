@@ -210,10 +210,10 @@ export default {
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc" }).toFormat("yyyy-MM-dd TTT");
+      return moment.utc(timestamp).format() + " UTC";
     },
     fromNow(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
+      return moment.utc(timestamp).fromNow();
     }
   }
 };
