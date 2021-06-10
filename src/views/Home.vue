@@ -176,7 +176,7 @@ export default {
         asValid = true;
         this.error = null;
       } else {
-        this.error = this.$t("Please enter a valid ASN");
+        this.error = this.$t("home.pleasevalidasn");
       }
 
       let prefixValid = false;
@@ -185,8 +185,8 @@ export default {
         prefixValid = true;
       } else {
         this.error =
-          (this.error && this.$t(`${this.error} and a valid Prefix`)) ||
-          this.$t("Please enter a valid Prefix");
+          (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+          this.$t("home.pleasevalidprefix");
       }
 
       if (this.error) {
