@@ -11,30 +11,92 @@
             <h3 v-if="firstSearch">
               {{ $t("home.welcome") }}
             </h3>
-            <el-form :inline="true" :model="searchForm">
-              <el-form-item :label="$t('home.origin')">
-                <el-input
-                  v-model="searchForm.asn"
-                  placeholder="e.g. 64511"
-                  clearable
-                  @keyup.enter.native="validateAnnouncement"
-                ></el-input>
-              </el-form-item>
-              <el-form-item :label="$t('common.prefix')">
-                <el-input
-                  v-model="searchForm.prefix"
-                  placeholder="e.g. 192.0.2.0/24"
-                  clearable
-                  @keyup.enter.native="validateAnnouncement"
-                ></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="validateAnnouncement">{{
-                  $t("home.validate")
-                }}</el-button>
-              </el-form-item>
-            </el-form>
-            <el-tag size="mini" type="danger" v-if="error">{{ error }}</el-tag>
+            <div style="text-align: left">
+              <el-form
+                :inline="true"
+                label-position="right"
+                label-width="90px"
+                :status-icon="true"
+                :model="searchForm"
+              >
+                <el-form-item :label="$t('home.origin')">
+                  <el-input
+                    v-model="searchForm.asn"
+                    placeholder="e.g. 64511"
+                    clearable
+                    :disabled="bgpForm.inBGP"
+                    @keyup.enter.native="validateAnnouncement"
+                  ></el-input>
+                  <div class="bgp-popover-text" style="text-align: left">
+                    <el-button type="text" @click="setUseOptions">more options</el-button>
+                  </div>
+                </el-form-item>
+                <el-form-item :label="$t('common.prefix')">
+                  <el-input
+                    v-model="searchForm.prefix"
+                    placeholder="e.g. 192.0.2.0/24"
+                    clearable
+                    @keyup.enter.native="validateAnnouncement"
+                  ></el-input>
+                  <div v-if="bgpForm.inAlloc" class="options-text" style="text-align: left">
+                    + related prefixes
+                  </div>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div v-if="bgpForm.useOptions" style="text-align: left; margin-left: 90px">
+              <el-form label-position="top">
+                <el-form-item style="text-align: left" label="ASN lookup">
+                  <el-switch
+                    active-text="Validate Prefixes for ASN found in BGP"
+                    name="type"
+                    v-model="bgpForm.inBGP"
+                  ></el-switch>
+                  <el-popover
+                    class="item"
+                    effect="dark"
+                    trigger="click"
+                    width="200"
+                    placement="top"
+                  >
+                    <div slot="default" style="word-break: break-word;">
+                      With smiles and kisses, we prefer to seek accord beneath our star, although
+                      we're different (we concur) just as two drops of water are.
+                    </div>
+                    <i class="el-icon-question" slot="reference"
+                  /></el-popover>
+                </el-form-item>
+                <el-form-item label="Prefixes">
+                  <el-switch
+                    active-text="Add all Prefixes from the same Organisation in RIR Allocations"
+                    name="type"
+                    v-model="bgpForm.inAlloc"
+                  ></el-switch>
+                  <el-popover
+                    class="item"
+                    effect="dark"
+                    trigger="click"
+                    width="200"
+                    placement="top"
+                  >
+                    <div slot="default" style="word-break: break-word;">
+                      Nothing can ever happen twice. In consequence, the sorry fact is that we
+                      arrive here improvised and leave without the chance to practice.
+                    </div>
+                    <i class="el-icon-question" slot="reference"/></el-popover
+                ></el-form-item>
+              </el-form>
+            </div>
+            <div style="text-align: center">
+              <el-form>
+                <el-form-item>
+                  <el-button type="primary" @click="validateAnnouncement">{{
+                    $t("home.validate")
+                  }}</el-button>
+                </el-form-item>
+              </el-form>
+              <el-tag size="mini" type="danger" v-if="error">{{ error }}</el-tag>
+            </div>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
         </el-col>
@@ -102,7 +164,6 @@
         <tal :label="tal" :data="status.tals[tal]" :detailed="false" />
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -129,6 +190,11 @@ export default {
       searchForm: {
         asn: "",
         prefix: ""
+      },
+      bgpForm: {
+        inBGP: false,
+        inAlloc: false,
+        useOptions: false
       },
       error: null
     };
@@ -207,14 +273,17 @@ export default {
           .catch(() => {});
       }
     },
+    setUseOptions() {
+      this.bgpForm.useOptions = this.bgpForm.useOptions ? false : true;
+    },
     validateAnnouncement() {
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc"}).toFormat('yyyy-MM-dd TTT');
+      return DateTime.fromISO(timestamp, { zone: "utc" }).toFormat("yyyy-MM-dd TTT");
     },
     fromNow(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc"}).toRelative();
+      return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     }
   }
 };
@@ -264,5 +333,15 @@ h4.header {
   font-size: 0.8rem;
   text-align: center;
   color: #999;
+}
+.bgp-popover-text {
+  text-align: left;
+}
+.el-popper {
+  text-align: right;
+}
+.options-text {
+  font-style: italic;
+  color: #606266;
 }
 </style>
