@@ -24,11 +24,11 @@
                     v-model="searchForm.asn"
                     placeholder="e.g. 64511"
                     clearable
-                    :disabled="bgpForm.inBGP"
+                    :disabled="bgpForm.validateBGP"
                     @keyup.enter.native="validateAnnouncement"
                   ></el-input>
                   <div class="bgp-popover-text" style="text-align: left">
-                    <el-button type="text" @click="setUseOptions">more options</el-button>
+                    <el-button type="text" @click="setShowOptions">more options</el-button>
                   </div>
                 </el-form-item>
                 <el-form-item :label="$t('common.prefix')">
@@ -38,19 +38,23 @@
                     clearable
                     @keyup.enter.native="validateAnnouncement"
                   ></el-input>
-                  <div v-if="bgpForm.inAlloc" class="options-text" style="text-align: left">
+                  <div
+                    v-if="bgpForm.relatedFromAlloc"
+                    class="options-text"
+                    style="text-align: left; position: absolute"
+                  >
                     + related prefixes
                   </div>
                 </el-form-item>
               </el-form>
             </div>
-            <div v-if="bgpForm.useOptions" style="text-align: left; margin-left: 90px">
+            <div v-if="showOptions" style="text-align: left; margin-left: 90px">
               <el-form label-position="top">
                 <el-form-item style="text-align: left" label="ASN lookup">
                   <el-switch
                     active-text="Validate Prefixes for ASN found in BGP"
                     name="type"
-                    v-model="bgpForm.inBGP"
+                    v-model="bgpForm.validateBGP"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -66,11 +70,30 @@
                     <i class="el-icon-question" slot="reference"
                   /></el-popover>
                 </el-form-item>
-                <el-form-item label="Prefixes">
+                <el-form-item label="Prefixes Search">
                   <el-switch
                     active-text="Add all Prefixes from the same Organisation in RIR Allocations"
                     name="type"
-                    v-model="bgpForm.inAlloc"
+                    v-model="bgpForm.relatedFromAlloc"
+                  ></el-switch>
+                  <el-popover
+                    class="item"
+                    effect="dark"
+                    trigger="click"
+                    width="200"
+                    placement="top"
+                  >
+                    <div slot="default" style="word-break: break-word;">
+                      One day, perhaps some idle tongue mentions your name by accident: I feel as if
+                      a rose were flung into the room, all hue and scent.
+                    </div>
+                    <i class="el-icon-question" slot="reference"
+                  /></el-popover>
+                  <el-switch
+                    inactive-text="Use longest Matching Prefix"
+                    active-text="Use exactly matching Prefix only"
+                    name="type"
+                    v-model="bgpForm.exactMatchOnly"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -192,10 +215,11 @@ export default {
         prefix: ""
       },
       bgpForm: {
-        inBGP: false,
-        inAlloc: false,
-        useOptions: false
+        validateBGP: false,
+        relatedFromAlloc: false,
+        exactMatchOnly: false
       },
+      showOptions: false,
       error: null
     };
   },
@@ -241,6 +265,9 @@ export default {
       if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
         asValid = true;
         this.error = null;
+      } else if (this.bgpForm.relatedFromAlloc || this.bgpForm.validateBGP) {
+        asValid = true;
+        this.error = null;
       } else {
         this.error = this.$t("home.pleasevalidasn");
       }
@@ -273,8 +300,8 @@ export default {
           .catch(() => {});
       }
     },
-    setUseOptions() {
-      this.bgpForm.useOptions = this.bgpForm.useOptions ? false : true;
+    setShowOptions() {
+      this.showOptions = this.showOptions ? false : true;
     },
     validateAnnouncement() {
       this.validatePrefix();
