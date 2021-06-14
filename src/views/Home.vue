@@ -24,11 +24,13 @@
                     v-model="searchForm.asn"
                     placeholder="e.g. 64511"
                     clearable
-                    :disabled="bgpForm.validateBGP"
+                    :disabled="searchOptions.validateBGP"
                     @keyup.enter.native="validateAnnouncement"
                   ></el-input>
                   <div class="bgp-popover-text" style="text-align: left">
-                    <el-button type="text" @click="setShowOptions">more options</el-button>
+                    <el-button type="text" @click="setShowOptions"
+                      >more options</el-button
+                    >
                   </div>
                 </el-form-item>
                 <el-form-item :label="$t('common.prefix')">
@@ -39,7 +41,7 @@
                     @keyup.enter.native="validateAnnouncement"
                   ></el-input>
                   <div
-                    v-if="bgpForm.relatedFromAlloc"
+                    v-if="searchOptions.relatedFromAlloc"
                     class="options-text"
                     style="text-align: left; position: absolute"
                   >
@@ -54,7 +56,7 @@
                   <el-switch
                     active-text="Validate Prefixes for ASN found in BGP"
                     name="type"
-                    v-model="bgpForm.validateBGP"
+                    v-model="searchOptions.validateBGP"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -64,17 +66,43 @@
                     placement="top"
                   >
                     <div slot="default" style="word-break: break-word;">
-                      With smiles and kisses, we prefer to seek accord beneath our star, although
-                      we're different (we concur) just as two drops of water are.
+                      With smiles and kisses, we prefer to seek accord beneath
+                      our star, although we're different (we concur) just as two
+                      drops of water are.
+                    </div>
+                    <i class="el-icon-question" slot="reference"
+                  /></el-popover>
+                </el-form-item>
+                <el-form-item
+                  label="BGP Origin ASN Validation"
+                  v-if="searchOptions.validateBGP"
+                >
+                  <el-switch
+                    inactive-text="Longest Matching Prefix"
+                    active-text="Exact Match only"
+                    name="type"
+                    v-model="searchOptions.exactMatchOnly"
+                  ></el-switch>
+                  <el-popover
+                    class="item"
+                    effect="dark"
+                    trigger="click"
+                    width="200"
+                    placement="top"
+                  >
+                    <div slot="default" style="word-break: break-word;">
+                      Nothing can ever happen twice. In consequence, the sorry
+                      fact is that we arrive here improvised and leave without
+                      the chance to practice.
                     </div>
                     <i class="el-icon-question" slot="reference"
                   /></el-popover>
                 </el-form-item>
                 <el-form-item label="Prefixes Search">
                   <el-switch
-                    active-text="Add all Prefixes from the same Organisation in RIR Allocations"
+                    active-text="Show all Prefixes from the same Organisation in RIR Allocations"
                     name="type"
-                    v-model="bgpForm.relatedFromAlloc"
+                    v-model="searchOptions.relatedFromAlloc"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -84,30 +112,13 @@
                     placement="top"
                   >
                     <div slot="default" style="word-break: break-word;">
-                      One day, perhaps some idle tongue mentions your name by accident: I feel as if
-                      a rose were flung into the room, all hue and scent.
+                      One day, perhaps some idle tongue mentions your name by
+                      accident: I feel as if a rose were flung into the room,
+                      all hue and scent.
                     </div>
                     <i class="el-icon-question" slot="reference"
                   /></el-popover>
-                  <el-switch
-                    inactive-text="Use longest Matching Prefix"
-                    active-text="Use exactly matching Prefix only"
-                    name="type"
-                    v-model="bgpForm.exactMatchOnly"
-                  ></el-switch>
-                  <el-popover
-                    class="item"
-                    effect="dark"
-                    trigger="click"
-                    width="200"
-                    placement="top"
-                  >
-                    <div slot="default" style="word-break: break-word;">
-                      Nothing can ever happen twice. In consequence, the sorry fact is that we
-                      arrive here improvised and leave without the chance to practice.
-                    </div>
-                    <i class="el-icon-question" slot="reference"/></el-popover
-                ></el-form-item>
+                </el-form-item>
               </el-form>
             </div>
             <div style="text-align: center">
@@ -118,7 +129,9 @@
                   }}</el-button>
                 </el-form-item>
               </el-form>
-              <el-tag size="mini" type="danger" v-if="error">{{ error }}</el-tag>
+              <el-tag size="mini" type="danger" v-if="error">{{
+                error
+              }}</el-tag>
             </div>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
@@ -130,7 +143,7 @@
         {{ $t("common.loading") }}
       </div>
 
-      <div v-if="validation && validation.route">
+      <div v-if="validation && validation.route && !this.error">
         <h4 class="header validation-header">
           {{ $t("home.resultsfor") }} {{ validation.route.origin_asn }} -
           {{ validation.route.prefix }}
@@ -141,24 +154,46 @@
             >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
           >
         </h4>
-        <div class="validation-description">{{ validation.validity.description }}</div>
+        <div class="validation-description">
+          {{ validation.validity.description }}
+        </div>
 
         <validity-table
-          v-if="validation.validity.VRPs && validation.validity.VRPs.matched.length"
+          v-if="
+            validation.validity.VRPs && validation.validity.VRPs.matched.length
+          "
           :label="$t('home.matched')"
           :isValid="true"
           :data="validation.validity.VRPs.matched"
         />
         <validity-table
-          v-if="validation.validity.VRPs && validation.validity.VRPs.unmatched_as.length"
+          v-if="
+            validation.validity.VRPs &&
+              validation.validity.VRPs.unmatched_as.length
+          "
           :label="$t('home.unmatchedasn')"
           :data="validation.validity.VRPs.unmatched_as"
         />
         <validity-table
-          v-if="validation.validity.VRPs && validation.validity.VRPs.unmatched_length.length"
+          v-if="
+            validation.validity.VRPs &&
+              validation.validity.VRPs.unmatched_length.length
+          "
           :label="$t('home.unmatchedlength')"
           :data="validation.validity.VRPs.unmatched_length"
         />
+      </div>
+
+      <div
+        v-if="searchOptions.relatedFromAlloc && validation && validation.route"
+      >
+        <h4 class="header validation-header">
+          RELATED PREFIXES
+        </h4>
+        <h4 class="header validation-header">
+          Prefixes allocated to the same Organisation
+        </h4>
+        <prefix-list-table :data="RisAllocData" />
       </div>
     </el-card>
 
@@ -195,13 +230,15 @@ import APIService from "@/services/APIService.js";
 import router from "@/router";
 import Tal from "@/components/Tal";
 import ValidityTable from "@/components/ValidityTable";
+import PrefixListTable from "@/components/PrefixListTable";
 const cidrRegex = require("cidr-regex");
 import { DateTime } from "luxon";
 
 export default {
   components: {
     Tal,
-    ValidityTable
+    ValidityTable,
+    PrefixListTable
   },
   data() {
     return {
@@ -210,11 +247,12 @@ export default {
       loadingRoute: false,
       status: {},
       validation: {},
+      RisAllocData: [],
       searchForm: {
         asn: "",
         prefix: ""
       },
-      bgpForm: {
+      searchOptions: {
         validateBGP: false,
         relatedFromAlloc: false,
         exactMatchOnly: false
@@ -235,8 +273,12 @@ export default {
   methods: {
     loadRoute() {
       if (this.$route.params.asn || this.$route.query.asn) {
-        this.searchForm.asn = this.$route[this.$route.params.asn ? "params" : "query"].asn;
-        this.searchForm.prefix = this.$route[this.$route.params.asn ? "params" : "query"].prefix;
+        this.searchForm.asn = this.$route[
+          this.$route.params.asn ? "params" : "query"
+        ].asn;
+        this.searchForm.prefix = this.$route[
+          this.$route.params.asn ? "params" : "query"
+        ].prefix;
         this.validatePrefix();
       } else {
         this.searchForm.asn = "";
@@ -259,13 +301,17 @@ export default {
     validatePrefix() {
       let asValid = false;
       let asValue = this.searchForm.asn;
+      let PrefAsn = {};
       if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
         asValue = asValue.substr(2) * 1;
       }
       if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
         asValid = true;
         this.error = null;
-      } else if (this.bgpForm.relatedFromAlloc || this.bgpForm.validateBGP) {
+      } else if (
+        this.searchOptions.relatedFromAlloc ||
+        this.searchOptions.validateBGP
+      ) {
         asValid = true;
         this.error = null;
       } else {
@@ -286,19 +332,75 @@ export default {
         return;
       }
 
-      if (asValid && prefixValid) {
+      // Lookup BGP origin ASN and use that for validating the prefix the user
+      // gave us.
+      if (this.searchOptions.validateBGP) {
+        console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
-        APIService.checkValidity(this.searchForm.asn, this.searchForm.prefix).then(response => {
+        APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadingRoute = false;
-          if (response.data && response.data.validated_route) {
-            this.validation = response.data.validated_route;
+          // Use the prefix the user filled out by default, but use the ASN we got
+          // back from the LMP in the `relations[type="less-specific"]` when the
+          // use has set BGP Origin Validation to fall back to the LMP.
+          let hasBgpOrigin = response.results.find(s => s.source === "bgp");
+          if (hasBgpOrigin) {
+            PrefAsn = {
+              prefix: this.searchForm.prefix,
+              origin_asn: hasBgpOrigin.origin_asn
+            };
+          } else if (!this.searchOptions.exactMatchOnly) {
+            this.RisAllocData = response;
+            PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
+              response
+            ).origin_asn;
+            PrefAsn.prefix = this.searchForm.prefix;
+          } else {
+            this.error = "Cannot find an Origin AS in BGP for this prefix";
+            return;
           }
+
+          console.log(`validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`);
+          APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
+            response => {
+              this.loadingRoute = false;
+              if (response.data && response.data.validated_route) {
+                this.validation = response.data.validated_route;
+              }
+            }
+          );
         });
-        router
-          .push("/" + this.searchForm.asn + "/" + encodeURIComponent(this.searchForm.prefix))
-          .catch(() => {});
       }
+      // Straight forward validation with user-supplied ASN and prefix
+      else if (asValid && prefixValid) {
+        this.loadingRoute = true;
+        this.firstSearch = false;
+        PrefAsn.prefix = this.searchForm.prefix;
+        PrefAsn.origin_asn = this.searchForm.asn;
+        APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
+          response => {
+            this.loadingRoute = false;
+            if (response.data && response.data.validated_route) {
+              this.validation = response.data.validated_route;
+            }
+          }
+        );
+      }
+
+      // Lookup and validate all prefixes that are allocated to the same organisation as the
+      // one the user asked for.
+      if (this.searchOptions.relatedFromAlloc) {
+        this.loadingRoute = true;
+        this.firstSearch = false;
+        APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
+          this.loadRoute = false;
+          this.validateRelatedPrefixes(PrefAsn.origin_asn, response);
+        });
+      }
+
+      router
+        .push(`/${PrefAsn.origin_asn}/${encodeURIComponent(PrefAsn.prefix)}`)
+        .catch(() => {});
     },
     setShowOptions() {
       this.showOptions = this.showOptions ? false : true;
@@ -307,10 +409,59 @@ export default {
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc" }).toFormat("yyyy-MM-dd TTT");
+      return DateTime.fromISO(timestamp, { zone: "utc" }).toFormat(
+        "yyyy-MM-dd TTT"
+      );
     },
     fromNow(timestamp) {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
+    },
+    validateRelatedPrefixes(originAsn, response) {
+      if (!this.RisAllocData.length) {
+        console.log("validate related prefixes...");
+        response.relations
+          .filter(r => r.type === "same_org")
+          .forEach(p => {
+            let bgpSource = p.results.find(s => s.source === "bgp");
+            let valAsn = (bgpSource && bgpSource.origin_asn) || originAsn;
+            console.log(`validate ${p.prefix} for ${valAsn}`);
+            this.loadingRoute = true;
+            APIService.checkValidity(valAsn, p.prefix).then(r => {
+              this.loadingRoute = false;
+              console.log(r);
+              if (r.data && r.data.validated_route) {
+                this.RisAllocData.push({
+                  ...p,
+                  results: {
+                    rpki: r.data.validated_route,
+                    bgp: p.results.find(r => r.source === "bgp"),
+                    rir_alloc: p.results.find(r => r.source === "rir_alloc")
+                  }
+                });
+              }
+            });
+          });
+      }
+    },
+    extractAsnFromBgpAlloc(response) {
+      let source = response.results.find(s => s.source === "bgp");
+      if (source) {
+        return { origin_asn: source.origin_asn, prefix: response.prefix };
+      }
+      let lmp_re = response.relations
+        .filter(rel => rel.type === "less_specific")
+        .reduce((rel, lmp) => {
+          if (
+            Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
+          ) {
+            lmp = rel;
+          }
+          return lmp;
+        });
+      return {
+        origin_asn: lmp_re.results.find(s => s.source === "bgp").origin_asn,
+        prefix: lmp_re.prefix
+      };
     }
   }
 };
