@@ -184,16 +184,14 @@
         />
       </div>
 
-      <div
-        v-if="searchOptions.relatedFromAlloc && validation && validation.route"
-      >
+      <div v-if="searchOptions.relatedFromAlloc && RisAllocData.length">
         <h4 class="header validation-header">
           RELATED PREFIXES
         </h4>
         <h4 class="header validation-header">
-          Prefixes allocated to the same Organisation
+          Prefixes allocated to the same Organisation in Region {{ RisAllocData[0].rir }}
         </h4>
-        <prefix-list-table :data="RisAllocData" />
+        <prefix-list-table :data="RisAllocData" :searchAsn="searchForm.asn"/>
       </div>
     </el-card>
 
@@ -299,6 +297,7 @@ export default {
       return false;
     },
     validatePrefix() {
+      this.RisAllocData = [];
       let asValid = false;
       let asValue = this.searchForm.asn;
       let PrefAsn = {};
@@ -350,7 +349,7 @@ export default {
               origin_asn: hasBgpOrigin.origin_asn
             };
           } else if (!this.searchOptions.exactMatchOnly) {
-            this.RisAllocData = response;
+            this.RisAllocData = (Array.isArray(response) && response) || [];
             PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
               response
             ).origin_asn;
@@ -385,6 +384,10 @@ export default {
             }
           }
         );
+
+        router
+          .push(`/${PrefAsn.origin_asn}/${encodeURIComponent(PrefAsn.prefix)}`)
+          .catch(() => {});
       }
 
       // Lookup and validate all prefixes that are allocated to the same organisation as the
@@ -394,13 +397,9 @@ export default {
         this.firstSearch = false;
         APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadRoute = false;
-          this.validateRelatedPrefixes(PrefAsn.origin_asn, response);
+          this.transformRelatedPrefixes(response);
         });
       }
-
-      router
-        .push(`/${PrefAsn.origin_asn}/${encodeURIComponent(PrefAsn.prefix)}`)
-        .catch(() => {});
     },
     setShowOptions() {
       this.showOptions = this.showOptions ? false : true;
@@ -416,32 +415,19 @@ export default {
     fromNow(timestamp) {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     },
-    validateRelatedPrefixes(originAsn, response) {
-      if (!this.RisAllocData.length) {
-        console.log("validate related prefixes...");
-        response.relations
-          .filter(r => r.type === "same_org")
-          .forEach(p => {
-            let bgpSource = p.results.find(s => s.source === "bgp");
-            let valAsn = (bgpSource && bgpSource.origin_asn) || originAsn;
-            console.log(`validate ${p.prefix} for ${valAsn}`);
-            this.loadingRoute = true;
-            APIService.checkValidity(valAsn, p.prefix).then(r => {
-              this.loadingRoute = false;
-              console.log(r);
-              if (r.data && r.data.validated_route) {
-                this.RisAllocData.push({
-                  ...p,
-                  results: {
-                    rpki: r.data.validated_route,
-                    bgp: p.results.find(r => r.source === "bgp"),
-                    rir_alloc: p.results.find(r => r.source === "rir_alloc")
-                  }
-                });
-              }
-            });
-          });
-      }
+    transformRelatedPrefixes(response) {
+      console.log(response);
+      this.RisAllocData = response.relations
+        .filter(r => r.type === "same_org")
+        .map(d => {
+          let bgp_s = d.results.find(r => r.source === "bgp");
+          let rir_s = d.results.find(r => r.source === "rir_alloc");
+          return {
+            prefix: d.prefix,
+            rir: rir_s && rir_s.rir.toUpperCase() || "NOT FOUND",
+            bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
+          };
+        });
     },
     extractAsnFromBgpAlloc(response) {
       let source = response.results.find(s => s.source === "bgp");
