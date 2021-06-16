@@ -43,7 +43,9 @@
               >
             </div>
             <div>
-              <el-button type="text">Validate for {{ searchAsn }}</el-button>
+              <el-button type="text" v-if="searchAsn"
+                >Validate for {{ searchAsn }}</el-button
+              >
             </div>
           </div>
         </template>
