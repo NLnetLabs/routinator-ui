@@ -14,12 +14,15 @@
             <div style="text-align: left">
               <el-form
                 :inline="true"
-                label-position="right"
+                label-position="top"
                 label-width="90px"
                 :status-icon="true"
                 :model="searchForm"
               >
-                <el-form-item :label="$t('home.origin')">
+                <el-form-item
+                  :label="$t('home.origin')"
+                  style="margin-bottom: 48px;"
+                >
                   <el-input
                     v-model="searchForm.asn"
                     placeholder="e.g. 64511"
@@ -27,16 +30,19 @@
                     :disabled="searchOptions.validateBGP"
                     @keyup.enter.native="validateAnnouncement"
                   ></el-input>
-                  <div class="bgp-popover-text" style="text-align: left">
-                    <el-button type="text" @click="setShowOptions"
-                      >more options</el-button
-                    >
+                  <div
+                    class="bgp-popover-text"
+                    style="text-align: left; position: absolute;"
+                  >
                     <div v-if="searchOptions.validateBGP" class="options-text">
                       + validate with BGP ASN
                     </div>
                   </div>
                 </el-form-item>
-                <el-form-item :label="$t('common.prefix')">
+                <el-form-item
+                  :label="$t('common.prefix')"
+                  style="margin-bottom: 48px;"
+                >
                   <el-input
                     v-model="searchForm.prefix"
                     placeholder="e.g. 192.0.2.0/24"
@@ -53,88 +59,16 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div
-              v-if="showOptions"
-              style="text-align: left; margin-left: 90px; margin-top: 1rem"
-            >
-              <el-form label-position="top">
-                <el-form-item style="text-align: left" label="ASN lookup">
-                  <el-switch
-                    active-text="Validate Prefixes for ASN found in BGP"
-                    name="type"
-                    v-model="searchOptions.validateBGP"
-                    @change="toggleParam({ validate_bgp: true })"
-                  ></el-switch>
-                  <el-popover
-                    class="item"
-                    effect="dark"
-                    trigger="click"
-                    width="200"
-                    placement="top"
-                  >
-                    <div slot="default" style="word-break: break-word;">
-                      With smiles and kisses, we prefer to seek accord beneath
-                      our star, although we're different (we concur) just as two
-                      drops of water are.
-                    </div>
-                    <i class="el-icon-question" slot="reference"
-                  /></el-popover>
-                </el-form-item>
-                <el-form-item
-                  label="Origin ASN Validation Source"
-                  v-if="searchOptions.validateBGP"
-                >
-                  <el-switch
-                    inactive-text="Longest Matching Prefix"
-                    active-text="Exact Match only"
-                    name="type"
-                    v-model="searchOptions.exactMatchOnly"
-                    @change="toggleParam({ exact_match_only: true })"
-                  ></el-switch>
-                  <el-popover
-                    class="item"
-                    effect="dark"
-                    trigger="click"
-                    width="200"
-                    placement="top"
-                  >
-                    <div slot="default" style="word-break: break-word;">
-                      Nothing can ever happen twice. In consequence, the sorry
-                      fact is that we arrive here improvised and leave without
-                      the chance to practice.
-                    </div>
-                    <i class="el-icon-question" slot="reference"
-                  /></el-popover>
-                </el-form-item>
-                <el-form-item label="Prefixes Search">
-                  <el-switch
-                    active-text="Show all Prefixes from the same Organisation in RIR Allocations"
-                    name="type"
-                    v-model="searchOptions.relatedFromAlloc"
-                    @change="toggleParam({ include: 'related_alloc' })"
-                  ></el-switch>
-                  <el-popover
-                    class="item"
-                    effect="dark"
-                    trigger="click"
-                    width="200"
-                    placement="top"
-                  >
-                    <div slot="default" style="word-break: break-word;">
-                      One day, perhaps some idle tongue mentions your name by
-                      accident: I feel as if a rose were flung into the room,
-                      all hue and scent.
-                    </div>
-                    <i class="el-icon-question" slot="reference"
-                  /></el-popover>
-                </el-form-item>
-              </el-form>
-            </div>
-            <div style="text-align: center">
+
+            <!-- Validation Button + ----------------->
+            <div style="text-align: left; margin-top: 2rem">
               <el-form>
                 <el-form-item>
                   <el-button type="primary" @click="validateAnnouncement">{{
                     $t("home.validate")
+                  }}</el-button
+                  ><el-button type="text" @click="setShowOptions">{{
+                    (showOptions && "hide options") || "more options"
                   }}</el-button>
                 </el-form-item>
               </el-form>
@@ -143,6 +77,80 @@
               }}</el-tag>
             </div>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
+          </div>
+          <!----- end of Validation Button -------------------->
+
+          <div v-if="showOptions" style="text-align: left; margin-top: 1rem">
+            <el-form label-position="top">
+              <el-form-item style="text-align: left" label="ASN lookup">
+                <el-switch
+                  active-text="Validate Prefixes for ASN found in BGP"
+                  name="type"
+                  v-model="searchOptions.validateBGP"
+                  @change="toggleParam({ validate_bgp: true })"
+                ></el-switch>
+                <el-popover
+                  class="item"
+                  effect="dark"
+                  trigger="click"
+                  width="200"
+                  placement="top"
+                >
+                  <div slot="default" style="word-break: break-word;">
+                    With smiles and kisses, we prefer to seek accord beneath our
+                    star, although we're different (we concur) just as two drops
+                    of water are.
+                  </div>
+                  <i class="el-icon-question" slot="reference"
+                /></el-popover>
+              </el-form-item>
+              <el-form-item label="Origin ASN Validation Source">
+                <el-switch
+                  inactive-text="Longest Matching Prefix"
+                  active-text="Exact Match only"
+                  name="type"
+                  v-model="searchOptions.exactMatchOnly"
+                  @change="toggleParam({ exact_match_only: true })"
+                  :disabled="!searchOptions.validateBGP"
+                ></el-switch>
+                <el-popover
+                  class="item"
+                  effect="dark"
+                  trigger="click"
+                  width="200"
+                  placement="top"
+                >
+                  <div slot="default" style="word-break: break-word;">
+                    Nothing can ever happen twice. In consequence, the sorry
+                    fact is that we arrive here improvised and leave without the
+                    chance to practice.
+                  </div>
+                  <i class="el-icon-question" slot="reference"
+                /></el-popover>
+              </el-form-item>
+              <el-form-item label="Prefixes Search">
+                <el-switch
+                  active-text="Show all Prefixes from the same Organisation in RIR Allocations"
+                  name="type"
+                  v-model="searchOptions.relatedFromAlloc"
+                  @change="toggleParam({ include: 'related_alloc' })"
+                ></el-switch>
+                <el-popover
+                  class="item"
+                  effect="dark"
+                  trigger="click"
+                  width="200"
+                  placement="top"
+                >
+                  <div slot="default" style="word-break: break-word;">
+                    One day, perhaps some idle tongue mentions your name by
+                    accident: I feel as if a rose were flung into the room, all
+                    hue and scent.
+                  </div>
+                  <i class="el-icon-question" slot="reference"
+                /></el-popover>
+              </el-form-item>
+            </el-form>
           </div>
         </el-col>
       </el-row>
@@ -275,7 +283,11 @@ export default {
   },
   watch: {
     $route() {
-      this.loadRoute();
+      if (this.loadRoute) {
+        this.loadRoute();
+      } else {
+        console.log("no loadroute");
+      }
     }
   },
   methods: {
@@ -302,7 +314,9 @@ export default {
         if (this.$route.params.prefix) {
           this.searchForm.prefix = this.$route.params.prefix;
         }
-        this.validatePrefix();
+        if (this.firstSearch) {
+          this.validatePrefix();
+        }
         return;
       }
 
@@ -371,9 +385,7 @@ export default {
       if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
         asValid = true;
         this.error = null;
-      } else if (
-        this.searchOptions.validateBGP
-      ) {
+      } else if (this.searchOptions.validateBGP) {
         asValid = true;
         this.error = null;
       } else {
@@ -411,12 +423,14 @@ export default {
               prefix: this.searchForm.prefix,
               origin_asn: hasBgpOrigin.origin_asn
             };
+            this.searchForm.asn = hasBgpOrigin.origin_asn;
           } else if (!this.searchOptions.exactMatchOnly) {
             this.RisAllocData = (Array.isArray(response) && response) || [];
             PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
               response
             ).origin_asn;
             PrefAsn.prefix = this.searchForm.prefix;
+            this.searchForm.asn = PrefAsn.origin_asn;
           } else {
             this.error = "Cannot find an Origin AS in BGP for this prefix";
             return;
@@ -438,12 +452,12 @@ export default {
               query: this.$route.query
             })
             .catch(() => {});
-            return;
+          return;
         });
       }
       // Straight forward validation with user-supplied ASN and prefix
       else if (asValid && prefixValid) {
-        console.log('AS+Prefix validation');
+        console.log("AS+Prefix validation");
         this.loadingRoute = true;
         this.firstSearch = false;
         PrefAsn.prefix = this.searchForm.prefix;
