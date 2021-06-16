@@ -50,7 +50,7 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div v-if="showOptions" style="text-align: left; margin-left: 90px">
+            <div v-if="showOptions" style="text-align: left; margin-left: 90px; margin-top: 1rem">
               <el-form label-position="top">
                 <el-form-item style="text-align: left" label="ASN lookup">
                   <el-switch
@@ -74,7 +74,7 @@
                   /></el-popover>
                 </el-form-item>
                 <el-form-item
-                  label="BGP Origin ASN Validation"
+                  label="Origin ASN Validation Source"
                   v-if="searchOptions.validateBGP"
                 >
                   <el-switch
@@ -416,7 +416,6 @@ export default {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     },
     transformRelatedPrefixes(response) {
-      console.log(response);
       this.RisAllocData = response.relations
         .filter(r => r.type === "same_org")
         .map(d => {
