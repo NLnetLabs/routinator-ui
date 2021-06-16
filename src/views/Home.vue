@@ -31,6 +31,9 @@
                     <el-button type="text" @click="setShowOptions"
                       >more options</el-button
                     >
+                    <div v-if="searchOptions.validateBGP" class="options-text">
+                      + validate with BGP ASN
+                    </div>
                   </div>
                 </el-form-item>
                 <el-form-item :label="$t('common.prefix')">
@@ -50,13 +53,17 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div v-if="showOptions" style="text-align: left; margin-left: 90px; margin-top: 1rem">
+            <div
+              v-if="showOptions"
+              style="text-align: left; margin-left: 90px; margin-top: 1rem"
+            >
               <el-form label-position="top">
                 <el-form-item style="text-align: left" label="ASN lookup">
                   <el-switch
                     active-text="Validate Prefixes for ASN found in BGP"
                     name="type"
                     v-model="searchOptions.validateBGP"
+                    @change="toggleParam({ validate_bgp: true })"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -82,6 +89,7 @@
                     active-text="Exact Match only"
                     name="type"
                     v-model="searchOptions.exactMatchOnly"
+                    @change="toggleParam({ exact_match_only: true })"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -103,6 +111,7 @@
                     active-text="Show all Prefixes from the same Organisation in RIR Allocations"
                     name="type"
                     v-model="searchOptions.relatedFromAlloc"
+                    @change="toggleParam({ include: 'related_alloc' })"
                   ></el-switch>
                   <el-popover
                     class="item"
@@ -189,9 +198,10 @@
           RELATED PREFIXES
         </h4>
         <h4 class="header validation-header">
-          Prefixes allocated to the same Organisation in Region {{ RisAllocData[0].rir }}
+          Prefixes allocated to the same Organisation in Region
+          {{ RisAllocData[0].rir }}
         </h4>
-        <prefix-list-table :data="RisAllocData" :searchAsn="searchForm.asn"/>
+        <prefix-list-table :data="RisAllocData" :searchAsn="searchForm.asn" />
       </div>
     </el-card>
 
@@ -270,6 +280,33 @@ export default {
   },
   methods: {
     loadRoute() {
+      console.log(this.$route.query);
+      console.log(this.$route.params);
+
+      if (this.$route.query.include === "related_alloc") {
+        console.log("switch on include related alloc");
+        this.searchOptions.relatedFromAlloc = true;
+      }
+
+      if (this.$route.query.exact_match_only) {
+        console.log("switch on exact match only");
+        this.searchOptions.exactMatchOnly = true;
+      }
+
+      if (this.$route.query.validate_bgp) {
+        console.log("switch on validate_bgp");
+        this.searchOptions.validateBGP = true;
+
+        // if the prefix is in the URL,
+        // we have enough to validate, so do it.
+        if (this.$route.params.prefix) {
+          this.searchForm.prefix = this.$route.params.prefix;
+        }
+        this.validatePrefix();
+        return;
+      }
+
+      // straight forward as + prefix validation
       if (this.$route.params.asn || this.$route.query.asn) {
         this.searchForm.asn = this.$route[
           this.$route.params.asn ? "params" : "query"
@@ -277,11 +314,21 @@ export default {
         this.searchForm.prefix = this.$route[
           this.$route.params.asn ? "params" : "query"
         ].prefix;
+
         this.validatePrefix();
-      } else {
-        this.searchForm.asn = "";
-        this.searchForm.prefix = "";
-        this.validation = {};
+        return;
+      }
+
+      // We still may have a valid prefix in the URL,
+      // but we can't validate, because we're missing some
+      // info. Do not discard settings and copy the URL
+      // prefix into the input.
+      if (this.$route.params.prefix || this.$route.query.asn) {
+        if (this.$route.params.prefix) {
+          this.searchForm.prefix = this.$route.params.prefix;
+        }
+        this.validatePrefix();
+        return;
       }
     },
     loadStatus() {
@@ -296,6 +343,23 @@ export default {
 
       return false;
     },
+    toggleParam(param) {
+      let key = Object.keys(param)[0];
+      if (!this.$route.query[key]) {
+        router.push({
+          path: this.$route.path,
+          query: {
+            ...this.$route.query,
+            [key]: Object.values(param)[0]
+          }
+        });
+      } else {
+        let { [key]: del, ...query } = this.$route.query;
+        console.log(this.$route.query);
+        console.log(query);
+        router.push({ path: this.$route.path, query });
+      }
+    },
     validatePrefix() {
       this.RisAllocData = [];
       let asValid = false;
@@ -308,7 +372,6 @@ export default {
         asValid = true;
         this.error = null;
       } else if (
-        this.searchOptions.relatedFromAlloc ||
         this.searchOptions.validateBGP
       ) {
         asValid = true;
@@ -339,9 +402,9 @@ export default {
         this.firstSearch = false;
         APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadingRoute = false;
-          // Use the prefix the user filled out by default, but use the ASN we got
-          // back from the LMP in the `relations[type="less-specific"]` when the
-          // use has set BGP Origin Validation to fall back to the LMP.
+          // Use the ASN we got back from the LMP in the
+          // `relations[type="less-specific"]` when the user has set BGP Origin
+          // Validation to fall back to the LMP.
           let hasBgpOrigin = response.results.find(s => s.source === "bgp");
           if (hasBgpOrigin) {
             PrefAsn = {
@@ -368,10 +431,19 @@ export default {
               }
             }
           );
+
+          router
+            .push({
+              path: `/${encodeURIComponent(PrefAsn.prefix)}`,
+              query: this.$route.query
+            })
+            .catch(() => {});
+            return;
         });
       }
       // Straight forward validation with user-supplied ASN and prefix
       else if (asValid && prefixValid) {
+        console.log('AS+Prefix validation');
         this.loadingRoute = true;
         this.firstSearch = false;
         PrefAsn.prefix = this.searchForm.prefix;
@@ -386,7 +458,12 @@ export default {
         );
 
         router
-          .push(`/${PrefAsn.origin_asn}/${encodeURIComponent(PrefAsn.prefix)}`)
+          .push({
+            path: `/${PrefAsn.origin_asn}/${encodeURIComponent(
+              PrefAsn.prefix
+            )}`,
+            query: this.$route.query
+          })
           .catch(() => {});
       }
 
@@ -423,7 +500,7 @@ export default {
           let rir_s = d.results.find(r => r.source === "rir_alloc");
           return {
             prefix: d.prefix,
-            rir: rir_s && rir_s.rir.toUpperCase() || "NOT FOUND",
+            rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
             bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
           };
         });

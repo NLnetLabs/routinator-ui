@@ -11,6 +11,7 @@ Vue.use(Router);
 
 const router = new Router({
   base: "/ui/",
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -22,9 +23,19 @@ const router = new Router({
       name: "search",
       component: Home
     },
+    {
+      path: "/:prefix",
+      name: "searchBgp",
+      component: Home,
+      props: route => ({
+        validate_bgp: route.query.validateBgp,
+        include: route.query.include,
+        exact_match_only: route.query.exactMatchOnly
+      })
+    },
     // This is to support 1:1 url rewriting from https://rpki-validator.ripe.net/announcement-preview?asn=12654&prefix=93.175.146.0%2F25
     {
-      path: '/announcement-preview',
+      path: "/announcement-preview",
       component: Home,
       props: route => ({ asn: route.query.asn, prefix: route.query.prefix })
     },
