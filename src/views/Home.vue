@@ -72,15 +72,23 @@
                   }}</el-button>
                 </el-form-item>
               </el-form>
-              <el-tag size="mini" type="danger" v-if="error">{{
-                error
-              }}</el-tag>
+              <el-alert
+                type="error"
+                effect="dark"
+                v-if="error"
+                :title="error"
+              />
             </div>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
+
           <!----- end of Validation Button -------------------->
 
-          <div v-if="showOptions" style="text-align: left; margin-top: 1rem">
+          <div
+            v-if="showOptions"
+            style="text-align: left; margin-top: 1rem"
+            class="options-box"
+          >
             <el-form label-position="top">
               <el-form-item style="text-align: left" label="ASN lookup">
                 <el-switch
@@ -154,6 +162,7 @@
           </div>
         </el-col>
       </el-row>
+      <el-divider/>
 
       <div v-if="loadingRoute" class="loading">
         <i class="el-icon-loading"></i>
@@ -597,5 +606,10 @@ h4.header {
 .options-text {
   font-style: italic;
   color: #606266;
+}
+
+.options-box {
+  background-color: #fafafa;
+  padding: 12px 24px;
 }
 </style>
