@@ -3,14 +3,48 @@
     <el-table :data="enrichedData.prefixes" style="width: 100%" stripe>
       <el-table-column type="expand">
         <template slot-scope="props">
-          <p v-if="props.row.rpkiDetails.state">{{ props.row.rpkiDetails }}</p>
+          <div v-if="props.row.rpkiDetails.state">
+            <div v-if="props.row.rpkiDetails.state">
+              <div class="validation-description">
+                {{ props.row.rpkiDetails.description }}
+              </div>
+
+              <validity-table
+                v-if="
+                  props.row.rpkiDetails.VRPs &&
+                    props.row.rpkiDetails.VRPs.matched.length
+                "
+                :label="$t('home.matched')"
+                :isValid="true"
+                :data="props.row.rpkiDetails.VRPs.matched"
+              />
+              <validity-table
+                v-if="
+                  props.row.rpkiDetails.VRPs &&
+                    props.row.rpkiDetails.VRPs.unmatched_as.length
+                "
+                :label="$t('home.unmatchedasn')"
+                :data="props.row.rpkiDetails.VRPs.unmatched_as"
+              />
+              <validity-table
+                v-if="
+                  props.row.rpkiDetails.VRPs &&
+                    props.row.rpkiDetails.VRPs.unmatched_length.length
+                "
+                :label="$t('home.unmatchedlength')"
+                :data="props.row.rpkiDetails.VRPs.unmatched_length"
+              />
+            </div>
+          </div>
           <div v-else>
-            <el-button type="text"
-              >validate for {{ enrichedData.originAsn }}</el-button
-            >
-            <el-button type="text"
-              >validate for {{ searchAsn }}</el-button
-            >
+            <div>
+              <el-button type="text"
+                >Validate for {{ enrichedData.originAsn }}</el-button
+              >
+            </div>
+            <div>
+              <el-button type="text">Validate for {{ searchAsn }}</el-button>
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -31,9 +65,13 @@
 
 <script>
 import APIService from "@/services/APIService.js";
+import ValidityTable from "@/components/ValidityTable";
 import Vue from "vue";
 
 export default {
+  components: {
+    ValidityTable
+  },
   name: "PrefixListTable",
   props: ["data", "searchAsn"],
   created() {
@@ -94,5 +132,10 @@ export default {
   .el-tag {
     border-bottom-left-radius: 0;
   }
+}
+.validation-description {
+  font-style: italic;
+  margin-top: 0.6rem;
+  font-size: 16px;
 }
 </style>
