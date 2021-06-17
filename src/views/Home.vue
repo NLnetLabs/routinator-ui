@@ -27,8 +27,9 @@
                     v-model="searchForm.asn"
                     placeholder="e.g. 64511"
                     clearable
-                    :disabled="searchOptions.validateBGP"
                     @keyup.enter.native="validateAnnouncement"
+                  @clear="switchParam('validateBGP', true)"
+                  @focus="switchParam('validateBGP', false)"
                   ></el-input>
                   <div
                     class="bgp-popover-text"
@@ -72,12 +73,7 @@
                   }}</el-button>
                 </el-form-item>
               </el-form>
-              <el-alert
-                type="error"
-                effect="dark"
-                v-if="error"
-                :title="error"
-              />
+            <el-alert type="error" effect="dark" v-if="error" :title="error" />
             </div>
             <div class="spacer" v-if="firstSearch">&nbsp;</div>
           </div>
@@ -95,7 +91,6 @@
                   active-text="Validate Prefixes for ASN found in BGP"
                   name="type"
                   v-model="searchOptions.validateBGP"
-                  @change="toggleParam({ validate_bgp: true })"
                 ></el-switch>
                 <el-popover
                   class="item"
@@ -118,7 +113,6 @@
                   active-text="Exact Match only"
                   name="type"
                   v-model="searchOptions.exactMatchOnly"
-                  @change="toggleParam({ exact_match_only: true })"
                   :disabled="!searchOptions.validateBGP"
                 ></el-switch>
                 <el-popover
@@ -129,9 +123,9 @@
                   placement="top"
                 >
                   <div slot="default" style="word-break: break-word;">
-                    Nothing can ever happen twice. In consequence, the sorry
-                    fact is that we arrive here improvised and leave without the
-                    chance to practice.
+                  Nothing can ever happen twice. In consequence, the sorry fact
+                  is that we arrive here improvised and leave without the chance
+                  to practice.
                   </div>
                   <i class="el-icon-question" slot="reference"
                 /></el-popover>
@@ -141,7 +135,6 @@
                   active-text="Show all Prefixes from the same Organisation in RIR Allocations"
                   name="type"
                   v-model="searchOptions.relatedFromAlloc"
-                  @change="toggleParam({ include: 'related_alloc' })"
                 ></el-switch>
                 <el-popover
                   class="item"
@@ -162,7 +155,6 @@
           </div>
         </el-col>
       </el-row>
-      <el-divider/>
 
       <div v-if="loadingRoute" class="loading">
         <i class="el-icon-loading"></i>
@@ -170,6 +162,8 @@
       </div>
 
       <div v-if="validation && validation.route && !this.error">
+      <el-divider />
+
         <h4 class="header validation-header">
           {{ $t("home.resultsfor") }} {{ validation.route.origin_asn }} -
           {{ validation.route.prefix }}
@@ -278,26 +272,17 @@ export default {
         prefix: ""
       },
       searchOptions: {
-        validateBGP: false,
+        validateBGP: true,
         relatedFromAlloc: false,
         exactMatchOnly: false
       },
-      showOptions: false,
+      showOptions: true,
       error: null
     };
   },
   created() {
     this.loadRoute();
     this.loadStatus();
-  },
-  watch: {
-    $route() {
-      if (this.loadRoute) {
-        this.loadRoute();
-      } else {
-        console.log("no loadroute");
-      }
-    }
   },
   methods: {
     loadRoute() {
@@ -322,11 +307,10 @@ export default {
         // we have enough to validate, so do it.
         if (this.$route.params.prefix) {
           this.searchForm.prefix = this.$route.params.prefix;
-        }
-        if (this.firstSearch) {
+
           this.validatePrefix();
-        }
         return;
+      }
       }
 
       // straight forward as + prefix validation
@@ -353,6 +337,7 @@ export default {
         this.validatePrefix();
         return;
       }
+
     },
     loadStatus() {
       this.loadingStatus = true;
@@ -366,22 +351,30 @@ export default {
 
       return false;
     },
-    toggleParam(param) {
-      let key = Object.keys(param)[0];
-      if (!this.$route.query[key]) {
-        router.push({
-          path: this.$route.path,
-          query: {
-            ...this.$route.query,
-            [key]: Object.values(param)[0]
+    switchParam(key, status) {
+      if (status === undefined) {
+        return;
+      }
+      console.log(`switch ${key} ${(status === true && "on") || "off"}`);
+      this.searchOptions[key] = status;
+    },
+
+    setQueryParams() {
+      const queryParamMap = {
+        validateBGP: "validate-bgp",
+        exactMatchOnly: "exact-match-only",
+        relatedFromAlloc: "include"
+      };
+      let query = {};
+
+      Object.entries(this.searchOptions).forEach(o => {
+        if (o[1]) {
+          query[queryParamMap[o[0]]] = o[1];
           }
         });
-      } else {
-        let { [key]: del, ...query } = this.$route.query;
-        console.log(this.$route.query);
+
         console.log(query);
         router.push({ path: this.$route.path, query });
-      }
     },
     validatePrefix() {
       this.RisAllocData = [];
@@ -446,6 +439,7 @@ export default {
           }
 
           console.log(`validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`);
+          this.setQueryParams();
           APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
             response => {
               this.loadingRoute = false;
@@ -471,6 +465,7 @@ export default {
         this.firstSearch = false;
         PrefAsn.prefix = this.searchForm.prefix;
         PrefAsn.origin_asn = this.searchForm.asn;
+        this.setQueryParams();
         APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
           response => {
             this.loadingRoute = false;
@@ -495,6 +490,7 @@ export default {
       if (this.searchOptions.relatedFromAlloc) {
         this.loadingRoute = true;
         this.firstSearch = false;
+        this.setQueryParams();
         APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadRoute = false;
           this.transformRelatedPrefixes(response);
