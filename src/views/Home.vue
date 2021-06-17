@@ -221,7 +221,6 @@
         </div>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -318,7 +317,6 @@ export default {
         this.validatePrefix();
         return;
       }
-
     },
     loadStatus() {
       this.loadingStatus = true;
@@ -341,21 +339,30 @@ export default {
     },
 
     setQueryParams() {
+      let changed = false;
+
       const queryParamMap = {
-        validateBGP: "validate-bgp",
-        exactMatchOnly: "exact-match-only",
-        relatedFromAlloc: "include"
+        validateBGP: { name: "validate-bgp", type: Boolean },
+        exactMatchOnly: { name: "exact-match-only", type: Boolean },
+        relatedFromAlloc: {
+          name: "include",
+          type: String,
+          value: { true: "related_alloc" }
+        }
       };
       let query = {};
 
       Object.entries(this.searchOptions).forEach(o => {
+        let qp = queryParamMap[o[0]];
         if (o[1]) {
-          query[queryParamMap[o[0]]] = o[1];
+          let value = (qp.type === Boolean && o[1]) || qp.value.true;
+          query[qp.name] = value;
+        } else {
+          delete query[qp.name];
         }
       });
 
-      console.log(query);
-      router.push({ path: this.$route.path, query });
+      router.push({ path: this.$route.path, query }).catch(() => {});
     },
     validatePrefix() {
       this.RisAllocData = [];
