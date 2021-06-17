@@ -38,12 +38,22 @@
           </div>
           <div v-else>
             <div>
-              <el-button type="text"
+              <el-button
+                type="text"
+                @click="
+                  validateRelatedPrefix(
+                    enrichedData.originAsn,
+                    props.row.prefix
+                  )
+                "
                 >Validate for {{ enrichedData.originAsn }}</el-button
               >
             </div>
             <div>
-              <el-button type="text" v-if="searchAsn"
+              <el-button
+                type="text"
+                v-if="searchAsn && enrichedData.originAsn !== searchAsn"
+                @click="validateRelatedPrefix(searchAsn, props.row.prefix)"
                 >Validate for {{ searchAsn }}</el-button
               >
             </div>
@@ -51,12 +61,23 @@
         </template>
       </el-table-column>
       <el-table-column prop="prefix" label="Prefix"></el-table-column>
-      <el-table-column prop="bgp" label="BGP Origin ASN"></el-table-column>
+      <el-table-column prop="bgp" label="BGP Origin ASN"
+        ><template slot-scope="scope">
+          <el-tag v-if="scope.row.bgp === 'NOT SEEN'" type="info"
+            >NOT SEEN</el-tag
+          >
+          <span v-else>{{ scope.row.bgp }}</span>
+        </template></el-table-column
+      >
       <el-table-column prop="rpkiState" label="RPKI STATUS"
         ><template slot-scope="scope"
           ><el-tag
             v-if="scope.row.rpki.state"
-            :type="scope.row.rpki.state === 'VALID' ? 'success' : 'warning'"
+            :type="
+              (scope.row.rpki.state === 'VALID' && 'success') ||
+                (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                'warning'
+            "
             >{{ scope.row.rpki.state }} {{ scope.row.reason }}</el-tag
           ></template
         ></el-table-column
@@ -102,7 +123,8 @@ export default {
           let idx = this.enrichedData.prefixes.findIndex(
             p => p.prefix === prefix
           );
-          this.enrichedData.originAsn = matchedAsn.asn;
+          this.enrichedData.originAsn =
+            matchedAsn.asn || this.enrichedData.originAsn;
           Vue.set(this.enrichedData.prefixes, idx, {
             ...this.enrichedData.prefixes[idx],
             rpki: {
