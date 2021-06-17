@@ -28,7 +28,7 @@
                   style="text-align: left; position: absolute;"
                 >
                   <div v-if="searchOptions.validateBGP" class="options-text">
-                    + validate with BGP ASN
+                    validate with BGP ASN enabled
                   </div>
                 </div>
               </el-form-item>
@@ -47,7 +47,7 @@
                   class="options-text"
                   style="text-align: left; position: absolute"
                 >
-                  + related prefixes
+                  related prefixes will be added
                 </div>
               </el-form-item>
             </el-form>
