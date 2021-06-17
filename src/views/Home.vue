@@ -201,10 +201,20 @@
         RELATED PREFIXES
       </h4>
       <h4 class="header validation-header">
+        Less Specific Prefixes
+      </h4>
+      <prefix-list-table
+        :data="RisAllocData.filter(r => r.type === 'less_specific')"
+        :searchAsn="searchForm.asn"
+      />
+      <h4 class="header validation-header">
         Prefixes allocated to the same Organisation in Region
         {{ RisAllocData[0].rir }}
       </h4>
-      <prefix-list-table :data="RisAllocData" :searchAsn="searchForm.asn" />
+      <prefix-list-table
+        :data="RisAllocData.filter(p => p.type === 'same_org')"
+        :searchAsn="searchForm.asn"
+      />
     </div>
 
     <div v-if="loadingStatus" class="loading">
@@ -501,12 +511,12 @@ export default {
     },
     transformRelatedPrefixes(response) {
       this.RisAllocData = response.relations
-        .filter(r => r.type === "same_org")
         .map(d => {
           let bgp_s = d.results.find(r => r.source === "bgp");
           let rir_s = d.results.find(r => r.source === "rir_alloc");
           return {
             prefix: d.prefix,
+            type: d.type,
             rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
             bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
           };
