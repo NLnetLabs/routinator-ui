@@ -69,7 +69,7 @@
           <span v-else>{{ scope.row.bgp }}</span>
         </template></el-table-column
       >
-      <el-table-column prop="rpkiState" label="RPKI STATUS"
+      <el-table-column prop="rpkiState" label="RPKI Status"
         ><template slot-scope="scope"
           ><el-tag
             v-if="scope.row.rpki.state"

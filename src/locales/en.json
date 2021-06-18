@@ -41,7 +41,7 @@
   },
   "home": {
     "welcome": "Welcome to Routinator 3000.",
-    "origin": "Origin ASN",
+    "origin": "Origin ASN (optional)",
     "validate": "Validate",
     "resultsfor": "Results for",
     "valid": "Valid",

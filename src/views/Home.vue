@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="16" :offset="4">
         <div class="text-center welcome">
+          <!----  Prefix + ASN inputs ------------>
           <div style="text-align: left">
             <el-form
               :inline="true"
@@ -11,6 +12,25 @@
               :status-icon="true"
               :model="searchForm"
             >
+              <el-form-item
+                :label="$t('common.prefix')"
+                style="margin-bottom: 48px;"
+              >
+                <el-input
+                  v-model="searchForm.prefix"
+                  placeholder="e.g. 192.0.2.0/24"
+                  clearable
+                  required
+                  @keyup.enter.native="validateAnnouncement"
+                ></el-input>
+                <div
+                  v-if="searchOptions.relatedFromAlloc"
+                  class="options-text"
+                  style="text-align: left; position: absolute"
+                >
+                  related prefixes will be added
+                </div>
+              </el-form-item>
               <el-form-item
                 :label="$t('home.origin')"
                 style="margin-bottom: 48px;"
@@ -28,30 +48,13 @@
                   style="text-align: left; position: absolute;"
                 >
                   <div v-if="searchOptions.validateBGP" class="options-text">
-                    validate with BGP ASN enabled
+                    will be validated with BGP ASN
                   </div>
-                </div>
-              </el-form-item>
-              <el-form-item
-                :label="$t('common.prefix')"
-                style="margin-bottom: 48px;"
-              >
-                <el-input
-                  v-model="searchForm.prefix"
-                  placeholder="e.g. 192.0.2.0/24"
-                  clearable
-                  @keyup.enter.native="validateAnnouncement"
-                ></el-input>
-                <div
-                  v-if="searchOptions.relatedFromAlloc"
-                  class="options-text"
-                  style="text-align: left; position: absolute"
-                >
-                  related prefixes will be added
                 </div>
               </el-form-item>
             </el-form>
           </div>
+          <!--- End of Prefix + ASN inputs --------->
 
           <!-- Validation Button + ----------------->
           <div style="text-align: left; margin-top: 2rem">
@@ -61,11 +64,17 @@
                   $t("home.validate")
                 }}</el-button
                 ><el-button type="text" @click="setShowOptions">{{
-                  (showOptions && "hide options") || "more options"
+                  (showOptions && "hide options") || "show options"
                 }}</el-button>
               </el-form-item>
             </el-form>
-            <el-alert type="error" effect="dark" v-if="error" :title="error" />
+            <el-alert
+              type="error"
+              effect="dark"
+              v-if="error"
+              :title="error"
+              @close="resetError"
+            />
           </div>
           <div class="spacer" v-if="firstSearch">&nbsp;</div>
         </div>
@@ -157,8 +166,11 @@
       <el-divider />
 
       <h4 class="header validation-header">
-        {{ $t("home.resultsfor") }} {{ validation.route.origin_asn }} -
-        {{ validation.route.prefix }}
+        VALIDATION
+      </h4>
+      <h4 class="header validation-header">
+        {{ $t("home.resultsfor") }} {{ validation.route.prefix }} -
+        {{ validation.route.origin_asn }}
         <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
           $t("home.valid")
         }}</el-tag>
@@ -166,6 +178,7 @@
           >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
         >
       </h4>
+
       <div class="validation-description">
         {{ validation.validity.description }}
       </div>
@@ -201,15 +214,14 @@
         RELATED PREFIXES
       </h4>
       <h4 class="header validation-header">
-        Less Specific Prefixes
+        Exactly Matching & Less Specific Allocations in Region {{ RisAllocData[0].rir }}
       </h4>
       <prefix-list-table
         :data="RisAllocData.filter(r => r.type === 'less_specific')"
         :searchAsn="searchForm.asn"
       />
       <h4 class="header validation-header">
-        Prefixes allocated to the same Organisation in Region
-        {{ RisAllocData[0].rir }}
+        Other Allocations for Same Organisation in Region {{ RisAllocData[0].rir }}
       </h4>
       <prefix-list-table
         :data="RisAllocData.filter(p => p.type === 'same_org')"
@@ -374,6 +386,9 @@ export default {
 
       router.push({ path: this.$route.path, query }).catch(() => {});
     },
+    resetError() {
+      this.error = null;
+    },
     validatePrefix() {
       this.RisAllocData = [];
       let asValid = false;
@@ -510,17 +525,16 @@ export default {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     },
     transformRelatedPrefixes(response) {
-      this.RisAllocData = response.relations
-        .map(d => {
-          let bgp_s = d.results.find(r => r.source === "bgp");
-          let rir_s = d.results.find(r => r.source === "rir_alloc");
-          return {
-            prefix: d.prefix,
-            type: d.type,
-            rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
-            bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
-          };
-        });
+      this.RisAllocData = response.relations.map(d => {
+        let bgp_s = d.results.find(r => r.source === "bgp");
+        let rir_s = d.results.find(r => r.source === "rir_alloc");
+        return {
+          prefix: d.prefix,
+          type: d.type,
+          rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
+          bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
+        };
+      });
     },
     extractAsnFromBgpAlloc(response) {
       let source = response.results.find(s => s.source === "bgp");
