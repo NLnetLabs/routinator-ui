@@ -2,7 +2,7 @@
   <div :class="{ 'prefix-list-table': true, warning: true }">
     <el-table :data="enrichedData.prefixes" style="width: 100%" stripe>
       <el-table-column type="expand">
-        <template slot-scope="props">
+        <template v-slot:default="props">
           <div v-if="props.row.rpkiDetails.state">
             <div v-if="props.row.rpkiDetails.state">
               <div class="validation-description">
@@ -62,15 +62,15 @@
       </el-table-column>
       <el-table-column prop="prefix" label="Prefix"></el-table-column>
       <el-table-column prop="bgp" label="BGP Origin ASN"
-        ><template slot-scope="scope">
-          <el-tag v-if="scope.row.bgp === 'NOT SEEN'" type="info"
+        ><template v-slot:default="scope">
+          <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
           >
           <span v-else>{{ scope.row.bgp }}</span>
         </template></el-table-column
       >
       <el-table-column prop="rpkiState" label="RPKI Status"
-        ><template slot-scope="scope"
+        ><template v-slot:default="scope"
           ><el-tag
             v-if="scope.row.rpki.state"
             :type="
