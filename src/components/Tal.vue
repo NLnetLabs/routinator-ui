@@ -271,9 +271,12 @@ h4 {
 }
 .group {
   font-size: 0.8rem;
+  font-weight: 200;
   margin-bottom: 1rem;
   .value {
-    font-style: italic;
+    font-size: 1.0rem;
+    font-family: "Fira Code", monospace;
+    font-weight: 400;
   }
 }
 .group-detailed {

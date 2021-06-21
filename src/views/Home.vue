@@ -168,7 +168,7 @@
       <h4 class="header validation-header">
         VALIDATION
       </h4>
-      <h4 class="header validation-header">
+      <h4 class="header">
         {{ $t("home.resultsfor") }} {{ validation.route.prefix }} -
         {{ validation.route.origin_asn }}
         <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
@@ -213,15 +213,19 @@
       <h4 class="header validation-header">
         RELATED PREFIXES
       </h4>
-      <h4 class="header validation-header">
-        Exactly Matching & Less Specific Allocations in Region {{ RisAllocData[0].rir }}
+      <h4 class="header">
+        Exactly Matching & Less Specific Allocations<el-tag type="info"
+          >Region {{ RisAllocData[0].rir }}</el-tag
+        >
       </h4>
       <prefix-list-table
         :data="RisAllocData.filter(r => r.type === 'less_specific')"
         :searchAsn="searchForm.asn"
       />
-      <h4 class="header validation-header">
-        Other Allocations for Same Organisation in Region {{ RisAllocData[0].rir }}
+      <h4 class="header">
+        Other Allocations for Same Organisation<el-tag type="info"
+          >Region {{ RisAllocData[0].rir }}</el-tag
+        >
       </h4>
       <prefix-list-table
         :data="RisAllocData.filter(p => p.type === 'same_org')"
@@ -577,9 +581,14 @@ export default {
     margin-bottom: 1rem;
   }
 }
-h4.header {
-  margin: 0;
+h4.header, .validation-header {
+  margin-top: 3rem !important;
+  .el-tag {
+    margin-left: 1rem;
+    text-transform: uppercase;
+  }
 }
+
 .airy {
   margin-top: 4rem;
   margin-bottom: 3rem;
@@ -591,15 +600,18 @@ h4.header {
 }
 .validation-description {
   font-style: italic;
+  font-weight: 400;
   margin-top: 0.6rem;
 }
-.validation-header {
-  margin-top: 3rem !important;
-  .el-tag {
-    margin-left: 1rem;
-    text-transform: uppercase;
-  }
+
+.header {
+  font-weight: 500 !important;
 }
+
+.validation-header {
+  font-weight: 600 !important;
+}
+
 .last-update {
   font-size: 0.8rem;
   text-align: center;

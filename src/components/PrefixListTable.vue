@@ -1,6 +1,11 @@
 <template>
   <div :class="{ 'prefix-list-table': true, warning: true }">
-    <el-table :data="enrichedData.prefixes" style="width: 100%" stripe>
+    <el-table
+      :data="enrichedData.prefixes"
+      style="width: 100%"
+      stripe
+      :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
+    >
       <el-table-column type="expand">
         <template v-slot:default="props">
           <div v-if="props.row.rpkiDetails.state">
@@ -66,7 +71,7 @@
           <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
           >
-          <span v-else>{{ scope.row.bgp }}</span>
+          <span class="mono" v-else>{{ scope.row.bgp }}</span>
         </template></el-table-column
       >
       <el-table-column prop="rpkiState" label="RPKI Status"

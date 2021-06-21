@@ -5,7 +5,12 @@
         <el-row>
           <el-col :span="4">
             <router-link :to="{ name: 'home' }" custom v-slot="{ navigate }">
-              <div class="logo" @click="navigate" @keypress.enter="navigate" role="link">
+              <div
+                class="logo"
+                @click="navigate"
+                @keypress.enter="navigate"
+                role="link"
+              >
                 <img src="@/assets/images/routinator_logo_white.svg" />
               </div>
             </router-link>
@@ -19,10 +24,18 @@
               text-color="#fff"
               active-text-color="#ffffff"
             >
-              <el-menu-item index="0" :route="{ name: 'home' }"> Status </el-menu-item>
-              <el-menu-item index="1" :route="{ name: 'metrics' }"> Metrics </el-menu-item>
-              <el-menu-item index="2" :route="{ name: 'repositories' }"> Repositories </el-menu-item>
-              <el-menu-item index="3" :route="{ name: 'connections' }"> Connections </el-menu-item>
+              <el-menu-item index="0" :route="{ name: 'home' }">
+                Status
+              </el-menu-item>
+              <el-menu-item index="1" :route="{ name: 'metrics' }">
+                Metrics
+              </el-menu-item>
+              <el-menu-item index="2" :route="{ name: 'repositories' }">
+                Repositories
+              </el-menu-item>
+              <el-menu-item index="3" :route="{ name: 'connections' }">
+                Connections
+              </el-menu-item>
             </el-menu>
             &nbsp;</el-col
           >
@@ -50,62 +63,77 @@
         <el-row>
           <el-col :span="12">
             &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs
-            <span v-if="version">- {{
-              $t("common.version")
-            }} {{ version }}</span>
+            <span v-if="version"
+              >- {{ $t("common.version") }} {{ version }}</span
+            >
           </el-col>
           <el-col :span="12" class="text-right">
-            <a href="https://nlnetlabs.nl/services/contracts/" target="_blank">{{
-              $t("common.supportcontracts")
-            }}</a>
+            <a
+              href="https://nlnetlabs.nl/services/contracts/"
+              target="_blank"
+              >{{ $t("common.supportcontracts") }}</a
+            >
             -
             <a href="https://routinator.docs.nlnetlabs.nl/" target="_blank">{{
               $t("common.readthedocs")
             }}</a>
             -
-            <a href="https://github.com/NLnetLabs/routinator/issues/new" target="_blank">{{
-              $t("common.report")
-            }}</a>
+            <a
+              href="https://github.com/NLnetLabs/routinator/issues/new"
+              target="_blank"
+              >{{ $t("common.report") }}</a
+            >
           </el-col>
         </el-row>
       </el-footer>
     </el-container>
-    <el-drawer title="Routinator Help" :visible.sync="showHelp" :with-header="false">
+    <el-drawer
+      title="Routinator Help"
+      :visible.sync="showHelp"
+      :with-header="false"
+    >
       <div class="help">
         <h3>Introduction</h3>
         <div>
-          This page displays statistics from the last validation run Routinator has performed.
+          This page displays statistics from the last validation run Routinator
+          has performed.
           <br /><br />
-          You can also use this page to verify the RPKI origin validation status of an AS Number and
-          IP Prefix combination. You can enter an existing BGP announcement or an ASN and prefix of
-          your choice, for example for an announcement you're planning to do.<br /><br />
-          The returned RPKI validity state will be Valid, Invalid or Not Found and is based on the
-          current set of Validated ROA Payloads (VRPs) in the cache. Routinator will provide an
-          overview of all VRPs that led to the result, along with the reason for the outcome.
+          You can also use this page to verify the RPKI origin validation status
+          of an AS Number and IP Prefix combination. You can enter an existing
+          BGP announcement or an ASN and prefix of your choice, for example for
+          an announcement you're planning to do.<br /><br />
+          The returned RPKI validity state will be Valid, Invalid or Not Found
+          and is based on the current set of Validated ROA Payloads (VRPs) in
+          the cache. Routinator will provide an overview of all VRPs that led to
+          the result, along with the reason for the outcome.
         </div>
         <h3>Quick Glossary</h3>
         <div>
-          This overview provides a quick definition of the terms used in this user interface. For a
-          complete overview, please refer to the
-          <a href="https://rpki.readthedocs.io/en/latest/routinator/" target="_blank"
+          This overview provides a quick definition of the terms used in this
+          user interface. For a complete overview, please refer to the
+          <a
+            href="https://rpki.readthedocs.io/en/latest/routinator/"
+            target="_blank"
             >Routinator documentation</a
           >.
           <h4>Route Origin Attestation (ROA)</h4>
-          A cryptographically signed statement authorising one or more prefixes to be originated
-          from a specific Autonomous System.
+          A cryptographically signed statement authorising one or more prefixes
+          to be originated from a specific Autonomous System.
           <h4>Validated ROA Payload (VRP)</h4>
-          A verified object that contains a single IP prefix, a maximum prefix length, and an origin
-          AS number. When comparing the total set of VRPs to a BGP announcement, it can be RPKI
-          Valid, Invalid or NotFound.
+          A verified object that contains a single IP prefix, a maximum prefix
+          length, and an origin AS number. When comparing the total set of VRPs
+          to a BGP announcement, it can be RPKI Valid, Invalid or NotFound.
           <h4>Unsafe VRP</h4>
-          VRPs that have IP address prefixes overlapping with resources of rejected Certificate
-          Authorities (CAs)
+          VRPs that have IP address prefixes overlapping with resources of
+          rejected Certificate Authorities (CAs)
           <h4>Stale Object</h4>
-          An object is considered stale if the time given in their 'next-update' field is in the
-          past, indicating that an update to the object was scheduled but didn’t happen.
+          An object is considered stale if the time given in their 'next-update'
+          field is in the past, indicating that an update to the object was
+          scheduled but didn’t happen.
           <h4>RPKI Repository Delta Protocol (RRDP)</h4>
-          A retrieval mechanism that relies on snapshot and delta files which are retrieved using
-          HTTPS. It is designed to replace the original transport used for RPKI, rsync.
+          A retrieval mechanism that relies on snapshot and delta files which
+          are retrieved using HTTPS. It is designed to replace the original
+          transport used for RPKI, rsync.
           <h4>RPKI to Router (RTR) Protocol</h4>
           A protocol to deliver VRPs to a router in a lightweight manner.
         </div>
@@ -115,29 +143,34 @@
 </template>
 
 <script>
+import "@fontsource/fira-code/variable.css";
+import "@fontsource/raleway/variable.css";
+
 export default {
   data() {
     return {
       showHelp: false,
       version: "",
-      activeIndex: "0",
+      activeIndex: "0"
     };
   },
   watch: {
     $route(to) {
       this.activeIndex = this.getActiveIndex(to.name);
-    },
+    }
   },
-  mounted: function () {
+  mounted: function() {
     this.activeIndex = this.getActiveIndex(this.$route.name);
   },
   methods: {
     getActiveIndex(path) {
-      return "" + (["metrics", "repositories", "connections"].indexOf(path) + 1);
+      return (
+        "" + (["metrics", "repositories", "connections"].indexOf(path) + 1)
+      );
     },
     updateVersion(version) {
       this.version = version;
-    },
+    }
   }
 };
 </script>
@@ -147,8 +180,15 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Lato", sans-serif;
+  font-family: "Raleway", sans-serif;
   background-color: #ffffff;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.mono {
+  font-family: "Fira Code", monospace;
+  font-weight: 500;
 }
 
 .el-container {
@@ -195,7 +235,7 @@ body {
   a,
   a:hover {
     color: #999;
-    font-weight: bold;
+    font-weight: 600;
     text-decoration: none;
   }
 }
