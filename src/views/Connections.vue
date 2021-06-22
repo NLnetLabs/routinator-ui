@@ -22,7 +22,7 @@
                   ><a
                     :href="scope.row.url"
                     target="_blank"
-                    style="font-family: 'Raleway', sans-serif;"
+                    class="sans-serif"
                     >{{ scope.row.url }}</a
                   ></template
                 >
@@ -97,7 +97,7 @@
             >
               <el-table-column prop="url" label="URL" width="340"
                 ><template slot-scope="scope"
-                  ><span style="font-family: Raleway, sans-serif;">{{
+                  ><span class="sans-serif">{{
                     scope.row.url
                   }}</span></template
                 >

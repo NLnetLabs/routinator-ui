@@ -247,12 +247,14 @@ export default {
         image = "lacnic.svg";
       }
       return require("@/assets/images/" + image);
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+@import "../element-variables";
+
 .tal {
   margin-top: 1rem;
 }
@@ -274,19 +276,19 @@ h4 {
   font-weight: 200;
   margin-bottom: 1rem;
   .value {
-    font-size: 1.0rem;
+    font-size: 1rem;
     font-family: "Fira Code", monospace;
-    font-weight: 400;
+    font-weight: 500;
   }
 }
 .group-detailed {
-  color: #999;
+  color: $--color-text-regular;
 }
 .group-name {
   margin-top: 0.4rem;
   margin-bottom: 0.4rem;
   border-bottom: 1px solid #eee;
   padding-bottom: 0.2rem;
-  font-size: 0.9rem;
+  font-size: 1.0rem;
 }
 </style>

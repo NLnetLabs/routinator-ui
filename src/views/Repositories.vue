@@ -10,7 +10,7 @@
         <el-table :data="repositories" style="width: 100%" height="calc(100vh - 200px)" stripe row-class-name="mono">
           <el-table-column fixed :label="$t('repositories.repository')" width="300">
             <template slot-scope="scope">
-              <a :href="scope.row.repo" target="_blank" style="font-family: Raleway, sans-serif;">{{ scope.row.repo }}</a>
+              <a :href="scope.row.repo" target="_blank" class="sans-serif">{{ scope.row.repo }}</a>
             </template>
           </el-table-column>
           <el-table-column prop="type" :label="$t('repositories.type')" width="150" sortable>
@@ -221,6 +221,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-</style>

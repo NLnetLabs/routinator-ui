@@ -180,14 +180,19 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: RalewayVariable, sans-serif;
   background-color: #ffffff;
   font-style: normal;
   font-weight: 500;
 }
 
 .mono {
-  font-family: "Fira Code", monospace;
+  font-family: "Fira CodeVariable", monospace;
+  font-weight: 500;
+}
+
+.sans-serif {
+  font-family: RalewayVariable, sans-serif;
   font-weight: 500;
 }
 
