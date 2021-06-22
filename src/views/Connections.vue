@@ -18,7 +18,7 @@
               row-class-name="mono"
             >
               <el-table-column fixed label="URL" width="330">
-                <template slot-scope="scope"
+                <template v-slot:default="scope"
                   ><a
                     :href="scope.row.url"
                     target="_blank"
@@ -34,7 +34,7 @@
               >
               </el-table-column>
               <el-table-column :label="$t('connections.duration')" width="150"
-                ><template slot-scope="scope">
+                ><template v-slot:default="scope">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="3"
@@ -42,7 +42,7 @@
                   ></el-progress> </template
               ></el-table-column>
               <el-table-column label="" width="150">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ scope.row.duration }}s
                 </template>
               </el-table-column>
@@ -96,7 +96,7 @@
               row-class-name="mono"
             >
               <el-table-column prop="url" label="URL" width="340"
-                ><template slot-scope="scope"
+                ><template v-slot:default="scope"
                   ><span class="sans-serif">{{
                     scope.row.url
                   }}</span></template
@@ -109,7 +109,7 @@
               >
               </el-table-column>
               <el-table-column :label="$t('connections.duration')" width="150"
-                ><template slot-scope="scope">
+                ><template v-slot:default="scope">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="3"
@@ -117,7 +117,7 @@
                   ></el-progress> </template
               ></el-table-column>
               <el-table-column label="">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ scope.row.duration }}s
                 </template>
               </el-table-column>

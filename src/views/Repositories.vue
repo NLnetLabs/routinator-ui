@@ -9,7 +9,7 @@
       <div v-if="!loading">
         <el-table :data="repositories" style="width: 100%" height="calc(100vh - 200px)" stripe row-class-name="mono">
           <el-table-column fixed :label="$t('repositories.repository')" width="300">
-            <template slot-scope="scope">
+            <template v-slot:default="scope">
               <a :href="scope.row.repo" target="_blank" class="sans-serif">{{ scope.row.repo }}</a>
             </template>
           </el-table-column>
