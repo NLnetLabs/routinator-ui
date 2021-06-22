@@ -221,3 +221,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+@import "../element-variables";
+
+// Local override, global override
+// in element-variables file for table
+// header doesn't seem to work.
+.cell {
+  color: $--color-text-regular;
+}
+</style>
