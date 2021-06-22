@@ -31,7 +31,7 @@ jobs:
       - name: Install Deps
         run: npm ci
       - name: Build Vue App
-        run: npm run serve
+        run: npm run build
 
       # upload all build artefacts
       - uses: actions/upload-artifact@v2
