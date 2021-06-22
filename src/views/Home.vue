@@ -221,6 +221,7 @@
       <prefix-list-table
         :data="RisAllocData.filter(r => r.type === 'less_specific')"
         :searchAsn="searchForm.asn"
+        :validateBgp="searchOptions.validateBGP"
       />
       <h4 class="header">
         Other Allocations for Same Organisation<el-tag type="info"
@@ -230,6 +231,7 @@
       <prefix-list-table
         :data="RisAllocData.filter(p => p.type === 'same_org')"
         :searchAsn="searchForm.asn"
+        validateBgp=false
       />
     </div>
 

@@ -65,13 +65,18 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="prefix" label="Prefix"></el-table-column>
+      <el-table-column prop="prefix" label="Prefix">
+        <template v-slot:default="scope" style="position: relative;">
+           <lmp-arrow v-if="scope.row.lmp && validateBgp"
+        /> {{ scope.row.prefix }}</template>
+      </el-table-column>
       <el-table-column prop="bgp" label="BGP Origin ASN"
         ><template v-slot:default="scope">
           <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
           >
           <span class="mono" v-else>{{ scope.row.bgp }}</span>
+          <hand-drawn-box v-if="scope.row.lmp && validateBgp && searchAsn===scope.row.bgp"/>
         </template></el-table-column
       >
       <el-table-column prop="rpkiState" label="RPKI Status"
@@ -94,21 +99,35 @@
 <script>
 import APIService from "@/services/APIService.js";
 import ValidityTable from "@/components/ValidityTable";
+import LmpArrow from "@/components/LmpArrow";
+import HandDrawnBox from "@/components/HandDrawnBox";
 import Vue from "vue";
 
 export default {
   components: {
-    ValidityTable
+    ValidityTable,
+    LmpArrow,
+    HandDrawnBox
   },
   name: "PrefixListTable",
-  props: ["data", "searchAsn"],
+  props: ["data", "searchAsn", "validateBgp"],
   created() {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
   data() {
+    const lmp = (this.data[0].type === "less_specific" &&
+      this.data.sort(
+        (a, b) =>
+          Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1])
+      )[0]) || { prefix: null };
     return {
       enrichedData: {
-        prefixes: this.data.map(p => ({ ...p, rpki: {}, rpkiDetails: {} })),
+        prefixes: this.data.map(p => ({
+          ...p,
+          rpki: {},
+          rpkiDetails: {},
+          lmp: lmp.prefix === p.prefix
+        })),
         originAsn: null
       }
     };
