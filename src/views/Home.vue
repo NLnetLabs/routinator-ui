@@ -231,7 +231,7 @@
       <prefix-list-table
         :data="RisAllocData.filter(p => p.type === 'same_org')"
         :searchAsn="searchForm.asn"
-        validateBgp=false
+        validateBgp="false"
       />
     </div>
 
@@ -496,9 +496,9 @@ export default {
 
         router
           .push({
-            path: `/${PrefAsn.origin_asn}/${encodeURIComponent(
-              PrefAsn.prefix
-            )}`,
+            path: `/${encodeURIComponent(PrefAsn.prefix)}/${
+              PrefAsn.origin_asn
+            }`,
             query: this.$route.query
           })
           .catch(() => {});
@@ -583,7 +583,8 @@ export default {
     margin-bottom: 1rem;
   }
 }
-h4.header, .validation-header {
+h4.header,
+.validation-header {
   margin-top: 3rem !important;
   .el-tag {
     margin-left: 1rem;

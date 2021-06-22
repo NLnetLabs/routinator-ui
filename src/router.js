@@ -18,21 +18,6 @@ const router = new Router({
       name: "home",
       component: Home
     },
-    {
-      path: "/:asn/:prefix",
-      name: "search",
-      component: Home
-    },
-    {
-      path: "/:prefix",
-      name: "searchBgp",
-      component: Home,
-      props: route => ({
-        validate_bgp: route.query.validateBgp,
-        include: route.query.include,
-        exact_match_only: route.query.exactMatchOnly
-      })
-    },
     // This is to support 1:1 url rewriting from https://rpki-validator.ripe.net/announcement-preview?asn=12654&prefix=93.175.146.0%2F25
     {
       path: "/announcement-preview",
@@ -54,6 +39,21 @@ const router = new Router({
       path: "/repositories",
       name: "repositories",
       component: Repositories
+    },
+    {
+      path: "/:prefix/:asn",
+      name: "search",
+      component: Home
+    },
+    {
+      path: "/:prefix",
+      name: "searchBgp",
+      component: Home,
+      props: route => ({
+        validate_bgp: route.query.validateBgp,
+        include: route.query.include,
+        exact_match_only: route.query.exactMatchOnly
+      })
     },
     { path: "*", component: PageNotFound }
   ]
