@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "preversion": "git fetch; UPSTREAM=${1:-'@{u}'}; LOCAL=$(git rev-parse @); REMOTE=$(git rev-parse \"$UPSTREAM\"); if [ $LOCAL != $REMOTE ]; then echo \"\\033[0;31mYour local git repo is not in sync with remote. pull or push or do something like that first.\\033[0m\n\"; exit 1; fi; echo $npm_config_argv;[[ `git rev-parse --abbrev-ref HEAD` =~ ^release-*|master ]] || { printf '%s\\n' \"Not a release or master branch\" >&2; exit 1; }; printf \"new version from branch: \\e[42m`git rev-parse --abbrev-ref HEAD`\\e[0m%s\\n\";",
+    "preversion": "git fetch; UPSTREAM=${1:-'@{u}'}; LOCAL=$(git rev-parse @); REMOTE=$(git rev-parse \"$UPSTREAM\"); if [ $LOCAL != $REMOTE ]; then echo \"\\033[0;31mYour local git repo is not in sync with remote. pull or push or do something like that first.\\033[0m\n\"; exit 1; fi; echo $npm_config_argv;[[ `git rev-parse --abbrev-ref HEAD` =~ ^release-*|main ]] || { printf '%s\\n' \"Not a release or main branch\" >&2; exit 1; }; printf \"new version from branch: \\e[42m`git rev-parse --abbrev-ref HEAD`\\e[0m%s\\n\";",
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
