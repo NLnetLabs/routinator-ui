@@ -1,17 +1,14 @@
-name: Build App
+name: Release App
 
 on:
   push:
-    branches: [ compare_bgp ]
-  pull_request:
-    branches: [ main ]
-
-  workflow_dispatch:
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -22,9 +19,9 @@ jobs:
         run: npm ci
       - name: Build Vue App
         run: npm run build
-
-      # upload all build artefacts
-      - uses: actions/upload-artifact@v2
+      - name: Release App
+        uses: softprops/action-gh-release@v1
         with:
-          name: routinator-ui-build
-          path: dist/
+          files: dist/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
