@@ -22,6 +22,9 @@ jobs:
       - name: Release App
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*/**
+          # This filename is deteremined by the Webpack Filemanager 
+          # plugin in vue.config.js and contains all files in /dist
+          # *with* the original directory structure.
+          files: routinator-ui-build.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
