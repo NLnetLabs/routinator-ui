@@ -8,12 +8,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
           check-latest: true
       - name: Install Deps
         run: npm ci
@@ -27,7 +27,7 @@ jobs:
       - name: Release App
         uses: softprops/action-gh-release@v1
         with:
-          # This filename is deteremined by the Webpack Filemanager 
+          # This filename is deteremined by the Webpack Filemanager
           # plugin in vue.config.js and contains all files in /dist
           # *with* the original directory structure.
           files: routinator-ui-build.tar.gz
@@ -36,17 +36,17 @@ jobs:
 
   cargo-publish:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - uses: hecrj/setup-rust-action@v1
         with:
-          rust-version: '1.45.0'
+          rust-version: "1.45.0"
       - name: Download Files
-        working-directory: cargo-publish
         uses: actions/download-artifact@v2
         with:
           name: routinator-ui-build
+          path: cargo-publish
       - name: Build App
         working-directory: cargo-publish
         run: cargo build
