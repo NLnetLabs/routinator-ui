@@ -47,7 +47,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: routinator-ui-build
-          path: routinator-ui-buil.tar.gz
       - name: Build App
         working-directory: cargo-publish
         run: cargo build
@@ -56,3 +55,4 @@ jobs:
         uses: katyo/publish-crates@v1
         with:
           registry-token: ${{ secrets.rust.CARGO_REGISTRY_TOKEN }}
+          args: --allow-dirty
