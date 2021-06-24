@@ -42,11 +42,11 @@ jobs:
       - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: "1.45.0"
-      - name: Download Files
-        uses: actions/download-artifact@v2
-        with:
-          name: routinator-ui-build
-          path: cargo-publish
+      # - name: Download Files
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: routinator-ui-build
+      #     path: cargo-publish
       - name: Build App
         working-directory: cargo-publish
         run: cargo build
