@@ -1,6 +1,6 @@
 [package]
 name = "routinator-ui"
-version = "0.2.4"
+version = "0.2.2"
 edition = "2018"
 authors = ["The NLnet Labs RPKI Team <rpki@nlnetlabs.nl>"]
 description = "Web UI for Routinator, a RPKI relying party software."

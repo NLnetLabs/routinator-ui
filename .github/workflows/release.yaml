@@ -52,4 +52,6 @@ jobs:
         run: cargo build
       - name: Publish App
         working-directory: cargo-publish
-        run: cargo publish --allow-dirty --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
