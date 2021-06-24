@@ -23,3 +23,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+yarn.lock
+
+# build files
+routinator-ui-build.tar.gz
