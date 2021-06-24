@@ -19,6 +19,11 @@ jobs:
         run: npm ci
       - name: Build Vue App
         run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: routinator-ui-build
+          path: routinator-ui-build.tar.gz
       - name: Release App
         uses: softprops/action-gh-release@v1
         with:
@@ -28,3 +33,26 @@ jobs:
           files: routinator-ui-build.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cargo-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: '1.45.0'
+      - name: Download Files
+        working-directory: cargo-publish
+        uses: actions/download-artifact@v2
+        with:
+          name: routinator-ui-build
+          path: routinator-ui-buil.tar.gz
+      - name: Build App
+        working-directory: cargo-publish
+        run: cargo build
+      - name: Publish App
+        working-directory: cargo-publish
+        uses: katyo/publish-crates@v1
+        with:
+          registry-token: ${{ secrets.rust.CARGO_REGISTRY_TOKEN }}
