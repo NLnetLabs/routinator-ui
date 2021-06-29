@@ -7,7 +7,10 @@ export default {
     return apiClient.get("/api/v1/status");
   },
   checkValidity(asn, prefix) {
-    return apiClient.get("/api/v1/validity/" + asn + "/" + prefix);
+    return apiClient.get(`/api/v1/validity/${asn}/${prefix}`);
+  },
+  searchBgpAlloc(prefix, options) {
+    return apiClient.get(`/api/v1/${prefix}/search`);
   },
   mockSearchBgpAlloc(prefix, options) {
     return new Promise((resolve, reject) => {
@@ -16,20 +19,20 @@ export default {
           prefix: "193.0.10.0/24",
           type: "exact_match",
           // results: [
-          //   { source: "bgp", origin_asn: null },
+          //   { source: "bgp", origin_asnssss null },
           //   { source: "rir_alloc", rir: null }
           // ],
           results: [],
           relations: [
             {
-              type: "less_specific",
+              type: "less-specific",
               results: [{ source: "rir_alloc", rir: "ripe" }],
               prefix: "193.0.0.0/20"
             },
             {
-              type: "less_specific",
+              type: "less-specific",
               results: [
-                { source: "bgp", origin_asn: "AS3333" },
+                { source: "bgp", origin_asns: "AS3333" },
                 { source: "rir_alloc", rir: "ripe" }
               ],
               prefix: "193.0.10.0/23"
@@ -53,7 +56,7 @@ export default {
               type: "same_org",
               results: [
                 { source: "rir_alloc", rir: "ripe" },
-                { source: "bgp", origin_asn: "AS12859" }
+                { source: "bgp", origin_asns: "AS12859" }
               ],
               prefix: "93.175.159.0/24"
             }

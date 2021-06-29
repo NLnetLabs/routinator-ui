@@ -219,7 +219,7 @@
         >
       </h4>
       <prefix-list-table
-        :data="RisAllocData.filter(r => r.type === 'less_specific')"
+        :data="RisAllocData.filter(r => r.type === 'less-specific')"
         :searchAsn="searchForm.asn"
         :validateBgp="searchOptions.validateBGP"
       />
@@ -229,7 +229,7 @@
         >
       </h4>
       <prefix-list-table
-        :data="RisAllocData.filter(p => p.type === 'same_org')"
+        :data="RisAllocData.filter(p => p.type === 'same-org')"
         :searchAsn="searchForm.asn"
         validateBgp="false"
       />
@@ -433,22 +433,25 @@ export default {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
-        APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
+        APIService.searchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadingRoute = false;
           // Use the ASN we got back from the LMP in the
           // `relations[type="less-specific"]` when the user has set BGP Origin
           // Validation to fall back to the LMP.
-          let hasBgpOrigin = response.results.find(s => s.source === "bgp");
+          let hasBgpOrigin = response.data.results.find(
+            s => s.source === "bgp"
+          );
           if (hasBgpOrigin) {
             PrefAsn = {
               prefix: this.searchForm.prefix,
-              origin_asn: hasBgpOrigin.origin_asn
+              origin_asn: hasBgpOrigin.origin_asns[0]
             };
-            this.searchForm.asn = hasBgpOrigin.origin_asn;
+            this.searchForm.asn = hasBgpOrigin.origin_asns[0];
           } else if (!this.searchOptions.exactMatchOnly) {
-            this.RisAllocData = (Array.isArray(response) && response) || [];
+            this.RisAllocData =
+              (Array.isArray(response.data) && response.data) || [];
             PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
-              response
+              response.data
             ).origin_asn;
             PrefAsn.prefix = this.searchForm.prefix;
             this.searchForm.asn = PrefAsn.origin_asn;
@@ -457,16 +460,20 @@ export default {
             return;
           }
 
-          console.log(`validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`);
-          this.setQueryParams();
-          APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
-            response => {
-              this.loadingRoute = false;
-              if (response.data && response.data.validated_route) {
-                this.validation = response.data.validated_route;
+          if (PrefAsn.origin_asn) {
+            console.log(
+              `validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`
+            );
+            this.setQueryParams();
+            APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
+              response => {
+                this.loadingRoute = false;
+                if (response.data && response.data.validated_route) {
+                  this.validation = response.data.validated_route;
+                }
               }
-            }
-          );
+            );
+          }
 
           router
             .push({
@@ -510,9 +517,9 @@ export default {
         this.loadingRoute = true;
         this.firstSearch = false;
         this.setQueryParams();
-        APIService.mockSearchBgpAlloc(this.searchForm.prefix).then(response => {
+        APIService.searchBgpAlloc(this.searchForm.prefix).then(response => {
           this.loadRoute = false;
-          this.transformRelatedPrefixes(response);
+          this.transformRelatedPrefixes(response.data);
         });
       }
     },
@@ -538,17 +545,17 @@ export default {
           prefix: d.prefix,
           type: d.type,
           rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
-          bgp: (bgp_s && bgp_s.origin_asn) || "NOT SEEN"
+          bgp: (bgp_s && bgp_s.origin_asns[0]) || "NOT SEEN"
         };
       });
     },
     extractAsnFromBgpAlloc(response) {
       let source = response.results.find(s => s.source === "bgp");
       if (source) {
-        return { origin_asn: source.origin_asn, prefix: response.prefix };
+        return { origin_asn: source.origin_asns[0], prefix: response.prefix };
       }
       let lmp_re = response.relations
-        .filter(rel => rel.type === "less_specific")
+        .filter(rel => rel.type === "less-specific")
         .reduce((rel, lmp) => {
           if (
             Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
@@ -557,8 +564,9 @@ export default {
           }
           return lmp;
         });
+      let bgp_rec = lmp_re.results.find(s => s.source === "bgp");
       return {
-        origin_asn: lmp_re.results.find(s => s.source === "bgp").origin_asn,
+        origin_asn: (bgp_rec && bgp_rec.origin_asns[0]) || null,
         prefix: lmp_re.prefix
       };
     }

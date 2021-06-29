@@ -8,7 +8,13 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     // proxy: "http://routinator-dev.aws.nlnetlabs.nl:8323/"
-    proxy: "https://routinator-demo.aws.nlnetlabs.nl"
+    proxy: {
+      "/api/v1/validity/": {
+        target: "https://routinator-demo.aws.nlnetlabs.nl"
+      },
+      "/api/v1/status": { target: "https://routinator-demo.aws.nlnetlabs.nl" },
+      "/api/v1/": { target: "https://roto-api-dev.do.nlnetlabs.nl" }
+    }
   },
   publicPath: "/ui/",
 

@@ -115,7 +115,7 @@ export default {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
   data() {
-    const lmp = (this.data[0].type === "less_specific" &&
+    const lmp = (this.data[0].type === "less-specific" &&
       this.data.sort(
         (a, b) =>
           Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1])
