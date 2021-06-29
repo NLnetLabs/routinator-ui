@@ -2,7 +2,7 @@
   <svg
     class="lmp-arrow"
     width="100px"
-    height="40px"
+    height="50px"
     viewBox="0 0 100 50"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -164,9 +164,9 @@ export default {
 svg.lmp-arrow {
   position: absolute;
   z-index: 10;
-  height: 40px;
+  height: 50px;
   width: 100px;
   margin-left: 77px;
-  margin-top: -47px;
+  margin-top: -57px;
 }
 </style>
