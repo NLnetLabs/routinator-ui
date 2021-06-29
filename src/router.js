@@ -10,7 +10,7 @@ import Repositories from "./views/Repositories.vue";
 Vue.use(Router);
 
 const router = new Router({
-  base: "/ui/",
+  base: "/",
   mode: "history",
   routes: [
     {

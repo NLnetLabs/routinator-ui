@@ -16,7 +16,7 @@ module.exports = {
       "/api/v1/": { target: "https://roto-api-dev.do.nlnetlabs.nl" }
     }
   },
-  publicPath: "/ui/",
+  publicPath: "/",
 
   pluginOptions: {
     i18n: {
