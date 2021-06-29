@@ -67,8 +67,10 @@
       </el-table-column>
       <el-table-column prop="prefix" label="Prefix">
         <template v-slot:default="scope" style="position: relative;">
-           <lmp-arrow v-if="scope.row.lmp && validateBgp"
-        /> {{ scope.row.prefix }}</template>
+          <lmp-arrow v-if="scope.row.lmp && validateBgp" /><em-arrow
+            v-if="scope.row.em && validateBgp"
+          />{{ scope.row.prefix }}</template
+        >
       </el-table-column>
       <el-table-column prop="bgp" label="BGP Origin ASN"
         ><template v-slot:default="scope">
@@ -76,9 +78,14 @@
             >NOT SEEN</el-tag
           >
           <span class="mono" v-else>{{ scope.row.bgp }}</span>
-          <hand-drawn-box v-if="scope.row.lmp && validateBgp && searchAsn===scope.row.bgp"/>
-        </template></el-table-column
-      >
+          <hand-drawn-box
+            v-if="
+              (scope.row.lmp || scope.row.em) &&
+                validateBgp &&
+                searchAsn === scope.row.bgp
+            "
+          /> </template
+      ></el-table-column>
       <el-table-column prop="rpkiState" label="RPKI Status"
         ><template v-slot:default="scope"
           ><el-tag
@@ -100,6 +107,7 @@
 import APIService from "@/services/APIService.js";
 import ValidityTable from "@/components/ValidityTable";
 import LmpArrow from "@/components/LmpArrow";
+import EmArrow from "@/components/EmArrow";
 import HandDrawnBox from "@/components/HandDrawnBox";
 import Vue from "vue";
 
@@ -107,10 +115,11 @@ export default {
   components: {
     ValidityTable,
     LmpArrow,
+    EmArrow,
     HandDrawnBox
   },
   name: "PrefixListTable",
-  props: ["data", "searchAsn", "validateBgp"],
+  props: ["data", "searchAsn", "searchPrefix", "validateBgp"],
   created() {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
@@ -126,7 +135,8 @@ export default {
           ...p,
           rpki: {},
           rpkiDetails: {},
-          lmp: lmp.prefix === p.prefix
+          lmp: lmp.prefix === p.prefix && p.prefix !== this.searchPrefix,
+          em: p.prefix === this.searchPrefix
         })),
         originAsn: null
       }
@@ -134,10 +144,10 @@ export default {
   },
   methods: {
     validateRelatedPrefix(asn, prefix) {
-      console.log(`validate ${prefix} for ${asn}`);
       if (asn == "NOT SEEN") {
         return;
       }
+      console.log(`validate ${prefix} for ${asn}`);
       APIService.checkValidity(asn, prefix).then(r => {
         console.log(`validated ${prefix} for ${asn}`);
         if (r.data && r.data.validated_route) {

@@ -221,6 +221,7 @@
       <prefix-list-table
         :data="RisAllocData.filter(r => r.type === 'less-specific')"
         :searchAsn="searchForm.asn"
+        :searchPrefix="searchForm.prefix"
         :validateBgp="searchOptions.validateBGP"
       />
       <h4 class="header">
@@ -231,6 +232,7 @@
       <prefix-list-table
         :data="RisAllocData.filter(p => p.type === 'same-org')"
         :searchAsn="searchForm.asn"
+        :searchPrefix="searchForm.prefix"
         validateBgp="false"
       />
     </div>
