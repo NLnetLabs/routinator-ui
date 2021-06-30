@@ -176,7 +176,8 @@
         VALIDATION
       </h4>
       <h4 class="header">
-        {{ $t("home.resultsfor") }} <span class="mono">{{ validation.route.prefix }}</span> -
+        {{ $t("home.resultsfor") }}
+        <span class="mono">{{ validation.route.prefix }}</span> -
         <span class="mono">{{ validation.route.origin_asn }}</span>
         <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
           $t("home.valid")
@@ -519,7 +520,9 @@ export default {
               // related prefixes (there are no ?include=
               // queryParms implemented in it at the time of
               // this writing).
-              this.storeRelatedPrefixesData(response.data);
+              if (response && response.data) {
+                this.storeRelatedPrefixesData(response.data);
+              }
 
               router
                 .push({
@@ -542,7 +545,7 @@ export default {
 
       // Straight forward validation with user-supplied ASN and prefix
       else if (this.searchForm.asn && this.searchForm.prefix) {
-        console.log("AS+Prefix validation");
+        console.log("Prefix + AS validation");
 
         if (this.error) {
           return;
