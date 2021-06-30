@@ -75,6 +75,13 @@
               :title="error"
               @close="resetError"
             />
+            <el-alert
+              type="warning"
+              effect="dark"
+              v-if="warning"
+              :title="warning"
+              @close="resetError"
+            />
           </div>
           <div class="spacer" v-if="firstSearch">&nbsp;</div>
         </div>
@@ -157,7 +164,7 @@
       </el-col>
     </el-row>
 
-    <div v-if="loadingRoute" class="loading">
+    <div v-if="loadingRoute && !this.error" class="loading">
       <i class="el-icon-loading"></i>
       {{ $t("common.loading") }}
     </div>
@@ -290,7 +297,8 @@ export default {
         exactMatchOnly: false
       },
       showOptions: true,
-      error: null
+      error: null,
+      warning: null
     };
   },
   created() {
@@ -399,11 +407,13 @@ export default {
     },
     resetError() {
       this.error = null;
+      this.warning = null;
     },
     validatePrefix() {
       this.RisAllocData = [];
       this.validation = {};
       this.error = null;
+      this.warning = null;
       let PrefAsn = {};
       let prefixValid = false;
 
@@ -430,52 +440,56 @@ export default {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
-        APIService.searchBgpAlloc(this.searchForm.prefix).then(response => {
-          this.loadingRoute = false;
-          // Use the ASN we got back from the LMP in the
-          // `relations[type="less-specific"]` when the user has set BGP Origin
-          // Validation to fall back to the LMP.
-          let hasBgpOrigin = response.data.results
-            .flatMap(r => r.results)
-            .find(s => s.source === "bgp");
-          if (hasBgpOrigin) {
-            PrefAsn = {
-              prefix: this.searchForm.prefix,
-              origin_asn: hasBgpOrigin.origin_asns[0]
-            };
-            this.searchForm.asn = hasBgpOrigin.origin_asns[0];
-          } else if (!this.searchOptions.exactMatchOnly) {
-            this.RisAllocData =
-              (Array.isArray(response.data) && response.data) || [];
-            PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
-              response.data
-            ).origin_asn;
-            PrefAsn.prefix = this.searchForm.prefix;
-            this.searchForm.asn = PrefAsn.origin_asn;
-          } else {
-            this.error = "Cannot find an Origin AS in BGP for this prefix";
-            return;
-          }
-
-          if (PrefAsn.origin_asn) {
-            console.log(
-              `validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`
-            );
-            this.setQueryParams();
-            APIService.checkValidity(PrefAsn.origin_asn, PrefAsn.prefix).then(
-              response => {
-                this.loadingRoute = false;
-                if (response.data && response.data.validated_route) {
-                  this.validation = response.data.validated_route;
-                }
+        APIService.searchBgpAlloc(this.searchForm.prefix)
+          .then(
+            response => {
+              this.loadingRoute = false;
+              // Use the ASN we got back from the LMP in the
+              // `relations[type="less-specific"]` when the user has set BGP Origin
+              // Validation to fall back to the LMP.
+              let hasBgpOrigin = response.data.results
+                .flatMap(r => r.results)
+                .find(s => s.source === "bgp");
+              if (hasBgpOrigin) {
+                PrefAsn = {
+                  prefix: this.searchForm.prefix,
+                  origin_asn: hasBgpOrigin.origin_asns[0]
+                };
+                this.searchForm.asn = hasBgpOrigin.origin_asns[0];
+              } else if (!this.searchOptions.exactMatchOnly) {
+                this.RisAllocData =
+                  (Array.isArray(response.data) && response.data) || [];
+                PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
+                  response.data
+                ).origin_asn;
+                PrefAsn.prefix = this.searchForm.prefix;
+                this.searchForm.asn = PrefAsn.origin_asn;
+              } else {
+                this.warning =
+                  "Cannot find an Origin AS in BGP for this prefix";
+                return;
               }
-            );
-          } else {
-            console.log(
-              `no announced asn for ${PrefAsn.prefix}. can't validate.`
-            );
-            this.error = `Can't find an Origin ASN for this Prefix`
-          }
+
+              if (PrefAsn.origin_asn) {
+                console.log(
+                  `validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`
+                );
+                this.setQueryParams();
+                APIService.checkValidity(
+                  PrefAsn.origin_asn,
+                  PrefAsn.prefix
+                ).then(response => {
+                  this.loadingRoute = false;
+                  if (response.data && response.data.validated_route) {
+                    this.validation = response.data.validated_route;
+                  }
+                });
+              } else {
+                console.log(
+                  `no announced asn for ${PrefAsn.prefix}. can't validate.`
+                );
+                this.warning = `Can't find an Origin ASN in BGP for this Prefix`;
+              }
 
               // Always store the related prefixes, so we
               // don't have to bother the roto API once more.
@@ -485,14 +499,23 @@ export default {
               // this writing).
               this.storeRelatedPrefixesData(response.data);
 
-          router
-            .push({
-              path: `/${encodeURIComponent(PrefAsn.prefix)}`,
-              query: this.$route.query
-            })
-            .catch(() => {});
-          // return;
-        });
+              router
+                .push({
+                  path: `/${encodeURIComponent(PrefAsn.prefix)}`,
+                  query: this.$route.query
+                })
+                .catch(() => {});
+              // return;
+            },
+            err => {
+              this.error =
+                "The BGP Lookup Server failed with an unknown error. Please retry later.";
+            }
+          )
+          .catch(err => {
+            console.log("Roto backend failed: (#1)");
+            console.error(err);
+          });
       }
 
       // Straight forward validation with user-supplied ASN and prefix
