@@ -94,6 +94,7 @@
             :type="
               (scope.row.rpki.state === 'VALID' && 'success') ||
                 (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                (scope.row.rpki.state === 'SERVER FAILURE' && 'danger') ||
                 'warning'
             "
             >{{ scope.row.rpki.state }} {{ scope.row.reason }}</el-tag
@@ -177,7 +178,7 @@ export default {
             }
           },
           err => {
-            console.log("Routinator API call failed miserably.");
+            console.log(`Routinator API call failed miserably for ${prefix} and ${asn}.`);
             let idx = this.enrichedData.prefixes.findIndex(
               p => p.prefix === prefix
             );
@@ -185,7 +186,7 @@ export default {
               ...this.enrichedData.prefixes[idx],
               rpki: {
                 originAsn: null,
-                state: "BACKEND FAILURE"
+                state: "SERVER FAILURE"
               },
               rpkiDetails: {}
             });
