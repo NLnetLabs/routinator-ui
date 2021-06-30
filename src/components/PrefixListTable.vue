@@ -45,6 +45,7 @@
             <div>
               <el-button
                 type="text"
+                v-if="enrichedData.originAsn"
                 @click="
                   validateRelatedPrefix(
                     enrichedData.originAsn,
@@ -148,29 +149,52 @@ export default {
         return;
       }
       console.log(`validate ${prefix} for ${asn}`);
-      APIService.checkValidity(asn, prefix).then(r => {
-        console.log(`validated ${prefix} for ${asn}`);
-        if (r.data && r.data.validated_route) {
-          let matched = r.data.validated_route.validity.VRPs.matched;
-          let matchedAsn = (matched && matched.find(m => m.asn)) ||
-            r.data.validated_route.validity.VRPs.unmatched_as || { asn: null };
-          let idx = this.enrichedData.prefixes.findIndex(
-            p => p.prefix === prefix
-          );
-          this.enrichedData.originAsn =
-            matchedAsn.asn || this.enrichedData.originAsn;
-          Vue.set(this.enrichedData.prefixes, idx, {
-            ...this.enrichedData.prefixes[idx],
-            rpki: {
-              originAsn: matchedAsn.asn,
-              state: r.data.validated_route.validity.state
-                .toUpperCase()
-                .replace("-", " ")
-            },
-            rpkiDetails: r.data.validated_route.validity
-          });
-        }
-      });
+      APIService.checkValidity(asn, prefix)
+        .then(
+          r => {
+            console.log(`validated ${prefix} for ${asn}`);
+            if (r.data && r.data.validated_route) {
+              let matched = r.data.validated_route.validity.VRPs.matched;
+              let matchedAsn = (matched && matched.find(m => m.asn)) ||
+                r.data.validated_route.validity.VRPs.unmatched_as || {
+                  asn: null
+                };
+              let idx = this.enrichedData.prefixes.findIndex(
+                p => p.prefix === prefix
+              );
+              this.enrichedData.originAsn =
+                matchedAsn.asn || this.enrichedData.originAsn;
+              Vue.set(this.enrichedData.prefixes, idx, {
+                ...this.enrichedData.prefixes[idx],
+                rpki: {
+                  originAsn: matchedAsn.asn,
+                  state: r.data.validated_route.validity.state
+                    .toUpperCase()
+                    .replace("-", " ")
+                },
+                rpkiDetails: r.data.validated_route.validity
+              });
+            }
+          },
+          err => {
+            console.log("Routinator API call failed miserably.");
+            let idx = this.enrichedData.prefixes.findIndex(
+              p => p.prefix === prefix
+            );
+            Vue.set(this.enrichedData.prefixes, idx, {
+              ...this.enrichedData.prefixes[idx],
+              rpki: {
+                originAsn: null,
+                state: "BACKEND FAILURE"
+              },
+              rpkiDetails: {}
+            });
+          }
+        )
+        .catch(err => {
+          console.log("Routinator API returned an error");
+          console.err(err);
+        });
     }
   }
 };

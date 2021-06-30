@@ -209,32 +209,35 @@
       />
     </div>
 
-    <div v-if="searchOptions.relatedFromAlloc && RisAllocData.length">
+    <div v-if="searchOptions.relatedFromAlloc">
       <h4 class="header validation-header">
         RELATED PREFIXES
       </h4>
-      <h4 class="header">
-        Exactly Matching & Less Specific Allocations<el-tag type="info"
-          >Region {{ RisAllocData[0].rir }}</el-tag
-        >
-      </h4>
-      <prefix-list-table
-        :data="RisAllocData.filter(r => r.type === 'less-specific')"
-        :searchAsn="searchForm.asn"
-        :searchPrefix="searchForm.prefix"
-        :validateBgp="searchOptions.validateBGP"
-      />
-      <h4 class="header">
-        Other Allocations for Same Organisation<el-tag type="info"
-          >Region {{ RisAllocData[0].rir }}</el-tag
-        >
-      </h4>
-      <prefix-list-table
-        :data="RisAllocData.filter(p => p.type === 'same-org')"
-        :searchAsn="searchForm.asn"
-        :searchPrefix="searchForm.prefix"
-        validateBgp="false"
-      />
+      <div v-if="RisAllocData.length">
+        <h4 class="header">
+          Exactly Matching & Less Specific Allocations<el-tag type="info"
+            >Region {{ RisAllocData[0].rir }}</el-tag
+          >
+        </h4>
+        <prefix-list-table
+          :data="RisAllocData.filter(r => r.type === 'less-specific')"
+          :searchAsn="searchForm.asn"
+          :searchPrefix="searchForm.prefix"
+          :validateBgp="searchOptions.validateBGP"
+        />
+        <h4 class="header">
+          Other Allocations for Same Organisation<el-tag type="info"
+            >Region {{ RisAllocData[0].rir }}</el-tag
+          >
+        </h4>
+        <prefix-list-table
+          :data="RisAllocData.filter(p => p.type === 'same-org')"
+          :searchAsn="searchForm.asn"
+          :searchPrefix="searchForm.prefix"
+          validateBgp="false"
+        />
+      </div>
+      <div v-else>no related prefixes found</div>
     </div>
 
     <div v-if="loadingStatus" class="loading">
@@ -399,23 +402,15 @@ export default {
     },
     validatePrefix() {
       this.RisAllocData = [];
-      let asValid = false;
-      let asValue = this.searchForm.asn;
+      this.validation = {};
+      this.error = null;
       let PrefAsn = {};
-      if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
-        asValue = asValue.substr(2) * 1;
-      }
-      if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
-        asValid = true;
-        this.error = null;
-      } else if (this.searchOptions.validateBGP) {
-        asValid = true;
-        this.error = null;
-      } else {
-        this.error = this.$t("home.pleasevalidasn");
-      }
-
       let prefixValid = false;
+
+      // validate prefix input,
+      // This should happen for any use case, at least as long
+      // as we don't implement searching for ASNs in delegated extended
+      // or BGP announcements.
       let prefixValue = this.searchForm.prefix;
       if (cidrRegex({ exact: true }).test(prefixValue)) {
         prefixValid = true;
@@ -431,7 +426,7 @@ export default {
 
       // Lookup BGP origin ASN and use that for validating the prefix the user
       // gave us.
-      if (this.searchOptions.validateBGP) {
+      if (this.searchOptions.validateBGP && prefixValid) {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
@@ -440,9 +435,9 @@ export default {
           // Use the ASN we got back from the LMP in the
           // `relations[type="less-specific"]` when the user has set BGP Origin
           // Validation to fall back to the LMP.
-          let hasBgpOrigin = response.data.results.find(
-            s => s.source === "bgp"
-          );
+          let hasBgpOrigin = response.data.results
+            .flatMap(r => r.results)
+            .find(s => s.source === "bgp");
           if (hasBgpOrigin) {
             PrefAsn = {
               prefix: this.searchForm.prefix,
@@ -475,6 +470,11 @@ export default {
                 }
               }
             );
+          } else {
+            console.log(
+              `no announced asn for ${PrefAsn.prefix}. can't validate.`
+            );
+            this.error = `Can't find an Origin ASN for this Prefix`
           }
 
           router
@@ -483,12 +483,39 @@ export default {
               query: this.$route.query
             })
             .catch(() => {});
-          return;
+          // return;
         });
       }
+
       // Straight forward validation with user-supplied ASN and prefix
-      else if (asValid && prefixValid) {
+      else if (this.searchForm.asn && this.searchForm.prefix && prefixValid) {
         console.log("AS+Prefix validation");
+        let asValid = false;
+        let asValue = this.searchForm.asn;
+
+        if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
+          asValue = asValue.substr(2) * 1;
+        }
+        if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
+          asValid = true;
+          this.error = null;
+        } else {
+          this.error = this.$t("home.pleasevalidasn");
+        }
+
+        let prefixValid = false;
+        let prefixValue = this.searchForm.prefix;
+        if (cidrRegex({ exact: true }).test(prefixValue)) {
+          prefixValid = true;
+        } else {
+          this.error =
+            (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+            this.$t("home.pleasevalidprefix");
+        }
+
+        if (this.error) {
+          return;
+        }
         this.loadingRoute = true;
         this.firstSearch = false;
         PrefAsn.prefix = this.searchForm.prefix;
@@ -540,6 +567,9 @@ export default {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     },
     transformRelatedPrefixes(response) {
+      if (!response.relations) {
+        return;
+      }
       this.RisAllocData = response.relations.map(d => {
         let bgp_s = d.results.find(r => r.source === "bgp");
         let rir_s = d.results.find(r => r.source === "rir_alloc");
@@ -551,11 +581,23 @@ export default {
         };
       });
     },
+    // Looks for the Origin ASN of the BGP announcement of the longest
+    // matching prefix, including the exactly matching one.
+    // return { origin_asn: null, ...} if it can't find one.
     extractAsnFromBgpAlloc(response) {
-      let source = response.results.find(s => s.source === "bgp");
+      let source = response.results
+        .flatMap(r => r.results)
+        .find(s => s.source === "bgp");
       if (source) {
         return { origin_asn: source.origin_asns[0], prefix: response.prefix };
       }
+
+      if (!response.relations) {
+        return { origin_asn: null, prefix: response.prefix };
+      }
+
+      // look for the longest prefix in the less-specific related ones,
+      // and return the origin_asn of the BGP announcement if it exists.
       let lmp_re = response.relations
         .filter(rel => rel.type === "less-specific")
         .reduce((rel, lmp) => {
