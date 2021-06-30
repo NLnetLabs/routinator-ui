@@ -51,7 +51,7 @@
     "unmatchedlength": "Unmatched VRPs - Length",
     "runat": "Validation run done at",
     "pleasevalidasn": "Please enter a valid ASN or enable validating for an ASN found in BGP",
-    "pleaseand": "and a valid prefix",
+    "pleaseand": "and a valid asn (or enable validating an ASN found in BGP)",
     "pleasevalidprefix": "Please enter a valid prefix"
   },
   "connections": {

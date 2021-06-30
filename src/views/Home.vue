@@ -409,34 +409,56 @@ export default {
       this.error = null;
       this.warning = null;
     },
+    // validate prefix input.
+
+    // At least the prefix should be validated always,
+    // until we implement searching on ASN
+    // ASN need only be validated when the user wants
+    // to validate PFX+AS pair.
+    validateInput() {
+      let prefixValid = false;
+      let prefixValue = this.searchForm.prefix;
+      if (cidrRegex({ exact: true }).test(prefixValue)) {
+        prefixValid = true;
+      } else {
+        this.error = this.$t("home.pleasevalidprefix");
+        // (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+        // this.$t("home.pleasevalidprefix");
+      }
+
+      if (!this.searchOptions.validateBGP) {
+        let asValid = false;
+        let asValue = this.searchForm.asn;
+
+        if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
+          asValue = asValue.substr(2) * 1;
+        }
+        if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
+          asValid = true;
+          this.error = null;
+        } else {
+          this.error =
+            (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+            this.$t("home.pleasevalidasn");
+        }
+      }
+
+      return this.error == null;
+    },
     validatePrefix() {
       this.RisAllocData = [];
       this.validation = {};
       this.error = null;
       this.warning = null;
       let PrefAsn = {};
-      let prefixValid = false;
 
-      // validate prefix input,
-      // This should happen for any use case, at least as long
-      // as we don't implement searching for ASNs in delegated extended
-      // or BGP announcements.
-      let prefixValue = this.searchForm.prefix;
-      if (cidrRegex({ exact: true }).test(prefixValue)) {
-        prefixValid = true;
-      } else {
-        this.error =
-          (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
-          this.$t("home.pleasevalidprefix");
-      }
-
-      if (this.error) {
+      if (!this.validateInput()) {
         return;
       }
 
       // Lookup BGP origin ASN and use that for validating the prefix the user
       // gave us.
-      if (this.searchOptions.validateBGP && prefixValid) {
+      if (this.searchOptions.validateBGP) {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
@@ -519,30 +541,8 @@ export default {
       }
 
       // Straight forward validation with user-supplied ASN and prefix
-      else if (this.searchForm.asn && this.searchForm.prefix && prefixValid) {
+      else if (this.searchForm.asn && this.searchForm.prefix) {
         console.log("AS+Prefix validation");
-        let asValid = false;
-        let asValue = this.searchForm.asn;
-
-        if (asValue !== "" && asValue.toLowerCase().indexOf("as") === 0) {
-          asValue = asValue.substr(2) * 1;
-        }
-        if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
-          asValid = true;
-          this.error = null;
-        } else {
-          this.error = this.$t("home.pleasevalidasn");
-        }
-
-        let prefixValid = false;
-        let prefixValue = this.searchForm.prefix;
-        if (cidrRegex({ exact: true }).test(prefixValue)) {
-          prefixValid = true;
-        } else {
-          this.error =
-            (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
-            this.$t("home.pleasevalidprefix");
-        }
 
         if (this.error) {
           return;
@@ -556,7 +556,9 @@ export default {
         // related prefixes (there are no ?include=
         // queryParms implemented in it at the time of
         // this writing).
-        this.storeRelatedPrefixesData(response.data);
+        if (response && response.data) {
+          this.storeRelatedPrefixesData(response.data);
+        }
 
         PrefAsn.prefix = this.searchForm.prefix;
         PrefAsn.origin_asn = this.searchForm.asn;
