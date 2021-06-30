@@ -10,11 +10,11 @@
       row-class-name=""
       stripe
     >
-      <el-table-column prop="asn" :label="$t('common.asn')"> </el-table-column>
       <el-table-column prop="prefix" :label="$t('common.prefix')">
       </el-table-column>
       <el-table-column prop="max_length" :label="$t('common.maxlength')">
       </el-table-column>
+      <el-table-column prop="asn" :label="$t('common.asn')"> </el-table-column>
     </el-table>
   </div>
 </template>
