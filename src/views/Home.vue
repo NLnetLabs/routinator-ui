@@ -477,6 +477,14 @@ export default {
             this.error = `Can't find an Origin ASN for this Prefix`
           }
 
+              // Always store the related prefixes, so we
+              // don't have to bother the roto API once more.
+              // For now the roto API always returns the
+              // related prefixes (there are no ?include=
+              // queryParms implemented in it at the time of
+              // this writing).
+              this.storeRelatedPrefixesData(response.data);
+
           router
             .push({
               path: `/${encodeURIComponent(PrefAsn.prefix)}`,
@@ -518,6 +526,15 @@ export default {
         }
         this.loadingRoute = true;
         this.firstSearch = false;
+
+        // Always store the related prefixes, so we
+        // don't have to bother the roto API once more.
+        // For now the roto API always returns the
+        // related prefixes (there are no ?include=
+        // queryParms implemented in it at the time of
+        // this writing).
+        this.storeRelatedPrefixesData(response.data);
+
         PrefAsn.prefix = this.searchForm.prefix;
         PrefAsn.origin_asn = this.searchForm.asn;
         this.setQueryParams();
@@ -546,10 +563,6 @@ export default {
         this.loadingRoute = true;
         this.firstSearch = false;
         this.setQueryParams();
-        APIService.searchBgpAlloc(this.searchForm.prefix).then(response => {
-          this.loadRoute = false;
-          this.transformRelatedPrefixes(response.data);
-        });
       }
     },
     setShowOptions() {
@@ -566,7 +579,7 @@ export default {
     fromNow(timestamp) {
       return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
     },
-    transformRelatedPrefixes(response) {
+    storeRelatedPrefixesData(response) {
       if (!response.relations) {
         return;
       }
