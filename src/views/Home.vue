@@ -559,9 +559,11 @@ export default {
         // related prefixes (there are no ?include=
         // queryParms implemented in it at the time of
         // this writing).
-        if (response && response.data) {
-          this.storeRelatedPrefixesData(response.data);
-        }
+        APIService.searchBgpAlloc(this.searchForm.prefix).then(response => {
+          if (response.data) {
+            this.storeRelatedPrefixesData(response.data);
+          }
+        });
 
         PrefAsn.prefix = this.searchForm.prefix;
         PrefAsn.origin_asn = this.searchForm.asn;
