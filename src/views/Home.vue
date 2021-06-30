@@ -176,8 +176,8 @@
         VALIDATION
       </h4>
       <h4 class="header">
-        {{ $t("home.resultsfor") }} {{ validation.route.prefix }} -
-        {{ validation.route.origin_asn }}
+        {{ $t("home.resultsfor") }} <span class="mono">{{ validation.route.prefix }}</span> -
+        <span class="mono">{{ validation.route.origin_asn }}</span>
         <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
           $t("home.valid")
         }}</el-tag>
