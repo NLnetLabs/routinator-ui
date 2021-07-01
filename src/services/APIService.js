@@ -10,7 +10,7 @@ export default {
     return apiClient.get(`/api/v1/validity/${asn}/${prefix}`);
   },
   searchBgpAlloc(prefix, options) {
-    return apiClient.get(`/api/v1/${prefix}/search`);
+    return apiClient.get(`/api/v1/prefix/${prefix}/search`);
   },
   mockSearchBgpAlloc(prefix, options) {
     return new Promise((resolve, reject) => {
