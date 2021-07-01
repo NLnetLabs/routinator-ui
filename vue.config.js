@@ -10,10 +10,10 @@ module.exports = {
     // proxy: "http://routinator-dev.aws.nlnetlabs.nl:8323/"
     proxy: {
       "/api/v1/validity/": {
-        target: "https://routinator-demo.aws.nlnetlabs.nl"
+        target: "https://routinator.do.nlnetlabs.nl"
       },
-      "/api/v1/status": { target: "https://routinator-demo.aws.nlnetlabs.nl" },
-      "/api/v1/": { target: "https://roto-api-dev.do.nlnetlabs.nl" }
+      "/api/v1/status": { target: "https://routinator.do.nlnetlabs.nl" },
+      "/api/v1/": { target: "http://127.0.0.1:8100"}
     }
   },
   publicPath: "/",
