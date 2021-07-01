@@ -7,7 +7,6 @@ const FileManagerPlugin = require("filemanager-webpack-plugin");
 module.exports = {
   productionSourceMap: false,
   devServer: {
-    // proxy: "http://routinator-dev.aws.nlnetlabs.nl:8323/"
     proxy: {
       "/api/v1/validity/": {
         target: "https://routinator.do.nlnetlabs.nl"
