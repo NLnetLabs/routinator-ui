@@ -87,7 +87,7 @@
         <div>
           This overview provides a quick definition of the terms used in this user interface. For a
           complete overview, please refer to the
-          <a href="https://rpki.readthedocs.io/en/latest/routinator/" target="_blank"
+          <a href="https://routinator.docs.nlnetlabs.nl" target="_blank"
             >Routinator documentation</a
           >.
           <h4>Route Origin Attestation (ROA)</h4>
