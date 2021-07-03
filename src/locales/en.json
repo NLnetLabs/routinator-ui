@@ -49,7 +49,10 @@
     "matched": "Matched VRPs",
     "unmatchedasn": "Unmatched VRPs - ASN",
     "unmatchedlength": "Unmatched VRPs - Length",
-    "runat": "Validation run done at"
+    "runat": "Validation run done at",
+    "pleasevalidasn": "Please enter a valid ASN",
+    "pleaseand": "and a valid prefix",
+    "pleasevalidprefix": "Please enter a valid prefix"
   },
   "connections": {
     "status": "Status",

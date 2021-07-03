@@ -102,7 +102,6 @@
         <tal :label="tal" :data="status.tals[tal]" :detailed="false" />
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -130,7 +129,7 @@ export default {
         asn: "",
         prefix: ""
       },
-      error: ""
+      error: null
     };
   },
   created() {
@@ -174,18 +173,22 @@ export default {
       }
       if (asValue !== "" && asValue >= 0 && asValue <= 4294967295) {
         asValid = true;
-        this.error = "";
+        this.error = null;
       } else {
-        this.error = this.$t("home.validasn");
-        return;
+        this.error = this.$t("home.pleasevalidasn");
       }
+
       let prefixValid = false;
       let prefixValue = this.searchForm.prefix;
       if (cidrRegex({ exact: true }).test(prefixValue)) {
         prefixValid = true;
-        this.error = "";
       } else {
-        this.error = this.$t("home.validprefix");
+        this.error =
+          (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+          this.$t("home.pleasevalidprefix");
+      }
+
+      if (this.error) {
         return;
       }
 
