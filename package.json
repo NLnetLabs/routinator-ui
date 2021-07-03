@@ -12,7 +12,7 @@
     "cidr-regex": "^3.1.1",
     "dotenv": "^8.2.0",
     "element-ui": "^2.9.1",
-    "moment": "^2.29.1",
+    "luxon": "^1.27.0",
     "typeface-lato": "^0.0.54",
     "vue": "^2.5.21",
     "vue-i18n": "^8.11.2",
