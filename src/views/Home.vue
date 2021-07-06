@@ -607,7 +607,7 @@ export default {
       );
     },
     fromNow(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc" }).toRelative();
+      return DateTime.fromISO(timestamp, { zone: "utc" }).setLocale("en").toRelative();
     },
     storeRelatedPrefixesData(response) {
       if (!response.relations) {
