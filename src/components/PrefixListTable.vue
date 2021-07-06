@@ -129,7 +129,7 @@ export default {
     const lmp = (this.data[0].type === "less-specific" &&
       this.data.sort(
         (a, b) =>
-          Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1])
+          (Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1]) && 1) || -1
       )[0]) || { prefix: null };
     return {
       enrichedData: {
