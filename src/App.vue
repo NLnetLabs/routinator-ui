@@ -180,7 +180,8 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: RalewayVariable, sans-serif;
+  font-family: Raleway, sans-serif;
+  font-size: 1rem;
   background-color: #ffffff;
   font-style: normal;
   font-weight: 500;
@@ -192,7 +193,8 @@ body {
 }
 
 .sans-serif {
-  font-family: RalewayVariable, sans-serif;
+  font-family: Raleway, sans-serif;
+  font-size: 1rem;
   font-weight: 500;
 }
 

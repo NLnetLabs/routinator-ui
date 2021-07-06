@@ -723,6 +723,7 @@ h4.header,
 }
 .options-text {
   font-style: italic;
+  white-space: nowrap;
   color: #606266;
 }
 
