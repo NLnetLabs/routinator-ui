@@ -72,7 +72,7 @@ jobs:
           SOURCE_DIR: "public" # optional: defaults to entire repository
       - name: invalidate
         working-directory: dist
-        run: ls -pd * | grep -v / > .files; ls -pd */* >> .files
+        run: echo `ls -pd * | grep -v /; ls -pd */*` > .files
         uses: chetan/invalidate-cloudfront-action@master
         env:
           DISTRIBUTION: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION }}
