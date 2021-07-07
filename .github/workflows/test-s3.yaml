@@ -4,6 +4,20 @@ on:
   push:
     branches: [ release-v0.2.4 ]
 jobs:
+  build:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          check-latest: true
+      - name: Install Deps
+        run: npm ci
+      - name: Build Vue App
+        run: npm run build
+
   sync-aws-s3-bucket:
     runs-on: ubuntu-latest
     env:
