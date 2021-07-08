@@ -2,7 +2,7 @@ name: Test S3
 
 on:
   push:
-    branches: [ release-v0.2.4 ]
+    branches: []
 jobs:
   build:
     runs-on: ubuntu-latest
