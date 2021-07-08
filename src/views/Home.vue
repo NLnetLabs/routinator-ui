@@ -472,13 +472,13 @@ export default {
               // Validation to fall back to the LMP.
               let hasBgpOrigin = response.data.results
                 .flatMap(r => r.results)
-                .find(s => s.source === "bgp");
+                .find(s => s.sourceType === "bgp");
               if (hasBgpOrigin) {
                 PrefAsn = {
                   prefix: this.searchForm.prefix,
-                  origin_asn: hasBgpOrigin.origin_asns[0]
+                  origin_asn: hasBgpOrigin.originASNs[0]
                 };
-                this.searchForm.asn = hasBgpOrigin.origin_asns[0];
+                this.searchForm.asn = hasBgpOrigin.originASNs[0];
               } else if (!this.searchOptions.exactMatchOnly) {
                 this.RisAllocData =
                   (Array.isArray(response.data) && response.data) || [];
@@ -614,13 +614,13 @@ export default {
         return;
       }
       this.RisAllocData = response.relations.map(d => {
-        let bgp_s = d.results.find(r => r.source === "bgp");
-        let rir_s = d.results.find(r => r.source === "rir_alloc");
+        let bgp_s = d.results.find(r => r.sourceType === "bgp");
+        let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
         return {
           prefix: d.prefix,
           type: d.type,
-          rir: (rir_s && rir_s.rir.toUpperCase()) || "NOT FOUND",
-          bgp: (bgp_s && bgp_s.origin_asns[0]) || "NOT SEEN"
+          rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+          bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
         };
       });
     },
@@ -630,9 +630,9 @@ export default {
     extractAsnFromBgpAlloc(response) {
       let source = response.results
         .flatMap(r => r.results)
-        .find(s => s.source === "bgp");
+        .find(s => s.sourceType === "bgp");
       if (source) {
-        return { origin_asn: source.origin_asns[0], prefix: response.prefix };
+        return { origin_asn: source.originASNs[0], prefix: response.prefix };
       }
 
       if (!response.relations) {
@@ -651,9 +651,9 @@ export default {
           }
           return lmp;
         });
-      let bgp_rec = lmp_re.results.find(s => s.source === "bgp");
+      let bgp_rec = lmp_re.results.find(s => s.sourceType === "bgp");
       return {
-        origin_asn: (bgp_rec && bgp_rec.origin_asns[0]) || null,
+        origin_asn: (bgp_rec && bgp_rec.originASNs[0]) || null,
         prefix: lmp_re.prefix
       };
     }

@@ -37,37 +37,37 @@ export default {
           relations: [
             {
               type: "less-specific",
-              results: [{ source: "rir_alloc", rir: "ripe" }],
+              results: [{ source: "rir-alloc", rir: "ripe" }],
               prefix: "193.0.0.0/20"
             },
             {
               type: "less-specific",
               results: [
-                { source: "bgp", origin_asns: "AS3333" },
-                { source: "rir_alloc", rir: "ripe" }
+                { sourceType: "bgp", originASNs: "AS3333" },
+                { source: "rir-alloc", sourceID: "ripe" }
               ],
               prefix: "193.0.10.0/23"
             },
             {
-              type: "same_org",
-              results: [{ source: "rir_alloc", rir: "ripe" }],
+              type: "same-org",
+              results: [{ source: "rir-alloc", rir: "ripe" }],
               prefix: "193.0.16.0/21"
             },
             {
-              type: "same_org",
-              results: [{ source: "rir_alloc", rir: "ripe" }],
+              type: "same-org",
+              results: [{ source: "rir-alloc", rir: "ripe" }],
               prefix: "84.205.64.0/19"
             },
             {
-              type: "same_org",
-              results: [{ source: "rir_alloc", rir: "ripe" }],
+              type: "same-org",
+              results: [{ source: "rir-alloc", rir: "ripe" }],
               prefix: "93.175.144.0/21"
             },
             {
-              type: "same_org",
+              type: "same-org",
               results: [
-                { source: "rir_alloc", rir: "ripe" },
-                { source: "bgp", origin_asns: "AS12859" }
+                { source: "rir-alloc", rir: "ripe" },
+                { source: "bgp", originASNs: "AS12859" }
               ],
               prefix: "93.175.159.0/24"
             }
