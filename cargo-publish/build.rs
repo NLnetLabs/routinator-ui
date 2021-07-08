@@ -14,7 +14,7 @@ fn download_ui_release_build() -> Result<Vec<u8>, reqwest::Error> {
 
     headers.insert(
         header::USER_AGENT,
-        header::HeaderValue::from_str(format!("User-Agent: routinator-ui/{}", version))
+        header::HeaderValue::from_str(&format!("User-Agent: routinator-ui/{}", version))
             .expect("Cannot download routinator-ui-build."),
     );
     let client = reqwest::blocking::Client::builder()
