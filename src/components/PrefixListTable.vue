@@ -1,7 +1,22 @@
 <template>
   <div :class="{ 'prefix-list-table': true, warning: true }">
+    <el-row v-if="enrichedData.prefixes.length > 1">
+      <el-col :span="8" :offset="1">
+        <el-input
+          v-model="filterPrefix"
+          placeholder="Filter on Prefix (regex allowed)"
+          clearable
+        />
+      </el-col>
+    </el-row>
     <el-table
-      :data="enrichedData.prefixes"
+      :data="
+        enrichedData.prefixes.filter(
+          data =>
+            !this.filterPrefixValidatedRegExp ||
+            data.prefix.match(this.filterPrefixValidatedRegExp)
+        )
+      "
       style="width: 100%"
       stripe
       :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
@@ -66,14 +81,14 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="prefix" label="Prefix">
+      <el-table-column prop="prefix" label="Prefix" sortable>
         <template v-slot:default="scope" style="position: relative;">
           <lmp-arrow v-if="scope.row.lmp && validateBgp" /><em-arrow
             v-if="scope.row.em && validateBgp"
           />{{ scope.row.prefix }}</template
         >
       </el-table-column>
-      <el-table-column prop="bgp" label="BGP Origin ASN"
+      <el-table-column prop="bgp" label="BGP Origin ASN" sortable
         ><template v-slot:default="scope">
           <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
@@ -87,7 +102,11 @@
             "
           /> </template
       ></el-table-column>
-      <el-table-column prop="rpkiState" label="RPKI Status"
+      <el-table-column
+        prop="rpkiState"
+        label="RPKI Status"
+        sortable
+        :sort-method="sortByRpkiStatus"
         ><template v-slot:default="scope"
           ><el-tag
             v-if="scope.row.rpki.state"
@@ -99,8 +118,8 @@
             "
             >{{ scope.row.rpki.state }} {{ scope.row.reason }}</el-tag
           ></template
-        ></el-table-column
-      >
+        >
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -129,7 +148,9 @@ export default {
     const lmp = (this.data[0].type === "less-specific" &&
       this.data.sort(
         (a, b) =>
-          (Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1]) && 1) || -1
+          (Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1]) &&
+            1) ||
+          -1
       )[0]) || { prefix: null };
     return {
       enrichedData: {
@@ -141,8 +162,20 @@ export default {
           em: p.prefix === this.searchPrefix
         })),
         originAsn: null
-      }
+      },
+      filterPrefix: ""
     };
+  },
+  computed: {
+    filterPrefixValidatedRegExp: function() {
+      let filterRegEx;
+      try {
+        filterRegEx = new RegExp(this.filterPrefix.replace(".", "\\."));
+      } catch (e) {
+        console.log("invalid regex");
+      }
+      return filterRegEx;
+    }
   },
   methods: {
     validateRelatedPrefix(asn, prefix) {
@@ -178,7 +211,9 @@ export default {
             }
           },
           err => {
-            console.log(`Routinator API call failed miserably for ${prefix} and ${asn}.`);
+            console.log(
+              `Routinator API call failed miserably for ${prefix} and ${asn}.`
+            );
             let idx = this.enrichedData.prefixes.findIndex(
               p => p.prefix === prefix
             );
@@ -196,6 +231,12 @@ export default {
           console.log("Routinator API returned an error");
           console.err(err);
         });
+    },
+    sortByRpkiStatus(a, b) {
+      if (a.rpki.state && !b.rpki.state) {
+        return 1;
+      }
+      return a.rpki.state > b.rpki.state;
     }
   }
 };
