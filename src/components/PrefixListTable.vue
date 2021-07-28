@@ -1,7 +1,7 @@
 <template>
   <div :class="{ 'prefix-list-table': true, warning: true }">
     <el-row v-if="enrichedData.prefixes.length > 1">
-      <el-col :span="8" :offset="1">
+      <el-col :span="8" style="margin-left: 42px;">
         <el-input
           v-model="filterPrefix"
           placeholder="Filter on Prefix (regex allowed)"
