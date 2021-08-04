@@ -9,10 +9,7 @@ keywords = ["rpki", "routing-security", "bgp"]
 categories = ["web-ui"]
 license = "BSD-3-Clause"
 readme = "README.md"
-
-[package.metadata]
-download-url = "https://github.com/NLnetLabs/routinator-ui/releases/download"
-build-file-name = "routinator-ui-build.tar.gz"
+build = "build.rs"
 
 [dependencies]
 
