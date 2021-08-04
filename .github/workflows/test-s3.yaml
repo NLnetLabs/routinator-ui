@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
- 
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -16,7 +16,8 @@ jobs:
       - name: Install Deps
         run: npm ci
       - name: Build Vue App
-        run: npm run build
+        # build-s3 uses .env.s3 config file
+        run: npm run build-s3
 
   sync-aws-s3-bucket:
     runs-on: ubuntu-latest

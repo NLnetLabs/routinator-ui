@@ -15,7 +15,9 @@ module.exports = {
       "/api/v1/": { target: "http://127.0.0.1:8100"}
     }
   },
-  publicPath: "/",
+  // note that relative publicPath seems the way to go,
+  // but can't be used in combination with history based routing.
+  publicPath: process.env.VUE_APP_BASE_DIR,
 
   pluginOptions: {
     i18n: {
