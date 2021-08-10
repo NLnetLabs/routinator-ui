@@ -36,7 +36,7 @@ pub mod endpoints {
 
     #[derive(Debug)]
     pub struct UiResource {
-        pub endpoint: String,
+        pub endpoint: &'static str,
         pub content_type: &'static [u8],
         pub content: &'static [u8],
     }
