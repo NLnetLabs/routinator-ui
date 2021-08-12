@@ -2,9 +2,8 @@ name: Build App
 
 on:
   push:
-    branches: [ compare_bgp ]
-  pull_request:
     branches: [ main ]
+
 
   workflow_dispatch:
 
@@ -21,7 +20,7 @@ jobs:
       - name: Install Deps
         run: npm ci
       - name: Build Vue App
-        run: npm run build
+        run: npm run build-dev
 
       # upload all build artefacts
       - uses: actions/upload-artifact@v2
