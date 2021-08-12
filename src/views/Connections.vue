@@ -10,16 +10,31 @@
         <el-row class="table-row">
           <el-col :span="4" class="title"> RRDP </el-col>
           <el-col :span="20">
-            <el-table :data="rrdp" style="width: 100%" stripe height="250">
-              <el-table-column fixed label="URL" width="300">
-                <template slot-scope="scope"
-                  ><a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a></template
+            <el-table
+              :data="rrdp"
+              style="width: 100%"
+              stripe
+              height="250"
+              row-class-name="mono"
+            >
+              <el-table-column fixed label="URL" width="330">
+                <template v-slot:default="scope"
+                  ><a
+                    :href="scope.row.url"
+                    target="_blank"
+                    class="sans-serif"
+                    >{{ scope.row.url }}</a
+                  ></template
                 >
               </el-table-column>
-              <el-table-column prop="status" :label="$t('connections.status')" width="150">
+              <el-table-column
+                prop="status"
+                :label="$t('connections.status')"
+                width="150"
+              >
               </el-table-column>
               <el-table-column :label="$t('connections.duration')" width="150"
-                ><template slot-scope="scope">
+                ><template v-slot:default="scope">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="3"
@@ -27,15 +42,33 @@
                   ></el-progress> </template
               ></el-table-column>
               <el-table-column label="" width="150">
-                <template slot-scope="scope"> {{ scope.row.duration }}s </template>
+                <template v-slot:default="scope">
+                  {{ scope.row.duration }}s
+                </template>
               </el-table-column>
-              <el-table-column prop="notifyStatus" :label="$t('connections.notifyStatus')" width="150">
+              <el-table-column
+                prop="notifyStatus"
+                :label="$t('connections.notifyStatus')"
+                width="150"
+              >
               </el-table-column>
-              <el-table-column prop="payloadStatus" :label="$t('connections.payloadStatus')" width="150">
+              <el-table-column
+                prop="payloadStatus"
+                :label="$t('connections.payloadStatus')"
+                width="150"
+              >
               </el-table-column>
-              <el-table-column prop="serial" :label="$t('connections.serial')" width="150">
+              <el-table-column
+                prop="serial"
+                :label="$t('connections.serial')"
+                width="150"
+              >
               </el-table-column>
-              <el-table-column prop="delta" :label="$t('connections.delta')" width="150">
+              <el-table-column
+                prop="delta"
+                :label="$t('connections.delta')"
+                width="150"
+              >
               </el-table-column>
               <el-table-column
                 prop="snapshot_reason"
@@ -43,7 +76,11 @@
                 width="150"
               >
               </el-table-column>
-              <el-table-column prop="session" :label="$t('connections.session')" width="350">
+              <el-table-column
+                prop="session"
+                :label="$t('connections.session')"
+                width="350"
+              >
               </el-table-column>
             </el-table>
           </el-col>
@@ -51,12 +88,28 @@
         <el-row class="table-row">
           <el-col :span="4" class="title"> RSYNC </el-col>
           <el-col :span="20">
-            <el-table :data="rsync" style="width: 100%" stripe height="250">
-              <el-table-column prop="url" label="URL" width="300"> </el-table-column>
-              <el-table-column prop="status" :label="$t('connections.status')" width="150">
+            <el-table
+              :data="rsync"
+              style="width: 100%"
+              stripe
+              height="250"
+              row-class-name="mono"
+            >
+              <el-table-column prop="url" label="URL" width="340"
+                ><template v-slot:default="scope"
+                  ><span class="sans-serif">{{
+                    scope.row.url
+                  }}</span></template
+                >
+              </el-table-column>
+              <el-table-column
+                prop="status"
+                :label="$t('connections.status')"
+                width="150"
+              >
               </el-table-column>
               <el-table-column :label="$t('connections.duration')" width="150"
-                ><template slot-scope="scope">
+                ><template v-slot:default="scope">
                   <el-progress
                     :text-inside="true"
                     :stroke-width="3"
@@ -64,7 +117,9 @@
                   ></el-progress> </template
               ></el-table-column>
               <el-table-column label="">
-                <template slot-scope="scope"> {{ scope.row.duration }}s </template>
+                <template v-slot:default="scope">
+                  {{ scope.row.duration }}s
+                </template>
               </el-table-column>
             </el-table>
           </el-col>
@@ -74,7 +129,7 @@
           <el-col :span="4" class="title">
             {{ $t("connections.serial") }}
           </el-col>
-          <el-col :span="20">
+          <el-col :span="20" class="mono">
             {{ status.serial }}
           </el-col>
         </el-row>
@@ -82,30 +137,32 @@
           <el-col :span="4" class="title">
             {{ $t("connections.lastupdatestart") }}
           </el-col>
-          <el-col :span="20">
-            {{ status.lastUpdateStart }}
+          <el-col :span="20" class="mono">
+            {{ formatDateTimeString(status.lastUpdateStart) }}
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="4" class="title">
             {{ $t("connections.lastupdateend") }}
           </el-col>
-          <el-col :span="20">
-            {{ status.lastUpdateDone }}
+          <el-col :span="20" class="mono">
+            {{ formatDateTimeString(status.lastUpdateDone) }}
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="4" class="title">
             {{ $t("connections.lastupdateduration") }}
           </el-col>
-          <el-col :span="20"> {{ status.lastUpdateDuration }} {{ $t("connections.seconds") }} </el-col>
+          <el-col :span="20" class="mono">
+            {{ status.lastUpdateDuration }} {{ $t("connections.seconds") }}
+          </el-col>
         </el-row>
 
         <el-row>
           <el-col :span="4" class="title">
             {{ $t("connections.vrpsaddedlocally") }}
           </el-col>
-          <el-col :span="20">
+          <el-col :span="20" class="mono">
             {{ status.vrpsAddedLocally }}
           </el-col>
         </el-row>
@@ -117,7 +174,7 @@
               <el-col :span="4">
                 {{ $t("connections.totalconnections") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.rtr.totalConnections }}
               </el-col>
             </el-row>
@@ -125,7 +182,7 @@
               <el-col :span="4">
                 {{ $t("connections.currentconnections") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.rtr.currentConnections }}
               </el-col>
             </el-row>
@@ -133,7 +190,7 @@
               <el-col :span="4">
                 {{ $t("connections.bytesread") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.rtr.bytesRead }}
               </el-col>
             </el-row>
@@ -141,7 +198,7 @@
               <el-col :span="4">
                 {{ $t("connections.byteswritten") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.rtr.bytesWritten }}
               </el-col>
             </el-row>
@@ -154,7 +211,7 @@
               <el-col :span="4">
                 {{ $t("connections.totalconnections") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.http.totalConnections }}
               </el-col>
             </el-row>
@@ -162,7 +219,7 @@
               <el-col :span="4">
                 {{ $t("connections.currentconnections") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.http.currentConnections }}
               </el-col>
             </el-row>
@@ -170,7 +227,7 @@
               <el-col :span="4">
                 {{ $t("connections.requests") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.http.requests }}
               </el-col>
             </el-row>
@@ -178,7 +235,7 @@
               <el-col :span="4">
                 {{ $t("connections.bytesread") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.http.bytesRead }}
               </el-col>
             </el-row>
@@ -186,7 +243,7 @@
               <el-col :span="4">
                 {{ $t("connections.byteswritten") }}
               </el-col>
-              <el-col :span="20">
+              <el-col :span="20" class="mono">
                 {{ status.http.bytesWritten }}
               </el-col>
             </el-row>
@@ -199,6 +256,7 @@
 
 <script>
 import APIService from "@/services/APIService.js";
+import { DateTime } from "luxon";
 
 export default {
   data() {
@@ -206,7 +264,7 @@ export default {
       loading: false,
       status: {},
       rsync: [],
-      rrdp: [],
+      rrdp: []
     };
   },
   created() {
@@ -216,7 +274,7 @@ export default {
     rrdpMax() {
       return Math.max.apply(
         Math,
-        this.rrdp.map(function (u) {
+        this.rrdp.map(function(u) {
           return u.duration;
         })
       );
@@ -224,16 +282,16 @@ export default {
     rsyncMax() {
       return Math.max.apply(
         Math,
-        this.rsync.map(function (u) {
+        this.rsync.map(function(u) {
           return u.duration;
         })
       );
-    },
+    }
   },
   methods: {
     loadStatus() {
       this.loading = true;
-      APIService.getStatus().then((response) => {
+      APIService.getStatus().then(response => {
         this.status = response.data;
         this.loading = false;
         if (this.status && this.status.version) {
@@ -241,20 +299,20 @@ export default {
         }
         if (this.status.rsync) {
           let rsync = [];
-          Object.keys(this.status.rsync).forEach((k) => {
+          Object.keys(this.status.rsync).forEach(k => {
             rsync.push({
               url: k,
-              ...this.status.rsync[k],
+              ...this.status.rsync[k]
             });
           });
           this.rsync = rsync;
         }
         if (this.status.rrdp) {
           let rrdp = [];
-          Object.keys(this.status.rrdp).forEach((k) => {
+          Object.keys(this.status.rrdp).forEach(k => {
             rrdp.push({
               url: k,
-              ...this.status.rrdp[k],
+              ...this.status.rrdp[k]
             });
           });
           this.rrdp = rrdp;
@@ -263,7 +321,12 @@ export default {
 
       return false;
     },
-  },
+    formatDateTimeString(DTString) {
+      return DateTime.fromISO(DTString, { zone: "utc" }).toFormat(
+        "yyyy-MM-dd TTT"
+      );
+    }
+  }
 };
 </script>
 

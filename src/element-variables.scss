@@ -1,3 +1,14 @@
 $--color-primary: #001f6d;
 $--font-path: "~element-ui/lib/theme-chalk/fonts";
 @import "~element-ui/packages/theme-chalk/src/index";
+// Sorry, but the contrast of the default secondary text
+// is too low. So we're setting it to the same shade of grey
+// of the regular text.
+$--color-text-secondary: $--color-text-regular;
+
+// This doesn't seem to work. Override locally please.
+// $--table-header-font-color: $--color-text-regular !default;
+
+.el-table__body-wrapper {
+  overflow: visible;
+}

@@ -7,10 +7,10 @@
       </div>
 
       <div v-if="!loading">
-        <el-table :data="repositories" style="width: 100%" height="calc(100vh - 200px)" stripe>
-          <el-table-column fixed :label="$t('repositories.repository')" width="250">
-            <template slot-scope="scope">
-              <a :href="scope.row.repo" target="_blank">{{ scope.row.repo }}</a>
+        <el-table :data="repositories" style="width: 100%" height="calc(100vh - 200px)" stripe row-class-name="mono">
+          <el-table-column fixed :label="$t('repositories.repository')" width="300">
+            <template v-slot:default="scope">
+              <a :href="scope.row.repo" target="_blank" class="sans-serif">{{ scope.row.repo }}</a>
             </template>
           </el-table-column>
           <el-table-column prop="type" :label="$t('repositories.type')" width="150" sortable>
@@ -222,5 +222,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import "../element-variables";
+
+// Local override, global override
+// in element-variables file for table
+// header doesn't seem to work.
+.cell {
+  color: $--color-text-regular;
+}
 </style>

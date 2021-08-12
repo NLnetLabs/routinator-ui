@@ -2,13 +2,22 @@ const webpack = require("webpack");
 const fs = require("fs");
 const packageJson = fs.readFileSync("./package.json");
 const version = JSON.parse(packageJson).version || 0;
+const FileManagerPlugin = require("filemanager-webpack-plugin");
 
 module.exports = {
   productionSourceMap: false,
   devServer: {
-    proxy: "http://routinator-dev.aws.nlnetlabs.nl:8323/"
+    proxy: {
+      "/api/v1/validity/": {
+        target: "https://routinator.do.nlnetlabs.nl"
+      },
+      "/api/v1/status": { target: "https://routinator.do.nlnetlabs.nl" },
+      "/api/v1/": { target: "http://127.0.0.1:8100"}
+    }
   },
-  publicPath: '/ui/',
+  // note that relative publicPath seems the way to go,
+  // but can't be used in combination with history based routing.
+  publicPath: process.env.VUE_APP_BASE_DIR,
 
   pluginOptions: {
     i18n: {
@@ -29,6 +38,28 @@ module.exports = {
       new webpack.DefinePlugin({
         "process.env": {
           PACKAGE_VERSION: '"' + version + '"'
+        }
+      }),
+      new FileManagerPlugin({
+        events: {
+          onEnd: {
+            archive: [
+              {
+                source: "./dist",
+                destination: "./routinator-ui-build.tar.gz",
+                format: "tar",
+                options: {
+                  gzip: true,
+                  gzipOptions: {
+                    level: 1
+                  },
+                  globOptions: {
+                    nomount: true
+                  }
+                }
+              }
+            ]
+          }
         }
       })
     ],

@@ -8,20 +8,77 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
           check-latest: true
       - name: Install Deps
         run: npm ci
       - name: Build Vue App
         run: npm run build
-      - name: Release App
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: routinator-ui-build
+          path: routinator-ui-build.tar.gz
+      - name: Release App on GH
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/
+          # This filename is deteremined by the Webpack Filemanager
+          # plugin in vue.config.js and contains all files in /dist
+          # *with* the original directory structure.
+          files: routinator-ui-build.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cargo-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: "1.51.0"
+      # - name: Download Files
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: routinator-ui-build
+      #     path: cargo-publish
+      - name: Build App
+        working-directory: cargo-publish
+        run: cargo build
+      - name: Publish App
+        working-directory: cargo-publish
+        run: cargo publish --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  sync-aws-s3-bucket:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          check-latest: true
+      - name: Install Deps
+        run: npm ci
+      - name: Build Vue App
+        run: npm run build-s3
+      - name: Deploy to AWS
+        uses: reggionick/s3-deploy@v3
+        with:
+          folder: dist
+          bucket: ${{ secrets.AWS_S3_BUCKET }}
+          bucket-region: ${{ secrets.AWS_S3_REGION }}
+          dist-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION }}
+          invalidation: /*
+          delete-removed: true
+          no-cache: true
+          private: false

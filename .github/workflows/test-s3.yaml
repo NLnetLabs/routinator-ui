@@ -1,0 +1,48 @@
+name: Test S3
+
+on:
+  push:
+    branches: []
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          check-latest: true
+      - name: Install Deps
+        run: npm ci
+      - name: Build Vue App
+        # build-s3 uses .env.s3 config file
+        run: npm run build-s3
+
+  sync-aws-s3-bucket:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          check-latest: true
+      - name: Install Deps
+        run: npm ci
+      - name: Build Vue App
+        run: npm run build
+      - name: Deploy to AWS
+        uses: reggionick/s3-deploy@v3
+        with:
+          folder: dist
+          bucket: ${{ secrets.AWS_S3_BUCKET }}
+          bucket-region: ${{ secrets.AWS_S3_REGION }}
+          dist-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION }}
+          invalidation: /*
+          delete-removed: true
+          no-cache: true
+          private: false
