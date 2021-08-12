@@ -89,7 +89,8 @@ See `.env.development`
 
 A new release should be created by:
 
-- Creating a new branch `release-v<NEW_VERSION>` and making it current or start from a up-to-date `main` branch.
+- Creating a new branch `release-v<NEW_VERSION>` and making it current or start the `main` branch.
+- Sync with remote: `git push`
 - Issuing:
 
 ```bash
