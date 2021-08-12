@@ -14,6 +14,12 @@ The project consists of:
 ## Requirements
 * Node.js >= 14
 
+## Current Use Cases
+
+- `https://roto-api-dev.do.nlnetlabs.nl` runs a nginx instance that hosts the build files in `/home/roto/routinator-ui/dist`. Generally you should use `npm run buil-dev` inside the repo there to host the right instance.
+- `https://routinator.nlnetlabs.nl` is backed by AWS CloudFront AWS S3. A `npm version` command ran locally takes care of all update shenanigans (see above) and puts a production build in the right place (See above).
+- `routinator` hosts a locally build and served instance of `routinator-ui`. This is also taken care of by `npm version`. See the `cargo-publish/README.md` as well.
+
 ## Dev setup
 To get all the required js libraries in, run
 
@@ -61,7 +67,7 @@ This build is using `/` is its `publicUrl`
 
 See `.env.s3` for all settings.
 
-### Stand-alone develepment build
+### Stand-alone development build
 
 ```bash
 npm run build-dev
@@ -77,7 +83,7 @@ See `.env.development`
 
 - On each push to the `main` branch a new development build and a .tar.gz with all assets are produced and available as downloads
   from Github. 
-- On each git tag that starts with `v` a production build and a .tar.gz with assets are produced and availables as a download from Github. The cargo crate is updated as well.
+- On each git tag that starts with `v` a production build and a .tar.gz with assets are produced and availables as a download from Github. The cargo crate is updated as well. The AWS S3 bucket will be updated with the new files and AWS CloudFront will refresh its cache.
 
 ## Creating a new Release
 
