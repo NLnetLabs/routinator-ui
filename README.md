@@ -87,7 +87,10 @@ See `.env.development`
 
 ## Creating a new Release
 
-A new release should be created by issuing:
+A new release should be created by:
+
+- Creating a new branch `release-v<NEW_VERSION>` and making it current or start from a up-to-date `main` branch.
+- Issuing:
 
 ```bash
 npm version [patch|minor|major] -m <RELEASE NAME>
