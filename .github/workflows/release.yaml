@@ -71,7 +71,7 @@ jobs:
       - name: Install Deps
         run: npm ci
       - name: Build Vue App
-        run: npm run build
+        run: npm run build-s3
       - name: Deploy to AWS
         uses: reggionick/s3-deploy@v3
         with:
