@@ -41,6 +41,8 @@ pub mod endpoints {
         pub content: &'static [u8],
     }
 
+    // A printed list of all endpoints that are in the generated
+    // ui_resources.rs file. Mainly for debugging.
     pub fn get_endpoints() -> Vec<std::io::Result<UiResource>> {
         crate::ui_resources::endpoints_as_tuple()
             .into_iter()
@@ -54,22 +56,19 @@ pub mod endpoints {
             .collect()
     }
 
+    // The main API, return a response payload for a given request path.
+    // This request path should be passed in WITHOUT the BASE_DIR prefix, e.g
+    // `index.html`, NOT `/ui/index.html`
     pub fn ui_resource(path: &std::path::Path) -> Option<UiResource> {
-        if let Some(path) = path.to_str() {
-            if let Some(r) = crate::ui_resources::endpoints_as_tuple()
-                .into_iter()
-                .find(|r| r.0 == path)
-            {
-                Some(UiResource {
-                    content_type: retrieve_content_type(&r.0).ok()?,
-                    endpoint: r.0,
-                    content: r.1,
-                })
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        let path = path.to_str()?;
+        let resource = *crate::ui_resources::endpoints_as_tuple()
+            .iter()
+            .find(|r| r.0 == path)?;
+
+        Some(UiResource {
+            content_type: retrieve_content_type(&resource.0).ok()?,
+            endpoint: resource.0,
+            content: resource.1,
+        })
     }
 }
