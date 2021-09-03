@@ -32,7 +32,7 @@ export default {
       setTimeout(() => {
         return resolve({
           prefix: "193.0.10.0/24",
-          type: "exact_match",
+          type: "exact-match",
           results: [],
           relations: [
             {

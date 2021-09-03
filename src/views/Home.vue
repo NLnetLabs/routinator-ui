@@ -223,18 +223,105 @@
       </h4>
       <div v-if="RisAllocData.length">
         <h4 class="header">
-          Exactly Matching & Less Specific Allocations<el-tag type="info"
+          Best Matching Prefix in Allocations and/or BGP<el-tag type="info"
             >Region {{ RisAllocData[0].rir }}</el-tag
           >
         </h4>
         <prefix-list-table
-          :data="RisAllocData.filter(r => r.type === 'less-specific')"
+          :data="ResultPrefixData"
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           :validateBgp="searchOptions.validateBGP"
         />
+        <el-collapse
+          v-if="
+            ResultPrefixData[0].less_specifics ||
+              ResultPrefixData[0].more_specifics
+          "
+        >
+          <el-collapse-item
+            v-if="
+              ResultPrefixData[0].less_specifics &&
+                ResultPrefixData[0].less_specifics.length
+            "
+            :title="
+              `+ ${ResultPrefixData[0].less_specifics.length} less specific`
+            "
+          >
+            <el-table
+              :data="ResultPrefixData[0].less_specifics"
+              :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
+            >
+              <el-table-column prop="prefix" label="Prefix">
+                <template v-slot:default="scope">
+                  {{ scope.row.prefix }}
+                </template>
+              </el-table-column>
+              <el-table-column label="Allocated" prop="alloc">
+                <template v-slot:default="scope">
+                  <i
+                    v-if="scope.row.rir !== 'NOT FOUND'"
+                    class="el-icon-circle-check"
+                    style="font-size: 21px;"
+                  ></i>
+                </template>
+              </el-table-column>
+              <el-table-column label="bgp">
+                <template v-slot:default="scope">
+                  <el-tag
+                    class="label"
+                    v-if="scope.row.bgp === 'NOT SEEN'"
+                    type="info"
+                    >NOT SEEN</el-tag
+                  >
+                  <span class="mono" v-else>{{ scope.row.bgp }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-collapse-item>
+          <el-collapse-item
+            v-if="
+              ResultPrefixData[0].more_specifics &&
+                ResultPrefixData[0].more_specifics.length
+            "
+            :title="
+              `+ ${ResultPrefixData[0].more_specifics.length} more specific`
+            "
+          >
+            <el-table
+              :data="ResultPrefixData[0].more_specifics"
+              :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
+            >
+              <el-table-column prop="prefix" label="Prefix">
+                <template v-slot:default="scope">
+                  {{ scope.row.prefix }}
+                </template>
+              </el-table-column>
+              <el-table-column label="Allocated" prop="alloc">
+                <template v-slot:default="scope">
+                  <i
+                    v-if="scope.row.rir !== 'NOT FOUND'"
+                    class="el-icon-circle-check"
+                    style="font-size: 21px;"
+                  ></i>
+                </template>
+              </el-table-column>
+              <el-table-column label="bgp">
+                <template v-slot:default="scope">
+                  <el-tag
+                    class="label"
+                    v-if="scope.row.bgp === 'NOT SEEN'"
+                    type="info"
+                    >NOT SEEN</el-tag
+                  >
+                  <span class="mono" v-else>{{ scope.row.bgp }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-collapse-item>
+        </el-collapse>
         <h4 class="header">
-          Other Allocations for Same Organisation<el-tag type="info"
+          All Allocations for Same Organisation<el-tag type="info"
             >Region {{ RisAllocData[0].rir }}</el-tag
           >
         </h4>
@@ -288,6 +375,7 @@ export default {
       status: {},
       validation: {},
       RisAllocData: [],
+      ResultPrefixData: [],
       searchForm: {
         asn: "",
         prefix: ""
@@ -448,6 +536,7 @@ export default {
     },
     validatePrefix() {
       this.RisAllocData = [];
+      this.ResultPrefixData = [];
       this.validation = {};
       this.error = null;
       this.warning = null;
@@ -480,6 +569,8 @@ export default {
                 };
                 this.searchForm.asn = hasBgpOrigin.originASNs[0];
               } else if (!this.searchOptions.exactMatchOnly) {
+                this.PrefixResultData =
+                  (Array.isArray(response.data) && response.data) || [];
                 this.RisAllocData =
                   (Array.isArray(response.data) && response.data) || [];
                 PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
@@ -607,7 +698,9 @@ export default {
       );
     },
     fromNow(timestamp) {
-      return DateTime.fromISO(timestamp, { zone: "utc" }).setLocale("en-us").toRelative();
+      return DateTime.fromISO(timestamp, { zone: "utc" })
+        .setLocale("en-us")
+        .toRelative();
     },
     storeRelatedPrefixesData(response) {
       if (!response.relations) {
@@ -621,6 +714,40 @@ export default {
           type: d.type,
           rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
           bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+        };
+      });
+      this.ResultPrefixData = response.results.map(d => {
+        let bgp_s = d.results.find(r => r.sourceType === "bgp");
+        let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
+        return {
+          prefix: d.prefix,
+          type: d.type,
+          rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+          bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
+          less_specifics: response.relations
+            .filter(r => r.type === "less-specific")
+            .map(d => {
+              let bgp_s = d.results.find(r => r.sourceType === "bgp");
+              let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
+              return {
+                prefix: d.prefix,
+                type: d.type,
+                rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+                bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+              };
+            }),
+          more_specifics: response.relations
+            .filter(r => r.type === "more-specific")
+            .map(d => {
+              let bgp_s = d.results.find(r => r.sourceType === "bgp");
+              let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
+              return {
+                prefix: d.prefix,
+                type: d.type,
+                rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+                bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+              };
+            })
         };
       });
     },
@@ -642,7 +769,9 @@ export default {
       // look for the longest prefix in the less-specific related ones,
       // and return the origin_asn of the BGP announcement if it exists.
       let lmp_re = response.relations
-        .filter(rel => rel.type === "less-specific")
+        .filter(
+          rel => rel.type === "less-specific" || rel.type === "exact-match"
+        )
         .reduce((rel, lmp) => {
           if (
             Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
@@ -650,8 +779,9 @@ export default {
             lmp = rel;
           }
           return lmp;
-        });
-      let bgp_rec = lmp_re.results.find(s => s.sourceType === "bgp");
+        }, []);
+      let bgp_rec =
+        lmp_re.results && lmp_re.results.find(s => s.sourceType === "bgp");
       return {
         origin_asn: (bgp_rec && bgp_rec.originASNs[0]) || null,
         prefix: lmp_re.prefix

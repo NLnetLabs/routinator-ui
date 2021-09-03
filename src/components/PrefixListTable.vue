@@ -56,6 +56,7 @@
               />
             </div>
           </div>
+
           <div v-else>
             <div>
               <el-button
@@ -85,8 +86,8 @@
         <template v-slot:default="scope" style="position: relative;">
           <lmp-arrow v-if="scope.row.lmp && validateBgp" /><em-arrow
             v-if="scope.row.em && validateBgp"
-          />{{ scope.row.prefix }}</template
-        >
+          />{{ scope.row.prefix }}
+        </template>
       </el-table-column>
       <el-table-column prop="bgp" label="BGP Origin ASN" sortable
         ><template v-slot:default="scope">
@@ -145,25 +146,18 @@ export default {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
   data() {
-    const lmp = (this.data[0].type === "less-specific" &&
-      this.data.sort(
-        (a, b) =>
-          (Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1]) &&
-            1) ||
-          -1
-      )[0]) || { prefix: null };
     return {
       enrichedData: {
         prefixes: this.data.map(p => ({
           ...p,
           rpki: {},
           rpkiDetails: {},
-          lmp: lmp.prefix === p.prefix && p.prefix !== this.searchPrefix,
-          em: p.prefix === this.searchPrefix
+          lmp: p.type === "longest-match",
+          em: p.type === "exact-match"
         })),
         originAsn: null
       },
-      filterPrefix: ""
+      filterPrefix: "",
     };
   },
   computed: {
@@ -229,7 +223,7 @@ export default {
         )
         .catch(err => {
           console.log("Routinator API returned an error");
-          console.err(err);
+          console.error(err);
         });
     },
     sortByRpkiStatus(a, b) {

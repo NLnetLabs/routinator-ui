@@ -33,7 +33,7 @@ export default {
 <style lang="scss" scoped>
 .validity-table {
   margin-top: 2rem;
-  margin-left: 42px;
+  // margin-left: 42px;
   .el-table {
     border-left: 2px solid #e1f3d8;
   }
