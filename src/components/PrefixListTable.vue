@@ -84,9 +84,14 @@
       </el-table-column>
       <el-table-column prop="prefix" label="Prefix" sortable>
         <template v-slot:default="scope" style="position: relative;">
-          <lmp-arrow v-if="scope.row.lmp && validateBgp" /><em-arrow
-            v-if="scope.row.em && validateBgp"
+          <lmp-arrow
+            v-if="scope.row.type === 'longest-match' && validateBgp"
+          /><em-arrow
+            v-if="scope.row.type === 'exact-match' && validateBgp"
           />{{ scope.row.prefix }}
+          <el-tag class="label sans-serif" v-if="scope.row.isAlloc" type="info"
+            >ALLOCATED</el-tag
+          >
         </template>
       </el-table-column>
       <el-table-column prop="bgp" label="BGP Origin ASN" sortable
@@ -96,11 +101,7 @@
           >
           <span class="mono" v-else>{{ scope.row.bgp }}</span>
           <hand-drawn-box
-            v-if="
-              (scope.row.lmp || scope.row.em) &&
-                validateBgp &&
-                searchAsn === scope.row.bgp
-            "
+            v-if="validateBgp && searchAsn === scope.row.bgp"
           /> </template
       ></el-table-column>
       <el-table-column
@@ -141,7 +142,7 @@ export default {
     HandDrawnBox
   },
   name: "PrefixListTable",
-  props: ["data", "searchAsn", "searchPrefix", "validateBgp"],
+  props: ["data", "searchAsn", "searchPrefix", "validateBgp", "showAlloc"],
   created() {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
@@ -152,12 +153,14 @@ export default {
           ...p,
           rpki: {},
           rpkiDetails: {},
-          lmp: p.type === "longest-match",
-          em: p.type === "exact-match"
+          isAlloc:
+            this.showAlloc &&
+            p.meta &&
+            p.meta.some(m => m.sourceType === "rir-alloc")
         })),
         originAsn: null
       },
-      filterPrefix: "",
+      filterPrefix: ""
     };
   },
   computed: {

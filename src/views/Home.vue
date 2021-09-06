@@ -233,12 +233,14 @@
               prefix: ResultPrefixData.prefix,
               bgp: ResultPrefixData.bgp,
               type: ResultPrefixData.type,
-              rir: ResultPrefixData.rir
+              rir: ResultPrefixData.rir,
+              meta: ResultPrefixData.meta,
             }
           ]"
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           :validateBgp="searchOptions.validateBGP"
+          :showAlloc="true"
         />
         <el-collapse
           v-if="
@@ -252,36 +254,13 @@
             "
             :title="`+ ${ResultPrefixData.less_specifics.length} less specific`"
           >
-            <el-table
+            <prefix-list-table
               :data="ResultPrefixData.less_specifics"
-              :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
-            >
-              <el-table-column prop="prefix" label="Prefix">
-                <template v-slot:default="scope">
-                  {{ scope.row.prefix }}
-                </template>
-              </el-table-column>
-              <el-table-column label="Allocated" prop="alloc">
-                <template v-slot:default="scope">
-                  <i
-                    v-if="scope.row.rir !== 'NOT FOUND'"
-                    class="el-icon-circle-check"
-                    style="font-size: 21px;"
-                  ></i>
-                </template>
-              </el-table-column>
-              <el-table-column label="bgp">
-                <template v-slot:default="scope">
-                  <el-tag
-                    class="label"
-                    v-if="scope.row.bgp === 'NOT SEEN'"
-                    type="info"
-                    >NOT SEEN</el-tag
-                  >
-                  <span class="mono" v-else>{{ scope.row.bgp }}</span>
-                </template>
-              </el-table-column>
-            </el-table>
+              :searchAsn="searchForm.asn"
+              :searchPrefix="searchForm.prefix"
+              validateBgp="false"
+              :showAlloc="true"
+            />
           </el-collapse-item>
           <el-collapse-item
             v-if="
@@ -290,36 +269,13 @@
             "
             :title="`+ ${ResultPrefixData.more_specifics.length} more specific`"
           >
-            <el-table
+           <prefix-list-table
               :data="ResultPrefixData.more_specifics"
-              :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
-            >
-              <el-table-column prop="prefix" label="Prefix">
-                <template v-slot:default="scope">
-                  {{ scope.row.prefix }}
-                </template>
-              </el-table-column>
-              <el-table-column label="Allocated" prop="alloc">
-                <template v-slot:default="scope">
-                  <i
-                    v-if="scope.row.rir !== 'NOT FOUND'"
-                    class="el-icon-circle-check"
-                    style="font-size: 21px;"
-                  ></i>
-                </template>
-              </el-table-column>
-              <el-table-column label="bgp">
-                <template v-slot:default="scope">
-                  <el-tag
-                    class="label"
-                    v-if="scope.row.bgp === 'NOT SEEN'"
-                    type="info"
-                    >NOT SEEN</el-tag
-                  >
-                  <span class="mono" v-else>{{ scope.row.bgp }}</span>
-                </template>
-              </el-table-column>
-            </el-table>
+              :searchAsn="searchForm.asn"
+              :searchPrefix="searchForm.prefix"
+              validateBgp="false"
+              :showAlloc="true"
+            />
           </el-collapse-item>
         </el-collapse>
         <h4 class="header" v-if="ResultPrefixData.same_org.length">
@@ -332,6 +288,7 @@
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           validateBgp="false"
+          :showAlloc="false"
         />
       </div>
       <div v-else>no related prefixes found</div>
@@ -715,6 +672,7 @@ export default {
         type: response.result.type,
         rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
         bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
+        meta: response.result.meta,
         less_specifics: response.result.relations
           .find(r => r.type === "less-specific")
           .members.map(d => {
@@ -724,7 +682,8 @@ export default {
               prefix: d.prefix,
               type: d.type,
               rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
+              meta: d.meta
             };
           }),
         more_specifics: response.result.relations
@@ -736,7 +695,8 @@ export default {
               prefix: d.prefix,
               type: d.type,
               rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
+              meta: d.meta
             };
           }),
         same_org: response.result.relations
