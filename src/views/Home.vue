@@ -221,35 +221,39 @@
       <h4 class="header validation-header">
         RELATED PREFIXES
       </h4>
-      <div v-if="RisAllocData.length">
-        <h4 class="header">
+      <div v-if="ResultPrefixData.prefix">
+        <h4 class="header" v-if="ResultPrefixData.same_org.length">
           Best Matching Prefix in Allocations and/or BGP<el-tag type="info"
-            >Region {{ RisAllocData[0].rir }}</el-tag
+            >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
           >
         </h4>
         <prefix-list-table
-          :data="ResultPrefixData"
+          :data="[
+            {
+              prefix: ResultPrefixData.prefix,
+              bgp: ResultPrefixData.bgp,
+              type: ResultPrefixData.type,
+              rir: ResultPrefixData.rir
+            }
+          ]"
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           :validateBgp="searchOptions.validateBGP"
         />
         <el-collapse
           v-if="
-            ResultPrefixData[0].less_specifics ||
-              ResultPrefixData[0].more_specifics
+            ResultPrefixData.less_specifics || ResultPrefixData.more_specifics
           "
         >
           <el-collapse-item
             v-if="
-              ResultPrefixData[0].less_specifics &&
-                ResultPrefixData[0].less_specifics.length
+              ResultPrefixData.less_specifics &&
+                ResultPrefixData.less_specifics.length
             "
-            :title="
-              `+ ${ResultPrefixData[0].less_specifics.length} less specific`
-            "
+            :title="`+ ${ResultPrefixData.less_specifics.length} less specific`"
           >
             <el-table
-              :data="ResultPrefixData[0].less_specifics"
+              :data="ResultPrefixData.less_specifics"
               :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
             >
               <el-table-column prop="prefix" label="Prefix">
@@ -281,15 +285,13 @@
           </el-collapse-item>
           <el-collapse-item
             v-if="
-              ResultPrefixData[0].more_specifics &&
-                ResultPrefixData[0].more_specifics.length
+              ResultPrefixData.more_specifics &&
+                ResultPrefixData.more_specifics.length
             "
-            :title="
-              `+ ${ResultPrefixData[0].more_specifics.length} more specific`
-            "
+            :title="`+ ${ResultPrefixData.more_specifics.length} more specific`"
           >
             <el-table
-              :data="ResultPrefixData[0].more_specifics"
+              :data="ResultPrefixData.more_specifics"
               :cell-class-name="r => (r.columnIndex === 1 && 'mono') || ''"
             >
               <el-table-column prop="prefix" label="Prefix">
@@ -320,13 +322,13 @@
             </el-table>
           </el-collapse-item>
         </el-collapse>
-        <h4 class="header">
+        <h4 class="header" v-if="ResultPrefixData.same_org.length">
           All Allocations for Same Organisation<el-tag type="info"
-            >Region {{ RisAllocData[0].rir }}</el-tag
+            >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
           >
         </h4>
         <prefix-list-table
-          :data="RisAllocData.filter(p => p.type === 'same-org')"
+          :data="ResultPrefixData.same_org"
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           validateBgp="false"
@@ -374,7 +376,6 @@ export default {
       loadingRoute: false,
       status: {},
       validation: {},
-      RisAllocData: [],
       ResultPrefixData: [],
       searchForm: {
         asn: "",
@@ -535,7 +536,6 @@ export default {
       return this.error == null;
     },
     validatePrefix() {
-      this.RisAllocData = [];
       this.ResultPrefixData = [];
       this.validation = {};
       this.error = null;
@@ -559,9 +559,11 @@ export default {
               // Use the ASN we got back from the LMP in the
               // `relations[type="less-specific"]` when the user has set BGP Origin
               // Validation to fall back to the LMP.
-              let hasBgpOrigin = response.data.results
-                .flatMap(r => r.results)
-                .find(s => s.sourceType === "bgp");
+              let hasBgpOrigin =
+                response.data.result.prefix &&
+                (response.data.result.type === "exact-match" ||
+                  !this.searchOptions.exactMatchOnly) &&
+                response.data.result.meta.find(m => m.sourceType === "bgp");
               if (hasBgpOrigin) {
                 PrefAsn = {
                   prefix: this.searchForm.prefix,
@@ -570,8 +572,6 @@ export default {
                 this.searchForm.asn = hasBgpOrigin.originASNs[0];
               } else if (!this.searchOptions.exactMatchOnly) {
                 this.PrefixResultData =
-                  (Array.isArray(response.data) && response.data) || [];
-                this.RisAllocData =
                   (Array.isArray(response.data) && response.data) || [];
                 PrefAsn.origin_asn = this.extractAsnFromBgpAlloc(
                   response.data
@@ -703,76 +703,74 @@ export default {
         .toRelative();
     },
     storeRelatedPrefixesData(response) {
-      if (!response.relations) {
+      if (!response.result.relations) {
         return;
       }
-      this.RisAllocData = response.relations.map(d => {
-        let bgp_s = d.results.find(r => r.sourceType === "bgp");
-        let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
-        return {
-          prefix: d.prefix,
-          type: d.type,
-          rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-          bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
-        };
-      });
-      this.ResultPrefixData = response.results.map(d => {
-        let bgp_s = d.results.find(r => r.sourceType === "bgp");
-        let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
-        return {
-          prefix: d.prefix,
-          type: d.type,
-          rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-          bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
-          less_specifics: response.relations
-            .filter(r => r.type === "less-specific")
-            .map(d => {
-              let bgp_s = d.results.find(r => r.sourceType === "bgp");
-              let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
-              return {
-                prefix: d.prefix,
-                type: d.type,
-                rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-                bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
-              };
-            }),
-          more_specifics: response.relations
-            .filter(r => r.type === "more-specific")
-            .map(d => {
-              let bgp_s = d.results.find(r => r.sourceType === "bgp");
-              let rir_s = d.results.find(r => r.sourceType === "rir-alloc");
-              return {
-                prefix: d.prefix,
-                type: d.type,
-                rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
-                bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
-              };
-            })
-        };
-      });
+
+      let bgp_s = response.result.meta.find(r => r.sourceType === "bgp");
+      let rir_s = response.result.meta.find(r => r.sourceType === "rir-alloc");
+
+      this.ResultPrefixData = {
+        prefix: response.result.prefix,
+        type: response.result.type,
+        rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+        bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN",
+        less_specifics: response.result.relations
+          .find(r => r.type === "less-specific")
+          .members.map(d => {
+            let bgp_s = d.meta.find(r => r.sourceType === "bgp");
+            let rir_s = d.meta.find(r => r.sourceType === "rir-alloc");
+            return {
+              prefix: d.prefix,
+              type: d.type,
+              rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+            };
+          }),
+        more_specifics: response.result.relations
+          .find(r => r.type === "more-specific")
+          .members.map(d => {
+            let bgp_s = d.meta.find(r => r.sourceType === "bgp");
+            let rir_s = d.meta.find(r => r.sourceType === "rir-alloc");
+            return {
+              prefix: d.prefix,
+              type: d.type,
+              rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+            };
+          }),
+        same_org: response.result.relations
+          .find(r => r.type === "same-org")
+          .members.map(d => {
+            let bgp_s = d.meta.find(r => r.sourceType === "bgp");
+            let rir_s = d.meta.find(r => r.sourceType === "rir-alloc");
+            return {
+              prefix: d.prefix,
+              type: d.type,
+              rir: (rir_s && rir_s.sourceID.toUpperCase()) || "NOT FOUND",
+              bgp: (bgp_s && bgp_s.originASNs[0]) || "NOT SEEN"
+            };
+          })
+      };
     },
     // Looks for the Origin ASN of the BGP announcement of the longest
     // matching prefix, including the exactly matching one.
     // return { origin_asn: null, ...} if it can't find one.
     extractAsnFromBgpAlloc(response) {
-      let source = response.results
-        .flatMap(r => r.results)
-        .find(s => s.sourceType === "bgp");
+      let source = response.result.meta.find(s => s.sourceType === "bgp");
       if (source) {
         return { origin_asn: source.originASNs[0], prefix: response.prefix };
       }
 
-      if (!response.relations) {
+      if (!response.result.relations) {
         return { origin_asn: null, prefix: response.prefix };
       }
 
       // look for the longest prefix in the less-specific related ones,
       // and return the origin_asn of the BGP announcement if it exists.
-      let lmp_re = response.relations
-        .filter(
-          rel => rel.type === "less-specific" || rel.type === "exact-match"
-        )
-        .reduce((rel, lmp) => {
+      let lmp_re = response.result.relations
+        .find(rel => rel.type === "less-specific")
+        .members.reduce((rel, lmp) => {
           if (
             Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
           ) {
@@ -781,7 +779,7 @@ export default {
           return lmp;
         }, []);
       let bgp_rec =
-        lmp_re.results && lmp_re.results.find(s => s.sourceType === "bgp");
+        lmp_re.result && lmp_re.result.meta.find(s => s.sourceType === "bgp");
       return {
         origin_asn: (bgp_rec && bgp_rec.originASNs[0]) || null,
         prefix: lmp_re.prefix
