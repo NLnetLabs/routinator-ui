@@ -352,6 +352,7 @@
         </div>
         <div v-else>no related prefixes found</div>
       </div>
+      <div v-else class="validation-description">No less or more specific prefixes in either Allocations and BGP, or prefixes for the same organisation were found.</div>
     </div>
 
     <div v-if="loadingStatus" class="loading">
