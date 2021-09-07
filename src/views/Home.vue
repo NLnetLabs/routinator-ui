@@ -138,27 +138,6 @@
                 <i class="el-icon-question" slot="reference"
               /></el-popover>
             </el-form-item>
-            <el-form-item label="Prefixes Search">
-              <el-switch
-                active-text="Show all Prefixes from the same Organisation in RIR Allocations"
-                name="type"
-                v-model="searchOptions.relatedFromAlloc"
-              ></el-switch>
-              <el-popover
-                class="item"
-                effect="dark"
-                trigger="click"
-                width="200"
-                placement="top"
-              >
-                <div slot="default" style="word-break: break-word;">
-                  One day, perhaps some idle tongue mentions your name by
-                  accident: I feel as if a rose were flung into the room, all
-                  hue and scent.
-                </div>
-                <i class="el-icon-question" slot="reference"
-              /></el-popover>
-            </el-form-item>
           </el-form>
         </div>
       </el-col>
@@ -169,12 +148,13 @@
       {{ $t("common.loading") }}
     </div>
 
+    <h4 class="header validation-header">
+      VALIDATION
+    </h4>
+
     <div v-if="validation && validation.route && !this.error">
       <el-divider />
 
-      <h4 class="header validation-header">
-        VALIDATION
-      </h4>
       <h4 class="header">
         {{ $t("home.resultsfor") }}
         <span class="mono">{{ validation.route.prefix }}</span> -
@@ -216,8 +196,15 @@
         :data="validation.validity.VRPs.unmatched_length"
       />
     </div>
+    <div v-else>
+      <h4>No Origin ASN found for this Prefix in BGP.</h4>
+      <div class="validation-description">
+        You could enter an ASN to validate this prefix against and validate
+        again.
+      </div>
+    </div>
 
-    <div v-if="searchOptions.relatedFromAlloc">
+    <div>
       <h4 class="header validation-header">
         RELATED PREFIXES
       </h4>
@@ -234,26 +221,42 @@
               bgp: ResultPrefixData.bgp,
               type: ResultPrefixData.type,
               rir: ResultPrefixData.rir,
-              meta: ResultPrefixData.meta,
+              meta: ResultPrefixData.meta
             }
           ]"
           :searchAsn="searchForm.asn"
           :searchPrefix="searchForm.prefix"
           :validateBgp="searchOptions.validateBGP"
           :showAlloc="true"
+          style="margin-bottom: 24px;"
         />
-        <el-collapse
+
+        <!------------- Less Specifics ---------------->
+        <div
           v-if="
-            ResultPrefixData.less_specifics || ResultPrefixData.more_specifics
+            ResultPrefixData.less_specifics &&
+              ResultPrefixData.less_specifics.length
           "
         >
-          <el-collapse-item
-            v-if="
-              ResultPrefixData.less_specifics &&
-                ResultPrefixData.less_specifics.length
-            "
-            :title="`+ ${ResultPrefixData.less_specifics.length} less specific`"
-          >
+          <el-header style="background: none; height: 48px;">
+            <el-row>
+              <el-col :span="22">
+                <el-button type="text" @click="setShowLessSpecific">
+                  + {{ ResultPrefixData.less_specifics.length }} less specific
+                </el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-switch
+                  active-text="show"
+                  name="type"
+                  v-model="searchOptions.relatedLessSpecificExpanded"
+                  style="margin-top: 15%;"
+                ></el-switch>
+              </el-col>
+            </el-row>
+          </el-header>
+
+          <el-main v-if="searchOptions.relatedLessSpecificExpanded">
             <prefix-list-table
               :data="ResultPrefixData.less_specifics"
               :searchAsn="searchForm.asn"
@@ -261,37 +264,94 @@
               validateBgp="false"
               :showAlloc="true"
             />
-          </el-collapse-item>
-          <el-collapse-item
-            v-if="
-              ResultPrefixData.more_specifics &&
-                ResultPrefixData.more_specifics.length
-            "
-            :title="`+ ${ResultPrefixData.more_specifics.length} more specific`"
-          >
-           <prefix-list-table
+          </el-main>
+        </div>
+
+        <!----------------- More Specifics --------------->
+
+        <div
+          v-if="
+            ResultPrefixData.more_specifics &&
+              ResultPrefixData.more_specifics.length
+          "
+        >
+          <el-header style="background: none;height: 48px;">
+            <el-row>
+              <el-col :span="22">
+                <el-button type="text" @click="setShowMoreSpecific">
+                  + {{ ResultPrefixData.more_specifics.length }} more specific
+                </el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-switch
+                  active-text="show"
+                  name="type"
+                  v-model="searchOptions.relatedMoreSpecificExpanded"
+                  style="margin-top: 15%;"
+                ></el-switch>
+              </el-col>
+            </el-row>
+          </el-header>
+
+          <el-main v-if="searchOptions.relatedMoreSpecificExpanded">
+            <prefix-list-table
               :data="ResultPrefixData.more_specifics"
               :searchAsn="searchForm.asn"
               :searchPrefix="searchForm.prefix"
               validateBgp="false"
               :showAlloc="true"
             />
-          </el-collapse-item>
-        </el-collapse>
-        <h4 class="header" v-if="ResultPrefixData.same_org.length">
-          All Allocations for Same Organisation<el-tag type="info"
-            >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
-          >
-        </h4>
-        <prefix-list-table
-          :data="ResultPrefixData.same_org"
-          :searchAsn="searchForm.asn"
-          :searchPrefix="searchForm.prefix"
-          validateBgp="false"
-          :showAlloc="false"
-        />
+          </el-main>
+        </div>
+
+        <!----------------- Allocations ----------------->
+
+        <div
+          v-if="ResultPrefixData.same_org && ResultPrefixData.same_org.length"
+        >
+          <el-header style="background: none;height: 48px;">
+            <el-row>
+              <el-col :span="22">
+                <el-button
+                  type="text"
+                  @click="setShowRelatedAlloc"
+                  v-if="
+                    ResultPrefixData.same_org &&
+                      ResultPrefixData.same_org.length
+                  "
+                >
+                  + {{ ResultPrefixData.same_org.length }} allocated to the same
+                  Organisation
+                  <el-tag
+                    type="info"
+                    style="position: absolute; margin-left: 12px; margin-top: -8px;"
+                    >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
+                  >
+                </el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-switch
+                  active-text="show"
+                  name="type"
+                  v-model="searchOptions.relatedFromAlloc"
+                  style="margin-top: 15%;"
+                ></el-switch>
+              </el-col>
+            </el-row>
+          </el-header>
+
+          <el-main v-if="searchOptions.relatedFromAlloc">
+            <Prefix-list-table
+              :data="ResultPrefixData.same_org"
+              :searchAsn="searchForm.asn"
+              :searchPrefix="searchForm.prefix"
+              validateBgp="false"
+              :showAlloc="false"
+            />
+          </el-main>
+        </div>
+        <div v-else>no related prefixes found</div>
       </div>
-      <div v-else>no related prefixes found</div>
     </div>
 
     <div v-if="loadingStatus" class="loading">
@@ -341,6 +401,8 @@ export default {
       searchOptions: {
         validateBGP: true,
         relatedFromAlloc: false,
+        relatedLessSpecificExpanded: false,
+        relatedMoreSpecificExpanded: false,
         exactMatchOnly: false
       },
       showOptions: true,
@@ -360,6 +422,24 @@ export default {
       if (this.$route.query.include === "related_alloc") {
         console.log("switch on include related alloc");
         this.searchOptions.relatedFromAlloc = true;
+      }
+
+      if (this.$route.query.include === "related_less_specific") {
+        console.log("switch on include related alloc");
+        this.searchOptions.relatedLessSpecificExpanded = true;
+      }
+      if (this.$route.query.include === "related_alloc") {
+        console.log("switch on include related less specific");
+        this.searchOptions.relatedLessSpecificExpanded = true;
+      }
+
+      if (this.$route.query.include === "related_more_specific") {
+        console.log("switch on include related more specific");
+        this.searchOptions.relatedMoreSpecificExpanded = true;
+      }
+      if (this.$route.query.include === "related_more_specific") {
+        console.log("switch on include related alloc");
+        this.searchOptions.relatedMoreSpecificExpanded = true;
       }
 
       if (this.$route.query.exact_match_only) {
@@ -436,6 +516,16 @@ export default {
           name: "include",
           type: String,
           value: { true: "related_alloc" }
+        },
+        relatedLessSpecificExpanded: {
+          name: "include",
+          type: String,
+          value: { true: "related_less_specific" }
+        },
+        relatedMoreSpecificExpanded: {
+          name: "include",
+          type: String,
+          value: { true: "related_more_specific" }
         }
       };
       let query = {};
@@ -642,9 +732,34 @@ export default {
         this.firstSearch = false;
         this.setQueryParams();
       }
+      if (this.searchOptions.relatedLessSpecificExpanded) {
+        this.loadingRoute = true;
+        this.firstSearch = false;
+        this.setQueryParams();
+      }
+      if (this.searchOptions.relatedMoreSpecificExpanded) {
+        this.loadingRoute = true;
+        this.firstSearch = false;
+        this.setQueryParams();
+      }
     },
     setShowOptions() {
       this.showOptions = this.showOptions ? false : true;
+    },
+    setShowLessSpecific() {
+      this.searchOptions.relatedLessSpecificExpanded = this.searchOptions
+        .relatedLessSpecificExpanded
+        ? false
+        : true;
+    },
+    setShowMoreSpecific() {
+      this.searchOptions.relatedMoreSpecificExpanded = this.searchOptions
+        .relatedMoreSpecificExpanded
+        ? false
+        : true;
+    },
+    setShowRelatedAlloc() {
+      this.searchOptions.relatedFromAlloc = this.searchOptions.relatedFromAlloc ? false : true;
     },
     validateAnnouncement() {
       this.validatePrefix();

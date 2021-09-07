@@ -10,6 +10,12 @@
       </el-col>
     </el-row>
     <el-table
+      v-if="
+        !!(
+          this.enrichedData.prefixes.length > 1 ||
+          Object.values(this.enrichedData.prefixes[0].rpkiDetails).length
+        )
+      "
       :data="
         enrichedData.prefixes.filter(
           data =>
@@ -82,7 +88,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="prefix" label="Prefix" sortable>
+      <el-table-column
+        prop="prefix"
+        label="Prefix"
+        :sortable="enrichedData.prefixes.length > 1"
+      >
         <template v-slot:default="scope" style="position: relative;">
           <lmp-arrow
             v-if="scope.row.type === 'longest-match' && validateBgp"
@@ -94,7 +104,10 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="bgp" label="BGP Origin ASN" sortable
+      <el-table-column
+        prop="bgp"
+        label="BGP Origin ASN"
+        :sortable="enrichedData.prefixes.length > 1"
         ><template v-slot:default="scope">
           <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
@@ -107,7 +120,7 @@
       <el-table-column
         prop="rpkiState"
         label="RPKI Status"
-        sortable
+        :sortable="enrichedData.prefixes.length > 1"
         :sort-method="sortByRpkiStatus"
         ><template v-slot:default="scope"
           ><el-tag
@@ -123,6 +136,75 @@
         >
       </el-table-column>
     </el-table>
+    <el-main v-else>
+      <el-table
+        :data="
+          enrichedData.prefixes.filter(
+            data =>
+              !this.filterPrefixValidatedRegExp ||
+              data.prefix.match(this.filterPrefixValidatedRegExp)
+          )
+        "
+        style="width: 100%"
+        stripe
+        :cell-class-name="r => (r.columnIndex === 0 && 'mono') || ''"
+      >
+        <el-table-column
+          prop="prefix"
+          label="Prefix"
+          width="380"
+          :sortable="enrichedData.prefixes.length > 1"
+        >
+          <template v-slot:default="scope" style="position: relative;">
+            <lmp-arrow
+              v-if="scope.row.type === 'longest-match' && validateBgp"
+            /><em-arrow
+              v-if="scope.row.type === 'exact-match' && validateBgp"
+            />{{ scope.row.prefix }}
+            <el-tag
+              class="label sans-serif"
+              v-if="scope.row.isAlloc"
+              type="info"
+              >ALLOCATED</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="bgp"
+          label="BGP Origin ASN"
+          :sortable="enrichedData.prefixes.length > 1"
+          ><template v-slot:default="scope">
+            <el-tag
+              class="label"
+              v-if="scope.row.bgp === 'NOT SEEN'"
+              type="info"
+              >NOT SEEN</el-tag
+            >
+            <span class="mono" v-else>{{ scope.row.bgp }}</span>
+            <hand-drawn-box
+              v-if="validateBgp && searchAsn === scope.row.bgp"
+            /> </template
+        ></el-table-column>
+        <el-table-column
+          prop="rpkiState"
+          label="RPKI Status"
+          :sortable="enrichedData.prefixes.length > 1"
+          :sort-method="sortByRpkiStatus"
+          ><template v-slot:default="scope"
+            ><el-tag
+              v-if="scope.row.rpki.state"
+              :type="
+                (scope.row.rpki.state === 'VALID' && 'success') ||
+                  (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                  (scope.row.rpki.state === 'SERVER FAILURE' && 'danger') ||
+                  'warning'
+              "
+              >{{ scope.row.rpki.state }} {{ scope.row.reason }}</el-tag
+            ></template
+          >
+        </el-table-column>
+      </el-table>
+    </el-main>
   </div>
 </template>
 
@@ -172,6 +254,12 @@ export default {
         console.log("invalid regex");
       }
       return filterRegEx;
+    },
+    allowExpandTable: function() {
+      return !!(
+        this.enrichedData.prefixes.length > 1 ||
+        Object.values(this.enrichedData.prefixes[0].rpkiDetails).length
+      );
     }
   },
   methods: {
