@@ -199,7 +199,7 @@
     <div v-else>
       <h4>No Origin ASN found for this Prefix in BGP.</h4>
       <div class="validation-description">
-        You could enter an ASN to validate this prefix against and validate
+        You can enter an ASN to validate this prefix against and try
         again.
       </div>
     </div>
