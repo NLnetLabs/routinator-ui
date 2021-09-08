@@ -363,8 +363,8 @@
                   Organisation
                   <el-tag
                     type="info"
-                    style="position: absolute; margin-left: 12px; margin-top: -8px;"
-                    >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
+                    style="position: absolute; margin-left: 12px; margin-top: -8px; font-weight: 400;"
+                    >REGION {{ ResultPrefixData.same_org[0].rir }}</el-tag
                   >
                 </el-button>
               </el-col>
