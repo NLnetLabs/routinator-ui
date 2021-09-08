@@ -1,6 +1,6 @@
 <template>
   <div :class="{ 'validity-table': true, warning: !isValid }">
-    <el-tag :type="isValid ? 'success' : 'warning'" size="small">{{
+    <el-tag :type="isValid ? 'success' : 'danger'" size="small">{{
       label
     }}</el-tag>
     <el-table

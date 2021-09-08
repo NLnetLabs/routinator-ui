@@ -127,7 +127,7 @@
             v-if="scope.row.rpki.state"
             :type="
               (scope.row.rpki.state === 'VALID' && 'success') ||
-                (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                (scope.row.rpki.state === 'INVALID' && 'warning') ||
                 (scope.row.rpki.state === 'SERVER FAILURE' && 'danger') ||
                 'warning'
             "

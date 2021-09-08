@@ -198,7 +198,7 @@
         <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
           $t("home.valid")
         }}</el-tag>
-        <el-tag type="warning" v-if="validation.validity.state === 'invalid'"
+        <el-tag type="danger" v-if="validation.validity.state === 'invalid'"
           >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
         >
       </h4>
