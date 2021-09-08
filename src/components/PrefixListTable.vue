@@ -98,7 +98,7 @@
             v-if="scope.row.type === 'longest-match' && validateBgp"
           /><em-arrow
             v-if="scope.row.type === 'exact-match' && validateBgp"
-          />{{ scope.row.prefix }}
+          /><el-link :href="`/${encodeURIComponent(scope.row.prefix)}`">{{ scope.row.prefix }}</el-link>
           <el-tag class="label sans-serif" v-if="scope.row.isAlloc" type="info"
             >ALLOCATED</el-tag
           >
@@ -160,7 +160,7 @@
               v-if="scope.row.type === 'longest-match' && validateBgp"
             /><em-arrow
               v-if="scope.row.type === 'exact-match' && validateBgp"
-            />{{ scope.row.prefix }}
+            /><el-link :href="`/${encodeURIComponent(scope.row.prefix)}`">{{ scope.row.prefix }}</el-link>
             <el-tag
               class="label sans-serif"
               v-if="scope.row.isAlloc"
@@ -347,4 +347,9 @@ export default {
   margin-top: 0.6rem;
   font-size: 16px;
 }
+
+.el-link {
+  margin-right: 12px;
+}
+
 </style>
