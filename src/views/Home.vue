@@ -530,7 +530,6 @@ export default {
       };
       let query = {};
 
-      console.log("yo routing!");
       let value = "";
       Object.entries(this.searchOptions).forEach(o => {
         let qp = queryParamMap[o[0]];
