@@ -11,27 +11,27 @@
       <div v-if="!detailed">
         <div class="group">
           <strong>{{ $t("tal.valid") }}</strong>
-          <div class="value">{{ data.validROAs }}</div>
+          <div class="value">{{ (data.validROAs).toLocaleString("en") }}</div>
         </div>
 
         <div class="group">
           <strong>{{ $t("tal.final") }}</strong>
-          <div class="value">{{ data.vrpsFinal }}</div>
+          <div class="value">{{ (data.vrpsFinal).toLocaleString("en") }}</div>
         </div>
 
         <div class="group">
           <strong>{{ $t("tal.unsafe") }}</strong>
-          <div class="value">{{ data.vrpsUnsafe }}</div>
+          <div class="value">{{ (data.vrpsUnsafe).toLocaleString("en") }}</div>
         </div>
 
         <div class="group">
           <strong>{{ $t("tal.filtered") }}</strong>
-          <div class="value">{{ data.vrpsLocallyFiltered }}</div>
+          <div class="value">{{ (data.vrpsLocallyFiltered).toLocaleString("en") }}</div>
         </div>
 
         <div class="group">
           <strong>{{ $t("tal.duplicate") }}</strong>
-          <div class="value">{{ data.vrpsDuplicate }}</div>
+          <div class="value">{{ (data.vrpsDuplicate).toLocaleString("en") }}</div>
         </div>
       </div>
 
@@ -43,13 +43,13 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.valid") }}</strong>
-              <div class="value">{{ data.validROAs }}</div>
+              <div class="value">{{ (data.validROAs).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.invalid") }}</strong>
-              <div class="value">{{ data.invalidROAs }}</div>
+              <div class="value">{{ (data.invalidROAs).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -61,31 +61,31 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.total") }}</strong>
-              <div class="value">{{ data.vrpsTotal }}</div>
+              <div class="value">{{ (data.vrpsTotal).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.unsafe") }}</strong>
-              <div class="value">{{ data.vrpsUnsafe }}</div>
+              <div class="value">{{ (data.vrpsUnsafe).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.duplicate") }}</strong>
-              <div class="value">{{ data.vrpsDuplicate }}</div>
+              <div class="value">{{ (data.vrpsDuplicate).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.final") }}</strong>
-              <div class="value">{{ data.vrpsFinal }}</div>
+              <div class="value">{{ (data.vrpsFinal).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.locallyFiltered") }}</strong>
-              <div class="value">{{ data.vrpsLocallyFiltered }}</div>
+              <div class="value">{{ (data.vrpsLocallyFiltered).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -97,13 +97,13 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.valid") }}</strong>
-              <div class="value">{{ data.validPublicationPoints }}</div>
+              <div class="value">{{ (data.validPublicationPoints).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.rejected") }}</strong>
-              <div class="value">{{ data.rejectedPublicationPoints }}</div>
+              <div class="value">{{ (data.rejectedPublicationPoints).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -115,25 +115,25 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.valid") }}</strong>
-              <div class="value">{{ data.validManifests }}</div>
+              <div class="value">{{ (data.validManifests).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.invalid") }}</strong>
-              <div class="value">{{ data.invalidManifests }}</div>
+              <div class="value">{{ (data.invalidManifests).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.stale") }}</strong>
-              <div class="value">{{ data.staleManifests }}</div>
+              <div class="value">{{ (data.staleManifests).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.missing") }}</strong>
-              <div class="value">{{ data.missingManifests }}</div>
+              <div class="value">{{ (data.missingManifests).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -145,25 +145,25 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.valid") }}</strong>
-              <div class="value">{{ data.validCRLs }}</div>
+              <div class="value">{{ (data.validCRLs).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.invalid") }}</strong>
-              <div class="value">{{ data.invalidCRLs }}</div>
+              <div class="value">{{ (data.invalidCRLs).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.stale") }}</strong>
-              <div class="value">{{ data.staleCRLs }}</div>
+              <div class="value">{{ (data.staleCRLs).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.stray") }}</strong>
-              <div class="value">{{ data.strayCRLs }}</div>
+              <div class="value">{{ (data.strayCRLs).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -175,19 +175,19 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.validCA") }}</strong>
-              <div class="value">{{ data.validCACerts }}</div>
+              <div class="value">{{ (data.validCACerts).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.validEE") }}</strong>
-              <div class="value">{{ data.validEECerts }}</div>
+              <div class="value">{{ (data.validEECerts).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.invalid") }}</strong>
-              <div class="value">{{ data.invalidCerts }}</div>
+              <div class="value">{{ (data.invalidCerts).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -199,13 +199,13 @@
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.valid") }}</strong>
-              <div class="value">{{ data.validGBRs }}</div>
+              <div class="value">{{ (data.validGBRs).toLocaleString("en") }}</div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="group group-detailed">
               <strong>{{ $t("tal-detailed.invalid") }}</strong>
-              <div class="value">{{ data.invalidGBRs }}</div>
+              <div class="value">{{ (data.invalidGBRs).toLocaleString("en") }}</div>
             </div>
           </el-col>
         </el-row>
@@ -214,7 +214,7 @@
           <strong>{{ $t("tal-detailed.otherObjects") }}</strong>
         </div>
         <div class="group">
-          <div class="value">{{ data.otherObjects }}</div>
+          <div class="value">{{ (data.otherObjects).toLocaleString("en") }}</div>
         </div>
       </div>
     </el-card>
