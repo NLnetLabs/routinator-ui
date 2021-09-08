@@ -191,8 +191,6 @@
     </h4>
 
     <div v-if="validation && validation.route && !this.error">
-      <el-divider />
-
       <h4 class="header">
         {{ $t("home.resultsfor") }}
         <span class="mono">{{ validation.route.prefix }}</span> -
@@ -240,6 +238,8 @@
         You can enter an ASN to validate this prefix against and try again.
       </div>
     </div>
+
+    <el-divider />
 
     <div>
       <h4 class="header validation-header">
@@ -1041,5 +1041,4 @@ h4.header,
   // background: #f7f1e3;
   background-color: #f4f4f4;
 }
-
 </style>
