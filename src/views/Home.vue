@@ -85,7 +85,9 @@
           </div>
         </div>
 
-        <!----- end of Validation Button -------------------->
+        <!----- options + freshness box -------------------->
+
+        <!---- options box ------------------>
 
         <div
           v-if="showOptions"
@@ -141,6 +143,9 @@
         </div>
       </el-col>
     </el-row>
+
+    <!----------------  freshness box ----------------->
+
     <el-row>
       <el-col :span="16" :offset="4" v-if="showOptions">
         <div class="freshness-box">
@@ -155,7 +160,15 @@
               >
               ({{ fromNow(status.lastUpdateDone) }})
             </div>
-
+            <div
+              v-else-if="status && status.waiting"
+              style="color: rgb(104, 194, 59);"
+            >
+              Routinator is initializing, please wait.
+            </div>
+            <div v-else-if="status && status.error" style="color: red;">
+              NO DATA
+            </div>
             <div>
               BGP
             </div>
@@ -165,7 +178,6 @@
               }}</span>
               ({{ fromNow(bgpStatus) }})
             </div>
-
             <div>
               RIR
             </div>
@@ -189,7 +201,6 @@
     <!--------------------- Result Section ------------------------->
 
     <section v-if="!firstSearch">
-      
       <h4 class="header validation-header">
         VALIDATION
       </h4>
@@ -236,11 +247,17 @@
           :data="validation.validity.VRPs.unmatched_length"
         />
       </div>
-      <div v-else>
+      <div v-else-if="!this.status.error && !this.status.waiting">
         <h4>No Origin ASN found for this Prefix in BGP.</h4>
         <div class="validation-description">
           You can enter an ASN to validate this prefix against and try again.
         </div>
+      </div>
+      <div v-else-if="this.status.waiting">
+        <h4 style="color: red;">Routinator is initializing. Please wait.</h4>
+      </div>
+      <div v-else-if="this.status.error">
+        <h4 style="color: red;">{{ this.status.error }}</h4>
       </div>
 
       <el-divider />
@@ -434,7 +451,7 @@ export default {
       bgpStatus: null,
       rirAllocStatus: [],
       rotoSources: [],
-      status: {},
+      status: { waiting: true, error: null },
       validation: {},
       ResultPrefixData: [],
       searchForm: {
@@ -527,13 +544,32 @@ export default {
     },
     loadRoutinatorStatus() {
       this.loadingStatus = true;
-      APIService.getRoutinatorStatus().then(response => {
-        this.status = response.data;
-        this.loadingStatus = false;
-        if (this.status && this.status.version) {
-          this.$emit("update-version", this.status.version);
+      this.statusing = true;
+      APIService.getRoutinatorStatus().then(
+        response => {
+          this.status = response.data;
+          this.loadingStatus = false;
+          this.status.waiting = false;
+          this.status.error = null;
+          if (this.status && this.status.version) {
+            this.$emit("update-version", this.status.version);
+          }
+        },
+        err => {
+          this.loadingStatus = false;
+          console.log("routinator still initializing...");
+          if (err.response && err.response.status === 503) {
+            this.status.waiting = true;
+            // retry after 10 seconds.
+            window.setTimeout(this.loadRoutinatorStatus, 10000);
+          } else {
+            this.status.error =
+              (err.response && err.response.data) ||
+              "Routinator has unknown problems. Reloading this page may help.";
+            this.status.waiting = false;
+          }
         }
-      });
+      );
 
       return false;
     },
@@ -741,27 +777,6 @@ export default {
                 return;
               }
 
-              if (PrefAsn.origin_asn) {
-                console.log(
-                  `validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`
-                );
-                this.setQueryParams();
-                APIService.checkValidity(
-                  PrefAsn.origin_asn,
-                  PrefAsn.prefix
-                ).then(response => {
-                  this.loadingRoute = false;
-                  if (response.data && response.data.validated_route) {
-                    this.validation = response.data.validated_route;
-                  }
-                });
-              } else {
-                console.log(
-                  `no announced asn for ${PrefAsn.prefix}. can't validate.`
-                );
-                this.warning = `Can't find an Origin ASN in BGP for this Prefix`;
-              }
-
               // Always store the related prefixes, so we
               // don't have to bother the roto API once more.
               // For now the roto API always returns the
@@ -770,6 +785,29 @@ export default {
               // this writing).
               if (response && response.data) {
                 this.storeRelatedPrefixesData(response.data);
+              }
+
+              if (PrefAsn.origin_asn) {
+                console.log(
+                  `validating ${PrefAsn.prefix} for ${PrefAsn.origin_asn}`
+                );
+                if (!status.error && !status.waiting) {
+                  this.setQueryParams();
+                  APIService.checkValidity(
+                    PrefAsn.origin_asn,
+                    PrefAsn.prefix
+                  ).then(response => {
+                    this.loadingRoute = false;
+                    if (response.data && response.data.validated_route) {
+                      this.validation = response.data.validated_route;
+                    }
+                  });
+                }
+              } else {
+                console.log(
+                  `no announced asn for ${PrefAsn.prefix}. can't validate.`
+                );
+                this.warning = `Can't find an Origin ASN in BGP for this Prefix`;
               }
 
               router
@@ -893,6 +931,7 @@ export default {
         .toRelative();
     },
     storeRelatedPrefixesData(response) {
+      console.log("yo");
       if (!response.result.relations) {
         return;
       }

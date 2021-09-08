@@ -9,10 +9,10 @@ module.exports = {
   devServer: {
     proxy: {
       "/api/v1/validity/": {
-        target: "https://routinator.do.nlnetlabs.nl"
+        target: `https://${process.env.VUE_APP_ROUTINATOR_API_HOST}`
       },
-      "/api/v1/status": { target: "https://routinator.do.nlnetlabs.nl" },
-      "/api/v1/": { target: "http://127.0.0.1:8100"}
+      "/api/v1/status": { target: `https://${process.env.VUE_APP_ROUTINATOR_API_HOST}` },
+      "/api/v1/": { target: `https://${process.env.VUE_APP_HOST}` }
     }
   },
   // note that relative publicPath seems the way to go,
