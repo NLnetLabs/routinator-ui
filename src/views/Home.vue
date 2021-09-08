@@ -26,7 +26,7 @@
                 <div
                   v-if="inferredPrefix"
                   class="options-text"
-                  style="text-align: left; position: absolute; color: #e6a23c"
+                  style="text-align: left; position: absolute; color: rgb(104, 194, 59)"
                 >
                   this prefix was inferred
                 </div>
@@ -186,217 +186,222 @@
       {{ $t("common.loading") }}
     </div>
 
-    <h4 class="header validation-header">
-      VALIDATION
-    </h4>
+    <!--------------------- Result Section ------------------------->
 
-    <div v-if="validation && validation.route && !this.error">
-      <h4 class="header">
-        {{ $t("home.resultsfor") }}
-        <span class="mono">{{ validation.route.prefix }}</span> -
-        <span class="mono">{{ validation.route.origin_asn }}</span>
-        <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
-          $t("home.valid")
-        }}</el-tag>
-        <el-tag type="danger" v-if="validation.validity.state === 'invalid'"
-          >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
-        >
-      </h4>
-
-      <div class="validation-description">
-        {{ validation.validity.description }}
-      </div>
-
-      <validity-table
-        v-if="
-          validation.validity.VRPs && validation.validity.VRPs.matched.length
-        "
-        :label="$t('home.matched')"
-        :isValid="true"
-        :data="validation.validity.VRPs.matched"
-      />
-      <validity-table
-        v-if="
-          validation.validity.VRPs &&
-            validation.validity.VRPs.unmatched_as.length
-        "
-        :label="$t('home.unmatchedasn')"
-        :data="validation.validity.VRPs.unmatched_as"
-      />
-      <validity-table
-        v-if="
-          validation.validity.VRPs &&
-            validation.validity.VRPs.unmatched_length.length
-        "
-        :label="$t('home.unmatchedlength')"
-        :data="validation.validity.VRPs.unmatched_length"
-      />
-    </div>
-    <div v-else>
-      <h4>No Origin ASN found for this Prefix in BGP.</h4>
-      <div class="validation-description">
-        You can enter an ASN to validate this prefix against and try again.
-      </div>
-    </div>
-
-    <el-divider />
-
-    <div>
+    <section v-if="!firstSearch">
+      
       <h4 class="header validation-header">
-        RELATED PREFIXES
+        VALIDATION
       </h4>
-      <div v-if="ResultPrefixData.prefix">
-        <h4 class="header" v-if="ResultPrefixData.same_org.length">
-          Best Matching Prefix in Allocations and/or BGP<el-tag type="info"
-            >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
+
+      <div v-if="validation && validation.route && !this.error">
+        <h4 class="header">
+          {{ $t("home.resultsfor") }}
+          <span class="mono">{{ validation.route.prefix }}</span> -
+          <span class="mono">{{ validation.route.origin_asn }}</span>
+          <el-tag type="success" v-if="validation.validity.state === 'valid'">{{
+            $t("home.valid")
+          }}</el-tag>
+          <el-tag type="danger" v-if="validation.validity.state === 'invalid'"
+            >{{ $t("home.invalid") }} {{ validation.validity.reason }}</el-tag
           >
         </h4>
-        <prefix-list-table
-          :data="[
-            {
-              prefix: ResultPrefixData.prefix,
-              bgp: ResultPrefixData.bgp,
-              type: ResultPrefixData.type,
-              rir: ResultPrefixData.rir,
-              meta: ResultPrefixData.meta
-            }
-          ]"
-          :searchAsn="searchForm.asn"
-          :searchPrefix="searchForm.prefix"
-          :validateBgp="searchOptions.validateBGP"
-          :showAlloc="true"
-          style="margin-bottom: 24px;"
+
+        <div class="validation-description">
+          {{ validation.validity.description }}
+        </div>
+
+        <validity-table
+          v-if="
+            validation.validity.VRPs && validation.validity.VRPs.matched.length
+          "
+          :label="$t('home.matched')"
+          :isValid="true"
+          :data="validation.validity.VRPs.matched"
         />
-
-        <!------------- Less Specifics ---------------->
-        <div
+        <validity-table
           v-if="
-            ResultPrefixData.less_specifics &&
-              ResultPrefixData.less_specifics.length
+            validation.validity.VRPs &&
+              validation.validity.VRPs.unmatched_as.length
           "
-        >
-          <el-header style="background: none; height: 48px;">
-            <el-row>
-              <el-col :span="22">
-                <el-button type="text" @click="setShowLessSpecific">
-                  + {{ ResultPrefixData.less_specifics.length }} less specific
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-switch
-                  active-text="show"
-                  name="type"
-                  v-model="searchOptions.relatedLessSpecificExpanded"
-                  @change="setQueryParams"
-                  style="margin-top: 15%;"
-                ></el-switch>
-              </el-col>
-            </el-row>
-          </el-header>
-
-          <el-main v-if="searchOptions.relatedLessSpecificExpanded">
-            <prefix-list-table
-              :data="ResultPrefixData.less_specifics"
-              :searchAsn="searchForm.asn"
-              :searchPrefix="searchForm.prefix"
-              validateBgp="false"
-              :showAlloc="true"
-            />
-          </el-main>
-        </div>
-
-        <!----------------- More Specifics --------------->
-
-        <div
+          :label="$t('home.unmatchedasn')"
+          :data="validation.validity.VRPs.unmatched_as"
+        />
+        <validity-table
           v-if="
-            ResultPrefixData.more_specifics &&
-              ResultPrefixData.more_specifics.length
+            validation.validity.VRPs &&
+              validation.validity.VRPs.unmatched_length.length
           "
-        >
-          <el-header style="background: none;height: 48px;">
-            <el-row>
-              <el-col :span="22">
-                <el-button type="text" @click="setShowMoreSpecific">
-                  + {{ ResultPrefixData.more_specifics.length }} more specific
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-switch
-                  active-text="show"
-                  name="type"
-                  @change="setQueryParams"
-                  v-model="searchOptions.relatedMoreSpecificExpanded"
-                  style="margin-top: 15%;"
-                ></el-switch>
-              </el-col>
-            </el-row>
-          </el-header>
-
-          <el-main v-if="searchOptions.relatedMoreSpecificExpanded">
-            <prefix-list-table
-              :data="ResultPrefixData.more_specifics"
-              :searchAsn="searchForm.asn"
-              :searchPrefix="searchForm.prefix"
-              validateBgp="false"
-              :showAlloc="true"
-            />
-          </el-main>
+          :label="$t('home.unmatchedlength')"
+          :data="validation.validity.VRPs.unmatched_length"
+        />
+      </div>
+      <div v-else>
+        <h4>No Origin ASN found for this Prefix in BGP.</h4>
+        <div class="validation-description">
+          You can enter an ASN to validate this prefix against and try again.
         </div>
+      </div>
 
-        <!----------------- Allocations ----------------->
+      <el-divider />
 
-        <div
-          v-if="ResultPrefixData.same_org && ResultPrefixData.same_org.length"
-        >
-          <el-header style="background: none;height: 48px;">
-            <el-row>
-              <el-col :span="22">
-                <el-button
-                  type="text"
-                  @click="setShowRelatedAlloc"
-                  v-if="
-                    ResultPrefixData.same_org &&
-                      ResultPrefixData.same_org.length
-                  "
-                >
-                  + {{ ResultPrefixData.same_org.length }} allocated to the same
-                  Organisation
-                  <el-tag
-                    type="info"
-                    style="position: absolute; margin-left: 12px; margin-top: -8px; font-weight: 400;"
-                    >REGION {{ ResultPrefixData.same_org[0].rir }}</el-tag
+      <div>
+        <h4 class="header validation-header">
+          RELATED PREFIXES
+        </h4>
+        <div v-if="ResultPrefixData.prefix">
+          <h4 class="header" v-if="ResultPrefixData.same_org.length">
+            Best Matching Prefix in Allocations and/or BGP<el-tag type="info"
+              >Region {{ ResultPrefixData.same_org[0].rir }}</el-tag
+            >
+          </h4>
+          <prefix-list-table
+            :data="[
+              {
+                prefix: ResultPrefixData.prefix,
+                bgp: ResultPrefixData.bgp,
+                type: ResultPrefixData.type,
+                rir: ResultPrefixData.rir,
+                meta: ResultPrefixData.meta
+              }
+            ]"
+            :searchAsn="searchForm.asn"
+            :searchPrefix="searchForm.prefix"
+            :validateBgp="searchOptions.validateBGP"
+            :showAlloc="true"
+            style="margin-bottom: 24px;"
+          />
+
+          <!------------- Less Specifics ---------------->
+          <div
+            v-if="
+              ResultPrefixData.less_specifics &&
+                ResultPrefixData.less_specifics.length
+            "
+          >
+            <el-header style="background: none; height: 48px;">
+              <el-row>
+                <el-col :span="22">
+                  <el-button type="text" @click="setShowLessSpecific">
+                    + {{ ResultPrefixData.less_specifics.length }} less specific
+                  </el-button>
+                </el-col>
+                <el-col :span="2">
+                  <el-switch
+                    active-text="show"
+                    name="type"
+                    v-model="searchOptions.relatedLessSpecificExpanded"
+                    @change="setQueryParams"
+                    style="margin-top: 15%;"
+                  ></el-switch>
+                </el-col>
+              </el-row>
+            </el-header>
+
+            <el-main v-if="searchOptions.relatedLessSpecificExpanded">
+              <prefix-list-table
+                :data="ResultPrefixData.less_specifics"
+                :searchAsn="searchForm.asn"
+                :searchPrefix="searchForm.prefix"
+                validateBgp="false"
+                :showAlloc="true"
+              />
+            </el-main>
+          </div>
+
+          <!----------------- More Specifics --------------->
+
+          <div
+            v-if="
+              ResultPrefixData.more_specifics &&
+                ResultPrefixData.more_specifics.length
+            "
+          >
+            <el-header style="background: none;height: 48px;">
+              <el-row>
+                <el-col :span="22">
+                  <el-button type="text" @click="setShowMoreSpecific">
+                    + {{ ResultPrefixData.more_specifics.length }} more specific
+                  </el-button>
+                </el-col>
+                <el-col :span="2">
+                  <el-switch
+                    active-text="show"
+                    name="type"
+                    @change="setQueryParams"
+                    v-model="searchOptions.relatedMoreSpecificExpanded"
+                    style="margin-top: 15%;"
+                  ></el-switch>
+                </el-col>
+              </el-row>
+            </el-header>
+
+            <el-main v-if="searchOptions.relatedMoreSpecificExpanded">
+              <prefix-list-table
+                :data="ResultPrefixData.more_specifics"
+                :searchAsn="searchForm.asn"
+                :searchPrefix="searchForm.prefix"
+                validateBgp="false"
+                :showAlloc="true"
+              />
+            </el-main>
+          </div>
+
+          <!----------------- Allocations ----------------->
+
+          <div
+            v-if="ResultPrefixData.same_org && ResultPrefixData.same_org.length"
+          >
+            <el-header style="background: none;height: 48px;">
+              <el-row>
+                <el-col :span="22">
+                  <el-button
+                    type="text"
+                    @click="setShowRelatedAlloc"
+                    v-if="
+                      ResultPrefixData.same_org &&
+                        ResultPrefixData.same_org.length
+                    "
                   >
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-switch
-                  active-text="show"
-                  name="type"
-                  @change="setQueryParams"
-                  v-model="searchOptions.relatedFromAlloc"
-                  style="margin-top: 15%;"
-                ></el-switch>
-              </el-col>
-            </el-row>
-          </el-header>
+                    + {{ ResultPrefixData.same_org.length }} allocated to the
+                    same Organisation
+                    <el-tag
+                      type="info"
+                      style="position: absolute; margin-left: 12px; margin-top: -8px; font-weight: 400;"
+                      >REGION {{ ResultPrefixData.same_org[0].rir }}</el-tag
+                    >
+                  </el-button>
+                </el-col>
+                <el-col :span="2">
+                  <el-switch
+                    active-text="show"
+                    name="type"
+                    @change="setQueryParams"
+                    v-model="searchOptions.relatedFromAlloc"
+                    style="margin-top: 15%;"
+                  ></el-switch>
+                </el-col>
+              </el-row>
+            </el-header>
 
-          <el-main v-if="searchOptions.relatedFromAlloc">
-            <Prefix-list-table
-              :data="ResultPrefixData.same_org"
-              :searchAsn="searchForm.asn"
-              :searchPrefix="searchForm.prefix"
-              validateBgp="false"
-              :showAlloc="false"
-            />
-          </el-main>
+            <el-main v-if="searchOptions.relatedFromAlloc">
+              <Prefix-list-table
+                :data="ResultPrefixData.same_org"
+                :searchAsn="searchForm.asn"
+                :searchPrefix="searchForm.prefix"
+                validateBgp="false"
+                :showAlloc="false"
+              />
+            </el-main>
+          </div>
+          <div v-else>no related prefixes found</div>
         </div>
-        <div v-else>no related prefixes found</div>
+        <div v-else class="validation-description">
+          No less or more specific prefixes in either Allocations and BGP, or
+          prefixes for the same organisation were found.
+        </div>
       </div>
-      <div v-else class="validation-description">
-        No less or more specific prefixes in either Allocations and BGP, or
-        prefixes for the same organisation were found.
-      </div>
-    </div>
+    </section>
 
     <div v-if="loadingStatus" class="loading">
       <i class="el-icon-loading"></i>
@@ -687,7 +692,7 @@ export default {
           .then(
             response => {
               this.loadingRoute = false;
- 
+
               // if the prefix length is max prefix length, then probably
               // it was set by the validation function, but even if a user set
               // it manually, we're going to assume that the user wants to
@@ -701,8 +706,7 @@ export default {
                   console.log(response.data.result.type);
                   this.searchForm.prefix = response.data.result.prefix;
                   this.inferredPrefix = true;
-                }
-                else {
+                } else {
                   this.inferredPrefix = false;
                   this.warning = "Cannot infer a prefix from this IP address.";
                   return;
