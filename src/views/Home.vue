@@ -199,8 +199,7 @@
     <div v-else>
       <h4>No Origin ASN found for this Prefix in BGP.</h4>
       <div class="validation-description">
-        You can enter an ASN to validate this prefix against and try
-        again.
+        You can enter an ASN to validate this prefix against and try again.
       </div>
     </div>
 
@@ -250,6 +249,7 @@
                   active-text="show"
                   name="type"
                   v-model="searchOptions.relatedLessSpecificExpanded"
+                  @change="setQueryParams"
                   style="margin-top: 15%;"
                 ></el-switch>
               </el-col>
@@ -286,6 +286,7 @@
                 <el-switch
                   active-text="show"
                   name="type"
+                  @change="setQueryParams"
                   v-model="searchOptions.relatedMoreSpecificExpanded"
                   style="margin-top: 15%;"
                 ></el-switch>
@@ -333,6 +334,7 @@
                 <el-switch
                   active-text="show"
                   name="type"
+                  @change="setQueryParams"
                   v-model="searchOptions.relatedFromAlloc"
                   style="margin-top: 15%;"
                 ></el-switch>
@@ -352,7 +354,10 @@
         </div>
         <div v-else>no related prefixes found</div>
       </div>
-      <div v-else class="validation-description">No less or more specific prefixes in either Allocations and BGP, or prefixes for the same organisation were found.</div>
+      <div v-else class="validation-description">
+        No less or more specific prefixes in either Allocations and BGP, or
+        prefixes for the same organisation were found.
+      </div>
     </div>
 
     <div v-if="loadingStatus" class="loading">
@@ -420,27 +425,21 @@ export default {
       console.log(this.$route.query);
       console.log(this.$route.params);
 
-      if (this.$route.query.include === "related_alloc") {
+      if (this.$route.query.include) {
+        if (this.$route.query.include.match("related_alloc")) {
         console.log("switch on include related alloc");
         this.searchOptions.relatedFromAlloc = true;
       }
 
-      if (this.$route.query.include === "related_less_specific") {
+      if (this.$route.query.include.match("related_less_specific")) {
         console.log("switch on include related alloc");
-        this.searchOptions.relatedLessSpecificExpanded = true;
-      }
-      if (this.$route.query.include === "related_alloc") {
-        console.log("switch on include related less specific");
         this.searchOptions.relatedLessSpecificExpanded = true;
       }
 
-      if (this.$route.query.include === "related_more_specific") {
+      if (this.$route.query.include.match("related_more_specific")) {
         console.log("switch on include related more specific");
         this.searchOptions.relatedMoreSpecificExpanded = true;
       }
-      if (this.$route.query.include === "related_more_specific") {
-        console.log("switch on include related alloc");
-        this.searchOptions.relatedMoreSpecificExpanded = true;
       }
 
       if (this.$route.query.exact_match_only) {
@@ -515,31 +514,47 @@ export default {
         exactMatchOnly: { name: "exact-match-only", type: Boolean },
         relatedFromAlloc: {
           name: "include",
-          type: String,
+          type: Array,
           value: { true: "related_alloc" }
         },
         relatedLessSpecificExpanded: {
           name: "include",
-          type: String,
+          type: Array,
           value: { true: "related_less_specific" }
         },
         relatedMoreSpecificExpanded: {
           name: "include",
-          type: String,
+          type: Array,
           value: { true: "related_more_specific" }
         }
       };
       let query = {};
 
+      console.log("yo routing!");
+      let value = "";
       Object.entries(this.searchOptions).forEach(o => {
         let qp = queryParamMap[o[0]];
+
+        // add a queryparam
         if (o[1]) {
-          let value = (qp.type === Boolean && o[1]) || qp.value.true;
-          query[qp.name] = value;
-        } else {
-          delete query[qp.name];
+          if (qp.type === Boolean) {
+            query[qp.name] = o[1];
+          } else if (qp.type === Array) {
+            // Array values are assembled from scratch, at each
+            // run of this function, so they don't need removal.
+            value =
+              (value !== "" && `${value},${qp.value.true}`) || qp.value.true;
+            query[qp.name] = value;
+          }
+        }
+        // remove a queryparam
+        else {
+          if (qp.type === Boolean) {
+            delete query[qp.name];
+          }
         }
       });
+      console.log(query);
 
       router.push({ path: this.$route.path, query }).catch(() => {});
     },
@@ -748,19 +763,27 @@ export default {
       this.showOptions = this.showOptions ? false : true;
     },
     setShowLessSpecific() {
+      console.log("show less specifics");
       this.searchOptions.relatedLessSpecificExpanded = this.searchOptions
         .relatedLessSpecificExpanded
         ? false
         : true;
+      this.setQueryParams();
     },
     setShowMoreSpecific() {
+      console.log("show more specifics");
       this.searchOptions.relatedMoreSpecificExpanded = this.searchOptions
         .relatedMoreSpecificExpanded
         ? false
         : true;
+      this.setQueryParams();
     },
     setShowRelatedAlloc() {
-      this.searchOptions.relatedFromAlloc = this.searchOptions.relatedFromAlloc ? false : true;
+      console.log("show related allocs");
+      this.searchOptions.relatedFromAlloc = this.searchOptions.relatedFromAlloc
+        ? false
+        : true;
+      this.setQueryParams();
     },
     validateAnnouncement() {
       this.validatePrefix();
