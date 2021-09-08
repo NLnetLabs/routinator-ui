@@ -268,7 +268,7 @@ export default {
     };
   },
   created() {
-    this.loadStatus();
+    this.loadRoutinatorStatus();
   },
   computed: {
     rrdpMax() {
@@ -289,9 +289,9 @@ export default {
     }
   },
   methods: {
-    loadStatus() {
+    loadRoutinatorStatus() {
       this.loading = true;
-      APIService.getStatus().then(response => {
+      APIService.getRoutinatorStatus().then(response => {
         this.status = response.data;
         this.loading = false;
         if (this.status && this.status.version) {

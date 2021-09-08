@@ -3,8 +3,10 @@ import axios from "axios";
 const apiClient = axios.create();
 
 export default {
-  getStatus() {
-    // Use the VUE_APP_ROUTINATOR_API_HOST env var if set,
+
+  //----------------- Routinator calls --------------------------------------
+  getRoutinatorStatus() {
+    // Uses the VUE_APP_ROUTINATOR_API_HOST env var if set,
     // it's defined in a .env[.mode] file in the root of the project.
     let routinatorHost = process.env.VUE_APP_ROUTINATOR_API_HOST || "";
     return apiClient.get(
@@ -18,6 +20,14 @@ export default {
     return apiClient.get(
       `${(routinatorHost && "https://") ||
         ""}${routinatorHost}/api/v1/validity/${asn}/${prefix}`
+    );
+  },
+
+  //----------------- Roto calls --------------------------------------
+  getRotoStatus() {
+    let rotoHost = process.env.VUE_APP_ROTO_API_HOST || "";
+    return apiClient.get(
+      `${(rotoHost && "https://") || ""}${rotoHost}/api/v1/sources`
     );
   },
   searchBgpAlloc(prefix, options) {

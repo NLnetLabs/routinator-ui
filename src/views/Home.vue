@@ -83,7 +83,6 @@
               @close="resetError"
             />
           </div>
-          <div class="spacer" v-if="firstSearch">&nbsp;</div>
         </div>
 
         <!----- end of Validation Button -------------------->
@@ -139,6 +138,45 @@
               /></el-popover>
             </el-form-item>
           </el-form>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="16" :offset="4" v-if="showOptions">
+        <div class="freshness-box">
+          <div class="fresh-title">Data freshness</div>
+          <div style="display: grid; grid-template-columns: 1fr 12fr;">
+            <div>
+              RPKI
+            </div>
+            <div v-if="status && status.lastUpdateDone">
+              <span class="mono fresh-label">
+                {{ getTimestamp(status.lastUpdateDone) }}</span
+              >
+              ({{ fromNow(status.lastUpdateDone) }})
+            </div>
+
+            <div>
+              BGP
+            </div>
+            <div v-if="rotoStatus">
+              <span class="mono fresh-label">{{
+                getTimestamp(bgpStatus)
+              }}</span>
+              ({{ fromNow(bgpStatus) }})
+            </div>
+
+            <div>
+              RIR
+            </div>
+            <div v-if="rotoStatus">
+              <span class="mono fresh-label">
+                {{ getTimestamp(rirAllocStatus[0]) }} -
+                {{ getTimestamp(rirAllocStatus[1]) }}</span
+              >
+              ({{ fromNow(rirAllocStatus[1]) }})
+            </div>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -364,16 +402,6 @@
       <i class="el-icon-loading"></i>
       {{ $t("common.loading") }}
     </div>
-
-    <el-row class="airy">
-      <el-col :span="24">
-        <div v-if="status && status.lastUpdateDone" class="last-update">
-          {{ $t("home.runat") }} {{ getTimestamp(status.lastUpdateDone) }} ({{
-            fromNow(status.lastUpdateDone)
-          }})
-        </div>
-      </el-col>
-    </el-row>
   </div>
 </template>
 
@@ -397,6 +425,10 @@ export default {
       firstSearch: true,
       loadingStatus: true,
       loadingRoute: false,
+      rotoStatus: null,
+      bgpStatus: null,
+      rirAllocStatus: [],
+      rotoSources: [],
       status: {},
       validation: {},
       ResultPrefixData: [],
@@ -418,7 +450,8 @@ export default {
   },
   created() {
     this.loadRoute();
-    this.loadStatus();
+    this.loadRoutinatorStatus();
+    this.loadRotoStatus();
   },
   methods: {
     loadRoute() {
@@ -427,19 +460,19 @@ export default {
 
       if (this.$route.query.include) {
         if (this.$route.query.include.match("related_alloc")) {
-        console.log("switch on include related alloc");
-        this.searchOptions.relatedFromAlloc = true;
-      }
+          console.log("switch on include related alloc");
+          this.searchOptions.relatedFromAlloc = true;
+        }
 
-      if (this.$route.query.include.match("related_less_specific")) {
-        console.log("switch on include related alloc");
-        this.searchOptions.relatedLessSpecificExpanded = true;
-      }
+        if (this.$route.query.include.match("related_less_specific")) {
+          console.log("switch on include related alloc");
+          this.searchOptions.relatedLessSpecificExpanded = true;
+        }
 
-      if (this.$route.query.include.match("related_more_specific")) {
-        console.log("switch on include related more specific");
-        this.searchOptions.relatedMoreSpecificExpanded = true;
-      }
+        if (this.$route.query.include.match("related_more_specific")) {
+          console.log("switch on include related more specific");
+          this.searchOptions.relatedMoreSpecificExpanded = true;
+        }
       }
 
       if (this.$route.query.exact_match_only) {
@@ -486,9 +519,9 @@ export default {
         return;
       }
     },
-    loadStatus() {
+    loadRoutinatorStatus() {
       this.loadingStatus = true;
-      APIService.getStatus().then(response => {
+      APIService.getRoutinatorStatus().then(response => {
         this.status = response.data;
         this.loadingStatus = false;
         if (this.status && this.status.version) {
@@ -497,6 +530,28 @@ export default {
       });
 
       return false;
+    },
+    loadRotoStatus() {
+      this.loadingStatus = true;
+      APIService.getRotoStatus().then(response => {
+        this.rotoStatus =
+          response.data && response.data.sources && response.data.sources.length
+            ? true
+            : false;
+        this.loadingStatus = false;
+        if (!this.rotoStatus) {
+          return;
+        }
+        this.rotoSources = response.data.sources;
+        this.bgpStatus = response.data.sources.find(
+          s => s.type === "bgp"
+        ).lastUpdated;
+        let ra = response.data.sources
+          .filter(s => s.type === "rir-alloc")
+          .map(s => s.lastUpdated)
+          .sort();
+        this.rirAllocStatus = [ra[0], ra[ra.length - 1]];
+      });
     },
     switchParam(key, status) {
       if (status === undefined) {
@@ -947,6 +1002,7 @@ h4.header,
 .el-popper {
   text-align: right;
 }
+
 .options-text {
   font-style: italic;
   white-space: nowrap;
@@ -954,7 +1010,36 @@ h4.header,
 }
 
 .options-box {
-  background-color: #fafafa;
   padding: 12px 24px;
+  // background-color: #d1b36b30;
+  background-color: #f4f4f4;
+  border-radius: 8px 8px 0 0;
 }
+
+.freshness-box {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  color: rgb(96, 98, 102);
+  padding: 12px 24px 24px;
+  // background-color: #e0d6baa6;
+  background-color: #fafafa;
+  border-radius: 0 0 8px 8px;
+}
+
+.fresh-title {
+  font-weight: 500;
+  font-size: 14px;
+  margin: 8px 0 16px;
+}
+
+.fresh-label {
+  font-size: 13px;
+  background: white;
+  padding: 0px 4px 0px 4px;
+  // background: #f7f1e3;
+  background-color: #f4f4f4;
+}
+
 </style>
