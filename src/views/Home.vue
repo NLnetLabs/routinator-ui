@@ -13,7 +13,7 @@
               :model="searchForm"
             >
               <el-form-item
-                :label="$t('common.prefix')"
+                label="Prefix or IP Address"
                 style="margin-bottom: 48px;"
               >
                 <el-input
@@ -24,11 +24,11 @@
                   @keyup.enter.native="validateAnnouncement"
                 ></el-input>
                 <div
-                  v-if="searchOptions.relatedFromAlloc"
+                  v-if="inferredPrefix"
                   class="options-text"
-                  style="text-align: left; position: absolute"
+                  style="text-align: left; position: absolute; color: #e6a23c"
                 >
-                  related prefixes will be added
+                  this prefix was inferred
                 </div>
               </el-form-item>
               <el-form-item
@@ -443,6 +443,7 @@ export default {
         relatedMoreSpecificExpanded: false,
         exactMatchOnly: false
       },
+      inferredPrefix: false,
       showOptions: true,
       error: null,
       warning: null
@@ -624,6 +625,19 @@ export default {
     // to validate PFX+AS pair.
     validateInput() {
       let prefixValid = false;
+
+      // if an IP address was entered instead of a prefix,
+      // then convert it into a prefix with length = MAX_PREFIX_LENGTH
+      if (!this.searchForm.prefix.match("/")) {
+        if (this.searchForm.prefix.match(".")) {
+          this.searchForm.prefix = `${this.searchForm.prefix}/32`;
+          this.inferredPrefix = true;
+        } else if (this.searchForm.prefix.match(":")) {
+          this.searchForm.prefix = `${this.searchForm.prefix}/128`;
+          this.inferredPrefix = true;
+        }
+      }
+
       let prefixValue = this.searchForm.prefix;
       if (cidrRegex({ exact: true }).test(prefixValue)) {
         prefixValid = true;
@@ -673,6 +687,28 @@ export default {
           .then(
             response => {
               this.loadingRoute = false;
+ 
+              // if the prefix length is max prefix length, then probably
+              // it was set by the validation function, but even if a user set
+              // it manually, we're going to assume that the user wants to
+              // validate the longest-machting prefix.
+              if (
+                this.searchForm.prefix.match("/32") ||
+                this.searchForm.prefix.match("/128")
+              ) {
+                if (response.data.result.type !== "empty-match") {
+                  console.log(`infer prefix for ${this.searchForm.prefix}`);
+                  console.log(response.data.result.type);
+                  this.searchForm.prefix = response.data.result.prefix;
+                  this.inferredPrefix = true;
+                }
+                else {
+                  this.inferredPrefix = false;
+                  this.warning = "Cannot infer a prefix from this IP address.";
+                  return;
+                }
+              }
+
               // Use the ASN we got back from the LMP in the
               // `relations[type="less-specific"]` when the user has set BGP Origin
               // Validation to fall back to the LMP.
