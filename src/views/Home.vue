@@ -95,28 +95,54 @@
           class="options-box"
         >
           <el-form label-position="top">
-            <el-form-item style="text-align: left" label="ASN lookup">
+            <!--- ASN Lookup switch ---->
+            <el-form-item style="text-align: left">
+              <div slot="label">
+                ASN Lookup<el-popover
+                  class="item"
+                  effect="dark"
+                  trigger="click"
+                  width="380"
+                  placement="top"
+                >
+                  <div slot="default" style="word-break: break-word;">
+                    Enabling this will use the validation ASN to be looked up
+                    using an Origin ASN from BGP announcements for the requested
+                    prefix.
+                  </div>
+                  <i class="el-icon-question help-icon" slot="reference"
+                /></el-popover>
+              </div>
               <el-switch
                 active-text="Validate Prefixes for ASN found in BGP"
                 name="type"
                 v-model="searchOptions.validateBGP"
               ></el-switch>
-              <el-popover
-                class="item"
-                effect="dark"
-                trigger="click"
-                width="200"
-                placement="top"
-              >
-                <div slot="default" style="word-break: break-word;">
-                  With smiles and kisses, we prefer to seek accord beneath our
-                  star, although we're different (we concur) just as two drops
-                  of water are.
-                </div>
-                <i class="el-icon-question" slot="reference"
-              /></el-popover>
             </el-form-item>
-            <el-form-item label="Origin ASN Validation Source">
+
+            <!---- ASN origin switch  -------------------->
+            <el-form-item>
+              <div slot="label">
+                Origin ASN Validation Source
+                <el-popover
+                  class="item"
+                  effect="dark"
+                  trigger="click"
+                  width="380"
+                  placement="top"
+                >
+                  <div slot="default" style="word-break: break-word;">
+                    If the 'ASN Lookup' setting was enabled you can: <br />
+                    - use the ASN from BGP announcements for the
+                    <br /><strong>exact match</strong> of the requested prefix,
+                    or<br />
+                    - use the ASN found for the
+                    <strong>longest matching prefix</strong><br />
+                    of the requested prefix.
+                  </div>
+                  <i class="el-icon-question help-icon" slot="reference"
+                /></el-popover>
+              </div>
               <el-switch
                 inactive-text="Longest Matching Prefix"
                 active-text="Exact Match only"
@@ -124,20 +150,6 @@
                 v-model="searchOptions.exactMatchOnly"
                 :disabled="!searchOptions.validateBGP"
               ></el-switch>
-              <el-popover
-                class="item"
-                effect="dark"
-                trigger="click"
-                width="200"
-                placement="top"
-              >
-                <div slot="default" style="word-break: break-word;">
-                  Nothing can ever happen twice. In consequence, the sorry fact
-                  is that we arrive here improvised and leave without the chance
-                  to practice.
-                </div>
-                <i class="el-icon-question" slot="reference"
-              /></el-popover>
             </el-form-item>
           </el-form>
         </div>
@@ -149,7 +161,68 @@
     <el-row>
       <el-col :span="16" :offset="4" v-if="showOptions">
         <div class="freshness-box">
-          <div class="fresh-title">Data freshness</div>
+          <div class="fresh-title">
+            Data freshness<el-popover
+              class="item"
+              effect="dark"
+              trigger="click"
+              width="520"
+              placement="top"
+            >
+              <div slot="default" style="word-break: break-word;">
+                <h4>DATA SOURCES</h4>
+                <h5>RPKI</h5>
+                Data collected from the RPKI Trust Anchors and Publication
+                Servers. Update interval in the order of minutes.
+                <h5>BGP</h5>
+                <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected from the RIPE NCC<br>
+                <a href="https://ris.ripe.net">Route Information System</a>. Updated every 8 hours.
+                <h5>RIR Allocations</h5>
+                <p>
+                  Delegated-extended statistics from all five Regional Internet
+                  Registries (RIRs). Updated daily.
+                </p>
+                <ul class="popup-rir-list">
+                  <li>
+                    <a
+                      href="https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-extended-latest"
+                      >AFRINIC</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest"
+                      >APNIC</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest"
+                      >ARIN</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-extended-latest"
+                      >LACNIC</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-extended-latest"
+                      >RIPE NCC</a
+                    >
+                  </li>
+                </ul>
+                <h4>DATA DELIVERY</h4>
+                <h5>RPKI</h5>
+                <a :href="`https://${routinatorApiHost}/api/v1/status`">{{ this.status.version }}</a>
+                <h5>BGP + RIR Allocations</h5>
+                <a :href="`https://${rotoApiHost}/api/v1/`">{{ this.rotoStatus.version }}</a>
+              </div>
+              <i class="el-icon-question help-icon" slot="reference"
+            /></el-popover>
+          </div>
           <div style="display: grid; grid-template-columns: 1fr 12fr;">
             <div>
               RPKI
@@ -465,6 +538,8 @@ export default {
         relatedMoreSpecificExpanded: false,
         exactMatchOnly: false
       },
+      rotoApiHost: process.env.VUE_APP_ROTO_API_HOST,
+      routinatorApiHost: process.env.VUE_APP_ROUTINATOR_API_HOST,
       inferredPrefix: false,
       showOptions: true,
       error: null,
@@ -578,8 +653,8 @@ export default {
       APIService.getRotoStatus().then(response => {
         this.rotoStatus =
           response.data && response.data.sources && response.data.sources.length
-            ? true
-            : false;
+            ? { version: "roto/0.1.0" }
+            : null;
         this.loadingStatus = false;
         if (!this.rotoStatus) {
           return;
@@ -1086,6 +1161,11 @@ h4.header,
   text-align: right;
 }
 
+.help-icon {
+  font-size: 18px;
+  margin: 0 0 0 4px;
+}
+
 .options-text {
   font-style: italic;
   white-space: nowrap;
@@ -1123,5 +1203,15 @@ h4.header,
   padding: 0px 4px 0px 4px;
   // background: #f7f1e3;
   background-color: #f4f4f4;
+}
+
+.popup-rir-list {
+  list-style: none;
+  padding: 0;
+}
+
+.popup-rir-list > li {
+  display: inline;
+  margin-right: 8px;
 }
 </style>
