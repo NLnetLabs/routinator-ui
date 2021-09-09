@@ -175,8 +175,10 @@
                 Data collected from the RPKI Trust Anchors and Publication
                 Servers. Update interval in the order of minutes.
                 <h5>BGP</h5>
-                <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected from the RIPE NCC<br>
-                <a href="https://ris.ripe.net">Route Information System</a>. Updated every 8 hours.
+                <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected
+                from the RIPE NCC<br />
+                <a href="https://ris.ripe.net">Route Information System</a>.
+                Updated every 8 hours.
                 <h5>RIR Allocations</h5>
                 <p>
                   Delegated-extended statistics from all five Regional Internet
@@ -216,9 +218,13 @@
                 </ul>
                 <h4>DATA DELIVERY</h4>
                 <h5>RPKI</h5>
-                <a :href="`https://${routinatorApiHost}/api/v1/status`">{{ this.status.version }}</a>
+                <a :href="`https://${routinatorApiHost}/api/v1/status`">{{
+                  this.status.version || "NOT AVAILABLE"
+                }}</a>
                 <h5>BGP + RIR Allocations</h5>
-                <a :href="`https://${rotoApiHost}/api/v1/`">{{ this.rotoStatus.version }}</a>
+                <a :href="`https://${rotoApiHost}/api/v1/`">{{
+                  this.rotoStatus && this.rotoStatus.version || "NOT AVAILABLE"
+                }}</a>
               </div>
               <i class="el-icon-question help-icon" slot="reference"
             /></el-popover>
@@ -523,7 +529,6 @@ export default {
       rotoStatus: null,
       bgpStatus: null,
       rirAllocStatus: [],
-      rotoSources: [],
       status: { waiting: true, error: null },
       validation: {},
       ResultPrefixData: [],
@@ -653,13 +658,12 @@ export default {
       APIService.getRotoStatus().then(response => {
         this.rotoStatus =
           response.data && response.data.sources && response.data.sources.length
-            ? { version: "roto/0.1.0" }
+            ? response.data
             : null;
         this.loadingStatus = false;
         if (!this.rotoStatus) {
           return;
         }
-        this.rotoSources = response.data.sources;
         this.bgpStatus = response.data.sources.find(
           s => s.type === "bgp"
         ).lastUpdated;
@@ -679,8 +683,6 @@ export default {
     },
 
     setQueryParams() {
-      let changed = false;
-
       const queryParamMap = {
         validateBGP: { name: "validate-bgp", type: Boolean },
         exactMatchOnly: { name: "exact-match-only", type: Boolean },

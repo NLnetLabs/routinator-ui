@@ -27,7 +27,7 @@ export default {
   getRotoStatus() {
     let rotoHost = process.env.VUE_APP_ROTO_API_HOST || "";
     return apiClient.get(
-      `${(rotoHost && "https://") || ""}${rotoHost}/api/v1/sources`
+      `${(rotoHost && "https://") || ""}${rotoHost}/api/v1/status`
     );
   },
   searchBgpAlloc(prefix, options) {
