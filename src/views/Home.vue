@@ -163,7 +163,7 @@
       <el-col :span="16" :offset="4" v-if="showOptions">
         <div class="freshness-box">
           <div class="fresh-title">
-            Data freshness<el-popover
+            Data Freshness<el-popover
               class="item"
               effect="dark"
               trigger="click"
