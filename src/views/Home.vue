@@ -22,6 +22,7 @@
                   clearable
                   required
                   @keyup.enter.native="validateAnnouncement"
+                  @clear="() => { this.inferredPrefix=false; }"
                 ></el-input>
                 <div
                   v-if="inferredPrefix"
