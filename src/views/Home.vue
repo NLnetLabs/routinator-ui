@@ -922,6 +922,7 @@ export default {
       this.setQueryParams();
     },
     validateAnnouncement() {
+      this.inferredPrefix = false;
       this.validatePrefix();
     },
     getTimestamp(timestamp) {
@@ -935,7 +936,6 @@ export default {
         .toRelative();
     },
     storeRelatedPrefixesData(response) {
-      console.log("yo");
       if (!response.result.relations) {
         return;
       }
