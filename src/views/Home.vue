@@ -761,8 +761,7 @@ export default {
         prefixValid = true;
       } else {
         this.error = this.$t("home.pleasevalidprefix");
-        // (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
-        // this.$t("home.pleasevalidprefix");
+        this.inferredPrefix = false;
       }
 
       if (!this.searchOptions.validateBGP) {
