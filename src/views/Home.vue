@@ -714,6 +714,10 @@ export default {
       this.warning = null;
       let PrefAsn = {};
 
+      // Update the routinator status, mainly to see if it did another
+      // rpki repo update run between the last validation and now.
+      this.loadRoutinatorStatus();
+
       if (!this.validateInput()) {
         return;
       }
