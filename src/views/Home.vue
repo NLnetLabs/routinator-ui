@@ -184,8 +184,8 @@
                 Servers. Update interval in the order of minutes.
                 <div v-if="this.rotoStatus">
                   <h5>BGP</h5>
-                  <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected
-                  from the RIPE NCC<br />
+                  <a href="https://www.ris.ripe.net/dumps/">RISWhois</a> data,
+                  collected from the RIPE NCC<br />
                   <a href="https://ris.ripe.net">Route Information System</a>.
                   Updated every 8 hours.
                   <h5>RIR Allocations</h5>
@@ -229,7 +229,11 @@
                 <h4>DATA DELIVERY</h4>
                 <h5>RPKI</h5>
                 <a
-                  :href="`https://${routinatorApiHost}/api/v1/status`"
+                  :href="
+                    (routinatorApiHost &&
+                      `https://${routinatorApiHost}/api/v1/status`) ||
+                      `/api/v1/status`
+                  "
                   v-if="this.status.version"
                   >{{ this.status.version }}</a
                 >
