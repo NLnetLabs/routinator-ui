@@ -10,6 +10,12 @@
       </el-col>
     </el-row>
     <el-table
+      v-if="
+        !!(
+          this.enrichedData.prefixes.length > 1 ||
+          Object.values(this.enrichedData.prefixes[0].rpkiDetails).length
+        )
+      "
       :data="
         enrichedData.prefixes.filter(
           data =>
@@ -56,6 +62,7 @@
               />
             </div>
           </div>
+
           <div v-else>
             <div>
               <el-button
@@ -81,38 +88,46 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="prefix" label="Prefix" sortable>
+      <el-table-column
+        prop="prefix"
+        label="Prefix"
+        :sortable="enrichedData.prefixes.length > 1"
+      >
         <template v-slot:default="scope" style="position: relative;">
-          <lmp-arrow v-if="scope.row.lmp && validateBgp" /><em-arrow
-            v-if="scope.row.em && validateBgp"
-          />{{ scope.row.prefix }}</template
-        >
+          <lmp-arrow
+            v-if="scope.row.type === 'longest-match' && validateBgp"
+          /><em-arrow
+            v-if="scope.row.type === 'exact-match' && validateBgp"
+          /><el-link :href="`/${encodeURIComponent(scope.row.prefix)}`">{{ scope.row.prefix }}</el-link>
+          <el-tag class="label sans-serif" v-if="scope.row.isAlloc" type="info"
+            >ALLOCATED</el-tag
+          >
+        </template>
       </el-table-column>
-      <el-table-column prop="bgp" label="BGP Origin ASN" sortable
+      <el-table-column
+        prop="bgp"
+        label="BGP Origin ASN"
+        :sortable="enrichedData.prefixes.length > 1"
         ><template v-slot:default="scope">
           <el-tag class="label" v-if="scope.row.bgp === 'NOT SEEN'" type="info"
             >NOT SEEN</el-tag
           >
           <span class="mono" v-else>{{ scope.row.bgp }}</span>
           <hand-drawn-box
-            v-if="
-              (scope.row.lmp || scope.row.em) &&
-                validateBgp &&
-                searchAsn === scope.row.bgp
-            "
+            v-if="validateBgp && searchAsn === scope.row.bgp"
           /> </template
       ></el-table-column>
       <el-table-column
         prop="rpkiState"
         label="RPKI Status"
-        sortable
+        :sortable="enrichedData.prefixes.length > 1"
         :sort-method="sortByRpkiStatus"
         ><template v-slot:default="scope"
           ><el-tag
             v-if="scope.row.rpki.state"
             :type="
               (scope.row.rpki.state === 'VALID' && 'success') ||
-                (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                (scope.row.rpki.state === 'INVALID' && 'warning') ||
                 (scope.row.rpki.state === 'SERVER FAILURE' && 'danger') ||
                 'warning'
             "
@@ -121,6 +136,75 @@
         >
       </el-table-column>
     </el-table>
+    <el-main v-else>
+      <el-table
+        :data="
+          enrichedData.prefixes.filter(
+            data =>
+              !this.filterPrefixValidatedRegExp ||
+              data.prefix.match(this.filterPrefixValidatedRegExp)
+          )
+        "
+        style="width: 100%"
+        stripe
+        :cell-class-name="r => (r.columnIndex === 0 && 'mono') || ''"
+      >
+        <el-table-column
+          prop="prefix"
+          label="Prefix"
+          width="380"
+          :sortable="enrichedData.prefixes.length > 1"
+        >
+          <template v-slot:default="scope" style="position: relative;">
+            <lmp-arrow
+              v-if="scope.row.type === 'longest-match' && validateBgp"
+            /><em-arrow
+              v-if="scope.row.type === 'exact-match' && validateBgp"
+            /><el-link :href="`/${encodeURIComponent(scope.row.prefix)}`">{{ scope.row.prefix }}</el-link>
+            <el-tag
+              class="label sans-serif"
+              v-if="scope.row.isAlloc"
+              type="info"
+              >ALLOCATED</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="bgp"
+          label="BGP Origin ASN"
+          :sortable="enrichedData.prefixes.length > 1"
+          ><template v-slot:default="scope">
+            <el-tag
+              class="label"
+              v-if="scope.row.bgp === 'NOT SEEN'"
+              type="info"
+              >NOT SEEN</el-tag
+            >
+            <span class="mono" v-else>{{ scope.row.bgp }}</span>
+            <hand-drawn-box
+              v-if="validateBgp && searchAsn === scope.row.bgp"
+            /> </template
+        ></el-table-column>
+        <el-table-column
+          prop="rpkiState"
+          label="RPKI Status"
+          :sortable="enrichedData.prefixes.length > 1"
+          :sort-method="sortByRpkiStatus"
+          ><template v-slot:default="scope"
+            ><el-tag
+              v-if="scope.row.rpki.state"
+              :type="
+                (scope.row.rpki.state === 'VALID' && 'success') ||
+                  (scope.row.rpki.state === 'INVALID' && 'danger') ||
+                  (scope.row.rpki.state === 'SERVER FAILURE' && 'danger') ||
+                  'warning'
+              "
+              >{{ scope.row.rpki.state }} {{ scope.row.reason }}</el-tag
+            ></template
+          >
+        </el-table-column>
+      </el-table>
+    </el-main>
   </div>
 </template>
 
@@ -140,26 +224,21 @@ export default {
     HandDrawnBox
   },
   name: "PrefixListTable",
-  props: ["data", "searchAsn", "searchPrefix", "validateBgp"],
+  props: ["data", "searchAsn", "searchPrefix", "validateBgp", "showAlloc"],
   created() {
     this.data.forEach(p => this.validateRelatedPrefix(p.bgp, p.prefix));
   },
   data() {
-    const lmp = (this.data[0].type === "less-specific" &&
-      this.data.sort(
-        (a, b) =>
-          (Number(b.prefix.split("/")[1]) > Number(a.prefix.split("/")[1]) &&
-            1) ||
-          -1
-      )[0]) || { prefix: null };
     return {
       enrichedData: {
         prefixes: this.data.map(p => ({
           ...p,
           rpki: {},
           rpkiDetails: {},
-          lmp: lmp.prefix === p.prefix && p.prefix !== this.searchPrefix,
-          em: p.prefix === this.searchPrefix
+          isAlloc:
+            this.showAlloc &&
+            p.meta &&
+            p.meta.some(m => m.sourceType === "rir-alloc")
         })),
         originAsn: null
       },
@@ -175,6 +254,12 @@ export default {
         console.log("invalid regex");
       }
       return filterRegEx;
+    },
+    allowExpandTable: function() {
+      return !!(
+        this.enrichedData.prefixes.length > 1 ||
+        Object.values(this.enrichedData.prefixes[0].rpkiDetails).length
+      );
     }
   },
   methods: {
@@ -229,7 +314,7 @@ export default {
         )
         .catch(err => {
           console.log("Routinator API returned an error");
-          console.err(err);
+          console.error(err);
         });
     },
     sortByRpkiStatus(a, b) {
@@ -262,4 +347,9 @@ export default {
   margin-top: 0.6rem;
   font-size: 16px;
 }
+
+.el-link {
+  margin-right: 12px;
+}
+
 </style>

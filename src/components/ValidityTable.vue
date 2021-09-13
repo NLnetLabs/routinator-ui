@@ -1,6 +1,6 @@
 <template>
   <div :class="{ 'validity-table': true, warning: !isValid }">
-    <el-tag :type="isValid ? 'success' : 'warning'" size="small">{{
+    <el-tag :type="isValid ? 'success' : 'danger'" size="small">{{
       label
     }}</el-tag>
     <el-table
@@ -33,7 +33,7 @@ export default {
 <style lang="scss" scoped>
 .validity-table {
   margin-top: 2rem;
-  margin-left: 42px;
+  // margin-left: 42px;
   .el-table {
     border-left: 2px solid #e1f3d8;
   }

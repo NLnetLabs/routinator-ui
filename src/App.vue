@@ -25,7 +25,7 @@
               active-text-color="#ffffff"
             >
               <el-menu-item index="0" :route="{ name: 'home' }">
-                Status
+                Prefix Check
               </el-menu-item>
               <el-menu-item index="1" :route="{ name: 'metrics' }">
                 Metrics
