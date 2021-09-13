@@ -52,7 +52,10 @@
                   class="bgp-popover-text"
                   style="text-align: left; position: absolute;"
                 >
-                  <div v-if="searchOptions.validateBGP && this.rotoStatus" class="options-text">
+                  <div
+                    v-if="searchOptions.validateBGP && this.rotoStatus"
+                    class="options-text"
+                  >
                     will be validated with BGP ASN
                   </div>
                 </div>
@@ -225,10 +228,14 @@
                 </div>
                 <h4>DATA DELIVERY</h4>
                 <h5>RPKI</h5>
-                <a :href="`https://${routinatorApiHost}/api/v1/status`" v-if="this.status.version">{{
-                  this.status.version
-                }}</a>
-                <span v-else>Not available. Routinator may not be running!</span>
+                <a
+                  :href="`https://${routinatorApiHost}/api/v1/status`"
+                  v-if="this.status.version"
+                  >{{ this.status.version }}</a
+                >
+                <span v-else
+                  >Not available. Routinator may not be running!</span
+                >
                 <h5>BGP + RIR Allocations</h5>
                 <a
                   :href="`https://${rotoApiHost}/api/v1/`"
@@ -341,7 +348,9 @@
         />
       </div>
       <div v-else-if="!this.status.error && !this.status.waiting">
-        <h4 v-if="this.rotoStatus">No Origin ASN found for this Prefix in BGP.</h4>
+        <h4 v-if="this.rotoStatus">
+          No Origin ASN found for this Prefix in BGP.
+        </h4>
         <div class="validation-description">
           You can enter an ASN to validate this prefix against and try again.
         </div>
@@ -658,7 +667,8 @@ export default {
             window.setTimeout(this.loadRoutinatorStatus, 10000);
           } else {
             this.status.error =
-              (err.response && err.response.data) &&
+              err.response &&
+              err.response.data &&
               "Routinator API returned an error. Check your Routinator installation.";
             this.status.waiting = false;
           }
@@ -817,7 +827,7 @@ export default {
       // gave us.
       // We're only going to do this if the availability of the roto-api has been
       // confirmed. Since it may not be enabled by the user we're failing silently.
-      if (this.searchOptions.validateBGP && this.rotoStatus) {
+      if (this.searchOptions.validateBGP) {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
@@ -918,8 +928,14 @@ export default {
               // return;
             },
             err => {
-              this.error =
-                "The BGP Lookup Server failed with an unknown error. Please retry later.";
+              this.loadingStatus = false;
+              // Only throw an error if we previously saw the roto-api server.
+              if (this.rotoStatus) {
+                this.error =
+                  "The BGP Lookup Server failed with an unknown error. Please retry later.";
+              } else {
+                this.error = this.$t("home.pleasevalidasn");
+              }
             }
           )
           .catch(err => {
