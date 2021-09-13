@@ -168,9 +168,6 @@ fn main() {
     // This build.rs file was changed.
     println!("cargo:rerun-if-changed=build.rs");
 
-    // The local Vue built files were changed.
-    println!("cargo:rerun-if-changed=../dist");
-
     let rs_file_path: std::path::PathBuf;
     if let Ok(out_dir) = get_out_dir() {
         rs_file_path = Path::new(&out_dir).join(RS_FILE_NAME.to_string());
