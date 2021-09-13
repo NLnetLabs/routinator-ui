@@ -14,6 +14,6 @@ build = "build.rs"
 [dependencies]
 
 [build-dependencies]
-reqwest = { version="0.11.0", features=["blocking"] }
+reqwest = { version="0.11.0", default-features = false, features=["blocking", "rustls-tls"] }
 tar = "0.4.35"
 flate2 = "1.0.20"
