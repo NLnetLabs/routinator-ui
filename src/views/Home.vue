@@ -225,9 +225,10 @@
                 </div>
                 <h4>DATA DELIVERY</h4>
                 <h5>RPKI</h5>
-                <a :href="`https://${routinatorApiHost}/api/v1/status`">{{
-                  this.status.version || "NOT AVAILABLE"
+                <a :href="`https://${routinatorApiHost}/api/v1/status`" v-if="this.status.version">{{
+                  this.status.version
                 }}</a>
+                <span v-else>Not available. Routinator may not be running!</span>
                 <h5>BGP + RIR Allocations</h5>
                 <a
                   :href="`https://${rotoApiHost}/api/v1/`"
@@ -259,7 +260,7 @@
               Routinator is initializing, please wait.
             </div>
             <div v-else-if="status && status.error" style="color: red;">
-              NO DATA
+              Routinator API returned a status error. Check your installation.
             </div>
             <div v-if="rotoStatus">
               BGP
@@ -657,8 +658,8 @@ export default {
             window.setTimeout(this.loadRoutinatorStatus, 10000);
           } else {
             this.status.error =
-              (err.response && err.response.data) ||
-              "Routinator has unknown problems. Reloading this page may help.";
+              (err.response && err.response.data) &&
+              "Routinator API returned an error. Check your Routinator installation.";
             this.status.waiting = false;
           }
         }
