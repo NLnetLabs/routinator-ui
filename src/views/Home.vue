@@ -22,7 +22,11 @@
                   clearable
                   required
                   @keyup.enter.native="validateAnnouncement"
-                  @clear="() => { this.inferredPrefix=false; }"
+                  @clear="
+                    () => {
+                      this.inferredPrefix = false;
+                    }
+                  "
                 ></el-input>
                 <div
                   v-if="inferredPrefix"
@@ -48,7 +52,7 @@
                   class="bgp-popover-text"
                   style="text-align: left; position: absolute;"
                 >
-                  <div v-if="searchOptions.validateBGP" class="options-text">
+                  <div v-if="searchOptions.validateBGP && this.rotoStatus" class="options-text">
                     will be validated with BGP ASN
                   </div>
                 </div>
@@ -97,7 +101,7 @@
         >
           <el-form label-position="top">
             <!--- ASN Lookup switch ---->
-            <el-form-item style="text-align: left">
+            <el-form-item style="text-align: left" v-if="this.rotoStatus">
               <div slot="label">
                 ASN Lookup<el-popover
                   class="item"
@@ -175,57 +179,65 @@
                 <h5>RPKI</h5>
                 Data collected from the RPKI Trust Anchors and Publication
                 Servers. Update interval in the order of minutes.
-                <h5>BGP</h5>
-                <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected
-                from the RIPE NCC<br />
-                <a href="https://ris.ripe.net">Route Information System</a>.
-                Updated every 8 hours.
-                <h5>RIR Allocations</h5>
-                <p>
-                  Delegated-extended statistics from all five Regional Internet
-                  Registries (RIRs). Updated daily.
-                </p>
-                <ul class="popup-rir-list">
-                  <li>
-                    <a
-                      href="https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-extended-latest"
-                      >AFRINIC</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest"
-                      >APNIC</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest"
-                      >ARIN</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-extended-latest"
-                      >LACNIC</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="https://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-extended-latest"
-                      >RIPE NCC</a
-                    >
-                  </li>
-                </ul>
+                <div v-if="this.rotoStatus">
+                  <h5>BGP</h5>
+                  <a href="www.ris.ripe.net/dumps/">RISWhois</a> data, collected
+                  from the RIPE NCC<br />
+                  <a href="https://ris.ripe.net">Route Information System</a>.
+                  Updated every 8 hours.
+                  <h5>RIR Allocations</h5>
+                  <p>
+                    Delegated-extended statistics from all five Regional
+                    Internet Registries (RIRs). Updated daily.
+                  </p>
+                  <ul class="popup-rir-list">
+                    <li>
+                      <a
+                        href="https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-extended-latest"
+                        >AFRINIC</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest"
+                        >APNIC</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest"
+                        >ARIN</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-extended-latest"
+                        >LACNIC</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="https://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-extended-latest"
+                        >RIPE NCC</a
+                      >
+                    </li>
+                  </ul>
+                </div>
                 <h4>DATA DELIVERY</h4>
                 <h5>RPKI</h5>
                 <a :href="`https://${routinatorApiHost}/api/v1/status`">{{
                   this.status.version || "NOT AVAILABLE"
                 }}</a>
                 <h5>BGP + RIR Allocations</h5>
-                <a :href="`https://${rotoApiHost}/api/v1/`">{{
-                  this.rotoStatus && this.rotoStatus.version || "NOT AVAILABLE"
-                }}</a>
+                <a
+                  :href="`https://${rotoApiHost}/api/v1/`"
+                  v-if="this.rotoStatus"
+                  >{{ this.rotoStatus.version }}</a
+                >
+                <span v-else
+                  >Not available. It may not be enabled,
+                  <a href="">read more</a></span
+                >
               </div>
               <i class="el-icon-question help-icon" slot="reference"
             /></el-popover>
@@ -249,7 +261,7 @@
             <div v-else-if="status && status.error" style="color: red;">
               NO DATA
             </div>
-            <div>
+            <div v-if="rotoStatus">
               BGP
             </div>
             <div v-if="rotoStatus">
@@ -258,7 +270,7 @@
               }}</span>
               ({{ fromNow(bgpStatus) }})
             </div>
-            <div>
+            <div v-if="rotoStatus">
               RIR
             </div>
             <div v-if="rotoStatus">
@@ -328,7 +340,7 @@
         />
       </div>
       <div v-else-if="!this.status.error && !this.status.waiting">
-        <h4>No Origin ASN found for this Prefix in BGP.</h4>
+        <h4 v-if="this.rotoStatus">No Origin ASN found for this Prefix in BGP.</h4>
         <div class="validation-description">
           You can enter an ASN to validate this prefix against and try again.
         </div>
@@ -342,7 +354,7 @@
 
       <el-divider />
 
-      <div>
+      <div v-if="this.rotoStatus">
         <h4 class="header validation-header">
           RELATED PREFIXES
         </h4>
@@ -778,6 +790,7 @@ export default {
         } else {
           this.error =
             (this.error && `${this.error} ${this.$t("home.pleaseand")}`) ||
+            (this.rotoStatus && this.$t("home.pleasevalidasnorbgp")) ||
             this.$t("home.pleasevalidasn");
         }
       }
@@ -801,7 +814,9 @@ export default {
 
       // Lookup BGP origin ASN and use that for validating the prefix the user
       // gave us.
-      if (this.searchOptions.validateBGP) {
+      // We're only going to do this if the availability of the roto-api has been
+      // confirmed. Since it may not be enabled by the user we're failing silently.
+      if (this.searchOptions.validateBGP && this.rotoStatus) {
         console.log(`loading bgp+alloc data for ${this.searchForm.prefix}`);
         this.loadingRoute = true;
         this.firstSearch = false;
@@ -852,9 +867,11 @@ export default {
                 ).origin_asn;
                 PrefAsn.prefix = this.searchForm.prefix;
                 this.searchForm.asn = PrefAsn.origin_asn;
-              } else {
+              } else if (this.rotoStatus) {
                 this.warning =
                   "Cannot find an Origin AS in BGP for this prefix";
+                return;
+              } else {
                 return;
               }
 
