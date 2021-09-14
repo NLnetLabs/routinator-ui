@@ -65,7 +65,7 @@
             &copy; {{ new Date().getFullYear() }} Stichting NLnet Labs
             <span v-if="version"
               >- {{ $t("common.version") }} {{ version }}</span
-            >
+            ><span> - ui/{{ uiVersion }}</span>
           </el-col>
           <el-col :span="12" class="text-right">
             <a
@@ -151,7 +151,8 @@ export default {
     return {
       showHelp: false,
       version: "",
-      activeIndex: "0"
+      activeIndex: "0",
+      uiVersion: `${process.env.PACKAGE_VERSION}${process.env.NODE_ENV === 'development' && '+dev' || ''}`
     };
   },
   watch: {

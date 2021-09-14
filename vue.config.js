@@ -39,7 +39,7 @@ module.exports = {
       }),
       new webpack.DefinePlugin({
         "process.env": {
-          PACKAGE_VERSION: '"' + version + '"'
+          PACKAGE_VERSION: '"' + version + '"',
         }
       }),
       new FileManagerPlugin({
