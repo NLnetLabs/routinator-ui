@@ -13,7 +13,9 @@ module.exports = {
       },
       "/api/v1/status": { target: `https://${process.env.VUE_APP_ROUTINATOR_API_HOST}` },
       "/api/v1/": { target: `https://${process.env.VUE_APP_HOST}` }
-    }
+    },
+    // make the ws hostname also work with the nginx proxy
+    public: "8080.nlnetlabs.nl"
   },
   // note that relative publicPath seems the way to go,
   // but can't be used in combination with history based routing.
