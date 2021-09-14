@@ -785,10 +785,10 @@ export default {
       // if an IP address was entered instead of a prefix,
       // then convert it into a prefix with length = MAX_PREFIX_LENGTH
       if (!this.searchForm.prefix.match("/")) {
-        if (this.searchForm.prefix.match(".")) {
+        if (this.searchForm.prefix.match(/\./)) {
           this.searchForm.prefix = `${this.searchForm.prefix}/32`;
           this.inferredPrefix = true;
-        } else if (this.searchForm.prefix.match(":")) {
+        } else if (this.searchForm.prefix.match(/\:/)) {
           this.searchForm.prefix = `${this.searchForm.prefix}/128`;
           this.inferredPrefix = true;
         }
@@ -855,8 +855,8 @@ export default {
               // it manually, we're going to assume that the user wants to
               // validate the longest-machting prefix.
               if (
-                this.searchForm.prefix.match("/32") ||
-                this.searchForm.prefix.match("/128")
+                this.searchForm.prefix.match(/\..+\/32/) ||
+                this.searchForm.prefix.match(/\:.+\/128/)
               ) {
                 if (response.data.result.type !== "empty-match") {
                   console.log(`infer prefix for ${this.searchForm.prefix}`);
@@ -1133,7 +1133,7 @@ export default {
         .find(rel => rel.type === "less-specific")
         .members.reduce((rel, lmp) => {
           if (
-            Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
+            rel && rel.prefix && Number(rel.prefix.split("/")[1]) > Number(lmp.prefix.split("/")[1])
           ) {
             lmp = rel;
           }
