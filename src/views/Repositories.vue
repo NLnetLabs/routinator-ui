@@ -7,19 +7,37 @@
       </div>
 
       <div v-if="!loading">
-        <el-table :data="repositories" style="width: 100%" height="calc(100vh - 200px)" stripe row-class-name="mono">
-          <el-table-column fixed :label="$t('repositories.repository')" width="300">
+        <el-table
+          :data="repositories"
+          style="width: 100%"
+          height="calc(100vh - 200px)"
+          stripe
+          row-class-name="mono"
+        >
+          <el-table-column
+            fixed
+            :label="$t('repositories.repository')"
+            width="300"
+          >
             <template v-slot:default="scope">
-              <a :href="scope.row.repo" target="_blank" class="sans-serif">{{ scope.row.repo }}</a>
+              <a :href="scope.row.repo" target="_blank" class="sans-serif">{{
+                scope.row.repo
+              }}</a>
             </template>
           </el-table-column>
-          <el-table-column prop="type" :label="$t('repositories.type')" width="150" sortable>
+          <el-table-column
+            prop="type"
+            :label="$t('repositories.type')"
+            width="150"
+            sortable
+          >
           </el-table-column>
           <el-table-column
             prop="vrpsTotal"
             :label="$t('repositories.vrpsTotal')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -27,6 +45,7 @@
             :label="$t('repositories.vrpsUnsafe')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -34,6 +53,7 @@
             :label="$t('repositories.vrpsLocallyFiltered')"
             width="180"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -41,6 +61,7 @@
             :label="$t('repositories.vrpsDuplicate')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -48,6 +69,7 @@
             :label="$t('repositories.vrpsFinal')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -55,6 +77,7 @@
             :label="$t('repositories.validPublicationPoints')"
             width="200"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -62,6 +85,7 @@
             :label="$t('repositories.rejectedPublicationPoints')"
             width="220"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -69,6 +93,7 @@
             :label="$t('repositories.validManifests')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -76,6 +101,7 @@
             :label="$t('repositories.invalidManifests')"
             width="180"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -83,6 +109,7 @@
             :label="$t('repositories.staleManifests')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -90,6 +117,7 @@
             :label="$t('repositories.missingManifests')"
             width="180"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -97,6 +125,7 @@
             :label="$t('repositories.validCRLs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -104,6 +133,7 @@
             :label="$t('repositories.invalidCRLs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -111,6 +141,7 @@
             :label="$t('repositories.staleCRLs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -118,6 +149,7 @@
             :label="$t('repositories.strayCRLs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -125,6 +157,7 @@
             :label="$t('repositories.validCACerts')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -132,6 +165,7 @@
             :label="$t('repositories.validEECerts')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -139,6 +173,7 @@
             :label="$t('repositories.invalidCerts')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -146,6 +181,7 @@
             :label="$t('repositories.validROAs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -153,6 +189,7 @@
             :label="$t('repositories.invalidROAs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -160,6 +197,7 @@
             :label="$t('repositories.validGBRs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -167,6 +205,7 @@
             :label="$t('repositories.invalidGBRs')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
           <el-table-column
@@ -174,6 +213,7 @@
             :label="$t('repositories.otherObjects')"
             width="150"
             sortable
+            align="right"
           >
           </el-table-column>
         </el-table>
@@ -189,7 +229,7 @@ export default {
   data() {
     return {
       loading: false,
-      repositories: [],
+      repositories: []
     };
   },
   created() {
@@ -198,7 +238,7 @@ export default {
   methods: {
     loadRoutinatorStatus() {
       this.loading = true;
-      APIService.getRoutinatorStatus().then((response) => {
+      APIService.getRoutinatorStatus().then(response => {
         this.status = response.data;
         this.loading = false;
         if (this.status && this.status.version) {
@@ -206,10 +246,15 @@ export default {
         }
         if (this.status.repositories) {
           let repos = [];
-          Object.keys(this.status.repositories).forEach((k) => {
+          Object.keys(this.status.repositories).forEach(k => {
             repos.push({
               repo: k,
-              ...this.status.repositories[k],
+              ...Object.fromEntries(
+                Object.entries(this.status.repositories[k]).map(([key, v]) => [
+                  key,
+                  Number.isInteger(v) ? v.toLocaleString("en") : v
+                ])
+              )
             });
           });
           this.repositories = repos;
@@ -217,8 +262,8 @@ export default {
       });
 
       return false;
-    },
-  },
+    }
+  }
 };
 </script>
 

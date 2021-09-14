@@ -97,9 +97,7 @@
             >
               <el-table-column prop="url" label="URL" width="340"
                 ><template v-slot:default="scope"
-                  ><span class="sans-serif">{{
-                    scope.row.url
-                  }}</span></template
+                  ><span class="sans-serif">{{ scope.row.url }}</span></template
                 >
               </el-table-column>
               <el-table-column
@@ -183,7 +181,7 @@
                 {{ $t("connections.bytesread") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.rtr.bytesRead }}
+                {{ status.rtr.bytesRead.toLocaleString("en") }}
               </el-col>
             </el-row>
             <el-row>
@@ -191,7 +189,7 @@
                 {{ $t("connections.byteswritten") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.rtr.bytesWritten }}
+                {{ status.rtr.bytesWritten.toLocaleString("en") }}
               </el-col>
             </el-row>
           </el-col>
@@ -204,7 +202,7 @@
                 {{ $t("connections.totalconnections") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.http.totalConnections }}
+                {{ status.http.totalConnections.toLocaleString("en") }}
               </el-col>
             </el-row>
             <el-row>
@@ -212,7 +210,7 @@
                 {{ $t("connections.currentconnections") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.http.currentConnections }}
+                {{ status.http.currentConnections.toLocaleString("en") }}
               </el-col>
             </el-row>
             <el-row>
@@ -220,7 +218,7 @@
                 {{ $t("connections.requests") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.http.requests }}
+                {{ status.http.requests.toLocaleString("en") }}
               </el-col>
             </el-row>
             <el-row>
@@ -228,7 +226,7 @@
                 {{ $t("connections.bytesread") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.http.bytesRead }}
+                {{ status.http.bytesRead.toLocaleString("en") }}
               </el-col>
             </el-row>
             <el-row>
@@ -236,7 +234,7 @@
                 {{ $t("connections.byteswritten") }}
               </el-col>
               <el-col :span="20" class="mono">
-                {{ status.http.bytesWritten }}
+                {{ status.http.bytesWritten.toLocaleString("en") }}
               </el-col>
             </el-row>
           </el-col>
