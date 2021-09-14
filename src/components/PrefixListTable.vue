@@ -98,14 +98,17 @@
             v-if="scope.row.type === 'longest-match' && validateBgp"
           /><em-arrow
             v-if="scope.row.type === 'exact-match' && validateBgp"
-          /><el-link
-            :href="
-              `${window.location.protocol}//${
-                window.location.hostname
-              }/${encodeURIComponent(scope.row.prefix)}`
-            "
-            >{{ scope.row.prefix }}</el-link
+          /><router-link
+            :route="{ name: 'searchBgp' }"
+            :to="{ path: `/${encodeURIComponent(scope.row.prefix)}` }"
+            custom
+            v-slot="{ href, navigate }"
           >
+            <el-link :href="href" @click="navigate">{{
+              scope.row.prefix
+            }}</el-link></router-link
+          >
+
           <el-tag class="label sans-serif" v-if="scope.row.isAlloc" type="info"
             >ALLOCATED</el-tag
           >
@@ -167,13 +170,16 @@
               v-if="scope.row.type === 'longest-match' && validateBgp"
             /><em-arrow
               v-if="scope.row.type === 'exact-match' && validateBgp"
-            /><el-link
-              :href="
-                `${window.location.protocol}//${
-                  window.location.hostname
-                }/${encodeURIComponent(scope.row.prefix)}`
-              "
-              >{{ scope.row.prefix }}</el-link
+            />
+            <router-link
+              :route="{ name: 'searchBgp' }"
+              :to="{ path: `/${encodeURIComponent(scope.row.prefix)}` }"
+              custom
+              v-slot="{ href, navigate }"
+            >
+              <el-link :href="href" @click="navigate">{{
+                scope.row.prefix
+              }}</el-link></router-link
             >
             <el-tag
               class="label sans-serif"

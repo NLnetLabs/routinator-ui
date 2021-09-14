@@ -583,6 +583,16 @@ export default {
     this.loadRoutinatorStatus();
     this.loadRotoStatus();
   },
+  watch: {
+    $route(to, from) {
+      console.log("routing kicked in");
+      console.log(from);
+      console.log(to);
+      if (to.params.prefix !== from.params.prefix) {
+        this.loadRoute();
+      }
+    }
+  },
   methods: {
     loadRoute() {
       console.log(this.$route.query);
