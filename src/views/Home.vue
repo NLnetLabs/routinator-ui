@@ -186,7 +186,7 @@
                   <h5>BGP</h5>
                   <a href="https://www.ris.ripe.net/dumps/">RISWhois</a> data,
                   collected from the RIPE NCC<br />
-                  <a href="https://ris.ripe.net">Route Information System</a>.
+                  <a href="https://ris.ripe.net">Route Information Service</a>.
                   Updated every 8 hours.
                   <h5>RIR Allocations</h5>
                   <p>
