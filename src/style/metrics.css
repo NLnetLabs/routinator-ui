@@ -1,0 +1,97 @@
+.content.route-metrics {
+  background-color: var(--light);
+}
+
+#metrics {
+  display: grid;
+  margin: 2rem;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(37rem, 1fr));
+}
+
+#metrics > div {
+  border: 1px solid var(--grey-light);
+  border-radius: var(--radius);
+  padding-bottom: 1rem;
+  background-color: var(--white);
+  max-width: calc(100vw - 4rem);
+}
+
+#metrics h4 {
+  line-height: 4rem;
+  position: relative;
+  padding-left: 4rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-bottom: 1px solid var(--grey-light);
+}
+
+#metrics h4::before {
+  content: ' ';
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background-repeat: no-repeat;
+  background-size: 2rem;
+  background-position: left;
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
+
+#metrics h4.afrinic::before {
+  background-image: url('../img/afrinic.svg');
+}
+
+#metrics h4.apnic::before {
+  background-image: url('../img/apnic.svg');
+}
+
+#metrics h4.arin::before {
+  background-image: url('../img/arin.svg');
+}
+
+#metrics h4.lacnic::before {
+  background-image: url('../img/lacnic.svg');
+}
+
+#metrics h4.ripe::before {
+  background-image: url('../img/ripe.svg');
+}
+
+#metrics h5 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1.5rem 1rem 0 1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--grey-light);
+}
+
+#metrics dl {
+  margin: 0.3rem 1rem;
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-auto-columns: 7rem;
+  grid-auto-flow: column;
+}
+
+#metrics dt {
+  font-size: 0.9rem;
+  color: var(--grey-darker);
+  margin-bottom: 0.2rem;
+}
+
+#metrics dd {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  #metrics > div {
+    max-width: calc(100% - 7rem);
+  }
+
+  #metrics dl {
+    grid-auto-columns: auto;
+  }
+}

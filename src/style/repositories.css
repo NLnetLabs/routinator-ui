@@ -1,0 +1,21 @@
+.content.route-repositories {
+  max-height: calc(100vh - 7rem);
+  background-color: var(--light);
+}
+
+#repositories {
+  box-sizing: border-box;
+  margin: 1rem;
+  width: calc(100% - 2rem);
+  height: calc(100% - 2rem);
+}
+
+#repositories tbody th {
+  max-width: 24rem;
+}
+
+@media (max-width: 720px) {
+  #repositories tbody th {
+    max-width: 15rem;
+  }
+}

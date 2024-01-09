@@ -1,0 +1,124 @@
+#prefix-check .sidebar {
+  min-width: 20rem;
+  flex-grow: 1;
+  background: var(--grey-98);
+}
+
+#prefix-check .sidebar form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1rem 0 1rem;
+}
+
+#prefix-check .sidebar form label {
+  display: block;
+}
+
+#prefix-check #notification {
+  position: relative;
+  width: 100%;
+  max-width: 18rem;
+  display: inline-block;
+  margin: 1rem;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding-right: 2rem;
+}
+
+#prefix-check #notification .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#prefix-check #notification.error {
+  color: var(--error);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+}
+
+#prefix-check #notification.warning {
+  color: var(--warning);
+  background-color: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+}
+
+#prefix-check #notification.success {
+  color: var(--success);
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+#prefix-check .help {
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--grey-dark);
+}
+
+#prefix-check #search-options {
+  margin-top: 1rem;
+  padding: 0 1rem 1rem 1rem;
+  background-color: var(--grey-99);
+  border-top: 1px solid var(--grey-light);
+}
+
+#prefix-check #data-freshness h2,
+#prefix-check #search-options h2 {
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--dark);
+}
+
+#prefix-check #search-options label {
+  font-size: 0.9rem;
+  margin-right: 0;
+  user-select: none;
+  cursor: pointer;
+  color: var(--blue-dark);
+}
+
+#prefix-check #data-freshness {
+  padding: 0 1rem 1rem 1rem;
+  color: var(--dark);
+  border-top: 1px solid var(--grey-light);
+}
+
+#data-freshness table {
+  width: 100%;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-collapse: collapse;
+  color: var(--grey-darker);
+}
+
+#prefix-check #data-freshness td {
+  text-align: right;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--grey-93);
+}
+
+#prefix-check #data-freshness th {
+  padding: 0.3rem 0;
+  text-align: left;
+  vertical-align: top;
+  font-weight: normal;
+  border-bottom: 1px solid var(--grey-93);
+}
+
+#prefix-check #data-freshness pre {
+  margin: 0;
+  padding: 0;
+}
+
+#prefix-check #data-freshness .ago {
+  opacity: 0.7;
+}

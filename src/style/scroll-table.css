@@ -1,0 +1,69 @@
+.scroll-table {
+  overflow: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--grey-light);
+  background-color: var(--white);
+}
+
+.scroll-table > div {
+  padding: 1rem;
+  position: relative;
+}
+
+.scroll-table table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.scroll-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: 0.5rem;
+  vertical-align: bottom;
+  min-width: 8rem;
+  color: var(--black);
+  background-color: var(--white);
+  border-left: 1px solid var(--grey-95);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.scroll-table thead th.active {
+  text-decoration: underline;
+}
+
+.scroll-table thead th:first-child {
+  left: 0;
+  z-index: 2;
+  border-left: none;
+}
+
+.scroll-table tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  font-weight: normal;
+  padding: 0.5rem;
+  border-top: 1px solid var(--grey-93);
+  background-color: var(--white);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.scroll-table td {
+  text-align: right;
+  color: var(--black);
+  padding: 0.5rem 0.5rem;
+  border-left: 1px solid var(--grey-95);
+  border-top: 1px solid var(--grey-93);
+  background-color: var(--grey-99);
+}
+
+.scroll-table tr:nth-child(even) td {
+  background-color: var(--grey-98);
+}

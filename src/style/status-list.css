@@ -1,0 +1,37 @@
+.status-list {
+  font-size: 0.9rem;
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--grey-light);
+  background-color: var(--white);
+  padding: 0.5rem 1rem;
+  display: grid;
+  grid-template-columns: 15rem auto;
+  line-height: 2rem;
+  overflow-x: auto;
+}
+
+.status-list dt {
+  font-weight: 500;
+  border-bottom: 1px solid var(--grey-light);
+}
+
+.status-list dd {
+  border-bottom: 1px solid var(--grey-light);
+  margin: 0;
+}
+
+.status-list > dd:nth-last-child(3),
+.status-list > dd:last-child,
+.status-list > dt:nth-last-child(2),
+.status-list dd:last-child dt:nth-last-child(2),
+.status-list dd:last-child dd:last-child {
+  border-bottom: none;
+}
+
+.status-list dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 12rem auto;
+}

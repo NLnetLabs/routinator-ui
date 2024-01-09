@@ -1,0 +1,138 @@
+html,
+body {
+  height: 100%;
+  min-width: 540px;
+}
+
+body {
+  overflow-y: scroll;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#root .content {
+  flex: 1;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+header {
+  background-color: var(--blue);
+  display: flex;
+  height: 4rem;
+  user-select: none;
+}
+
+header h1 {
+  display: block;
+  width: 18rem;
+  margin: 1rem;
+  background: url('../img/routinator_logo_white.svg') no-repeat;
+}
+
+header h1 span {
+  display: none;
+}
+
+header menu,
+header menu ul {
+  display: flex;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+header menu {
+  width: calc(100% - 20rem);
+  justify-content: space-between;
+}
+
+header menu li {
+  display: block;
+  height: 100%;
+  list-style: none;
+}
+
+header menu li a {
+  height: 100%;
+  line-height: 4rem;
+  padding: 0 1rem;
+  display: block;
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 100ms ease-in-out;
+}
+
+header menu li a:hover {
+  background-color: var(--blue-light);
+}
+
+header menu li a.active {
+  background-color: var(--blue-dark);
+  border-bottom: 0.2rem solid var(--red);
+}
+
+header menu button.help {
+  margin: 1rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  background-color: var(--blue-dark);
+}
+
+header menu button.help:hover {
+  background-color: var(--blue-light);
+}
+
+@media (max-width: 720px) {
+  header {
+    height: 3rem;
+  }
+
+  header h1 {
+    width: 6rem;
+  }
+
+  header menu li a {
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    line-height: 3rem;
+  }
+}
+
+footer {
+  background-color: var(--light);
+  color: var(--grey-dark);
+  line-height: 1.5rem;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+footer div {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  white-space: nowrap;
+}
+
+footer a {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--grey-dark);
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

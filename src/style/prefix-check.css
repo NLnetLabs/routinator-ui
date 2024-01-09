@@ -1,0 +1,267 @@
+#prefix-check {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  align-content: stretch;
+  height: 100%;
+}
+
+#prefix-check h2 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+#prefix-check .results {
+  flex-grow: 1000;
+  padding: 1rem;
+  min-width: calc(540px - 2rem);
+}
+
+#prefix-check .results > div {
+  border-left: 0.5rem solid var(--light);
+  padding-left: 1rem;
+  max-width: 50rem;
+}
+
+#prefix-check .results a {
+  color: var(--dark);
+  text-decoration: none;
+}
+
+#prefix-check .results a:hover {
+  color: var(--blue-dark);
+  text-decoration: underline;
+}
+
+#prefix-check .results table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2em;
+  color: var(--dark);
+}
+
+#prefix-check .results table tr td.sub-table {
+  background: white !important;
+  padding: 0.5rem 1rem;
+}
+
+#prefix-check .results table table {
+  margin-bottom: 1rem;
+}
+
+#prefix-check .results table th {
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--grey-light);
+  padding: 0.5rem;
+  text-align: right;
+}
+
+#prefix-check .results table td {
+  border-bottom: 1px solid var(--grey-light);
+  padding: 0.5rem;
+  vertical-align: middle;
+  text-align: right;
+}
+
+#prefix-check .results table .prefix-container {
+  text-align: left;
+}
+
+#prefix-check .results table tbody tr.even td {
+  background-color: var(--grey-99);
+}
+
+#prefix-check .results .valid,
+#prefix-check .results .invalid,
+#prefix-check .results .not-found,
+#prefix-check .results .tag {
+  display: inline-block;
+  border-radius: var(--radius);
+  padding: 0.2rem 0.3rem;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+#prefix-check .results .tag {
+  line-height: 1.2;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+#prefix-check .results .valid {
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+#prefix-check .results .invalid {
+  color: var(--warning);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+}
+
+#prefix-check .results .not-found,
+#prefix-check .results .tag {
+  color: var(--dark);
+  background: var(--light);
+  border: 1px solid var(--grey-light);
+}
+
+#prefix-check .results h3 {
+  text-transform: uppercase;
+}
+
+#prefix-check .results p {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  color: var(--dark);
+}
+
+#prefix-check .results table td p {
+  text-align: left;
+  margin-top: 0.5rem;
+  color: var(--dark);
+}
+
+#prefix-check .results table td.higlighted span {
+  border: 1px solid var(--blue-border);
+  background: var(--blue-bg);
+  display: inline-block;
+  padding: 0.1rem 0.2rem;
+  border-radius: var(--radius);
+  color: var(--black);
+}
+
+#prefix-check .button-container button {
+  display: block;
+  background: none;
+  border: none;
+  width: 100%;
+  min-width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
+#prefix-check .button-container button:hover span {
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+#prefix-check .button-container button span {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 2px solid var(--dark);
+  border-bottom: 2px solid var(--dark);
+  transition: 100ms;
+}
+
+#prefix-check .button-container .collapse span {
+  transform: rotate(45deg);
+}
+
+#prefix-check .button-container .expand span {
+  transform: rotate(-45deg);
+}
+
+#prefix-check .button-container button span span {
+  display: none;
+}
+
+#prefix-check .results table td.button-container {
+  padding: 0;
+}
+
+#prefix-check #related-prefixes > table {
+  margin-top: 1.5rem;
+}
+
+#prefix-check .related-prefixes-group {
+  width: 100%;
+  border: 1px solid var(--grey-light);
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius);
+}
+
+#prefix-check .related-prefixes-group > table {
+  margin: 1rem;
+  width: calc(100% - 2rem);
+}
+
+#prefix-check .related-prefixes-group h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--light);
+  height: 3rem;
+  line-height: 3rem;
+  padding-left: 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+#prefix-check .related-prefixes-group input {
+  margin: 1rem 1rem 0 1rem;
+  width: 20rem;
+}
+
+#prefix-check .related-prefixes-group h4.collapse {
+  border-bottom: 1px solid var(--grey-light);
+}
+
+#prefix-check .related-prefixes-group h4 .arrow {
+  display: inline-block;
+  margin-right: 1rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 2px solid var(--dark);
+  border-bottom: 2px solid var(--dark);
+  transition: 100ms;
+}
+
+#prefix-check .related-prefixes-group h4.collapse .arrow {
+  transform: rotate(45deg);
+}
+
+#prefix-check .related-prefixes-group h4.expand .arrow {
+  transform: rotate(-45deg);
+}
+
+#prefix-check .related-prefixes-group h4 .arrow span {
+  display: none;
+}
+
+#prefix-check .matched,
+#prefix-check .unmatchedasn,
+#prefix-check .unmatchedlength {
+  margin-top: 1rem;
+  text-align: left;
+  border-left: 0.5rem solid var(--error-border);
+}
+
+#prefix-check .matched h5,
+#prefix-check .unmatchedasn h5,
+#prefix-check .unmatchedlength h5 {
+  display: inline-block;
+  line-height: 1rem;
+  padding: 0.25rem;
+  text-align: left;
+  color: var(--error);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+#prefix-check .matched h5 {
+  color: var(--success);
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-left: none;
+}
+
+#prefix-check .matched {
+  border-left: 0.5rem solid var(--success-border);
+}

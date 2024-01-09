@@ -1,0 +1,85 @@
+.content.route-connections {
+  background-color: var(--light);
+}
+
+#connections {
+  padding: 2rem;
+}
+
+#connections h3 {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 1rem 0 0 0;
+}
+
+#rrdp {
+  max-height: 20rem;
+  max-width: 120rem;
+}
+
+#rsync {
+  max-width: 60rem;
+}
+
+#rrdp,
+#rsync {
+  display: inline-block;
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+#rrdp table,
+#rsync table {
+  width: 100%;
+}
+
+#rrdp tbody th {
+  max-width: 24rem;
+}
+
+@media (max-width: 720px) {
+  #rsync tbody th,
+  #rrdp tbody th {
+    max-width: 15rem;
+  }
+}
+
+.duration {
+  display: flex;
+}
+
+.duration > div {
+  width: 6rem;
+  margin-right: 0.5rem;
+  background: var(--blue-lighter);
+  height: 1rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.duration > div > div {
+  font-size: 0.7rem;
+  line-height: 1rem;
+  overflow: visible;
+  background: var(--blue);
+  color: var(--white);
+  height: 1rem;
+}
+
+.duration span {
+  margin: 0 0.2rem;
+}
+
+.side-by-side {
+  width: 100%;
+  max-width: 120rem;
+  overflow: hidden;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
+}
+
+.side-by-side > div {
+  max-width: calc(100% - 4rem);
+}

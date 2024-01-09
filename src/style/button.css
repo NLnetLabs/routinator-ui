@@ -1,0 +1,25 @@
+.button {
+  display: inline-block;
+  border: none;
+  background: var(--blue);
+  border-radius: var(--radius);
+  line-height: 2.5rem;
+  font-size: 0.9rem;
+  padding: 0 1rem;
+  color: white;
+  white-space: nowrap;
+  cursor: pointer;
+  vertical-align: text-bottom;
+}
+
+a.button {
+  text-decoration: none;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.button + .button {
+  margin-left: 0.75rem;
+}

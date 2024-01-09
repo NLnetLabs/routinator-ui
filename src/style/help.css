@@ -1,0 +1,79 @@
+.help {
+  display: inline-block;
+  border-radius: 100%;
+  border: none;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--white);
+  background-color: transparent;
+}
+
+.help:hover {
+  background-color: var(--blue-dark);
+}
+
+.help-overlay {
+  visibility: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 200ms ease-in-out;
+  opacity: 0;
+}
+
+.help-overlay.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.help-overlay .bar {
+  position: absolute;
+  right: -100%;
+  width: 30rem;
+  height: 100%;
+  max-width: 90%;
+  line-height: 1.4;
+  background: var(--white);
+  padding: 1.5rem;
+  color: var(--dark);
+  overflow-y: auto;
+  transition: all 200ms ease-in-out;
+}
+
+.help-overlay.visible .bar {
+  right: 0;
+}
+
+.help-overlay .bar h3,
+.help-overlay .bar h2 {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.help-overlay .bar h2 {
+  font-size: 1.2rem;
+}
+
+.help-overlay .bar p {
+  margin-bottom: 0.5rem;
+}
+
+.help-overlay .bar ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
