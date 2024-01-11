@@ -81,18 +81,6 @@ header menu li a.active {
   border-bottom: 0.2rem solid var(--red);
 }
 
-header menu button.help {
-  margin: 1rem;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
-  background-color: var(--blue-dark);
-}
-
-header menu button.help:hover {
-  background-color: var(--blue-light);
-}
-
 @media (max-width: 720px) {
   header {
     height: 3rem;

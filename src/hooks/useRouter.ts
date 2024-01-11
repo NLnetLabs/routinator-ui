@@ -65,12 +65,13 @@ export default function useRouter(): RouterContextProps {
   // handle back / forward events
   useEffect(() => {
     window.addEventListener('popstate', (event) => {
-      if (event.state.routeName) {
+      if (event.state?.routeName) {
         setRoute(matchName(event.state.routeName));
       } else {
         setRoute(matchPath(window.location.pathname));
+        setParams({});
       }
-      if (event.state.routeParams) {
+      if (event.state?.routeParams) {
         setParams(event.state.routeParams);
       }
     });

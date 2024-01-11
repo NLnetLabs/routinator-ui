@@ -24,8 +24,10 @@ export default function PrefixCheck(): JSX.Element {
     validationResult,
   } = useSearch();
 
+  const searched = validationResult?.prefix || searchResult;
+
   return (
-    <div id="prefix-check">
+    <div id="prefix-check" className={searched ? 'searched' : 'initial'}>
       <div className="sidebar">
         <SearchForm
           onSubmit={onSubmit}

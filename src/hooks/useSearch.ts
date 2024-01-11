@@ -175,7 +175,13 @@ export default function useSearch(): SearchProperties {
       }
 
       search(queryPrefix, setSearchResult, setNotification);
+    } else if (prefix || asn) {
+      setPrefix('');
+      setAsn('');
+      setSearchResult(null);
+      setValidationResult(null);
     }
+
   }, [params.asn, params.prefix]);
 
   // fill asn from search result

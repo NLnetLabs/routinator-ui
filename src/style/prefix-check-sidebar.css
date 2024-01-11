@@ -1,7 +1,38 @@
 #prefix-check .sidebar {
-  min-width: 20rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 250ms ease-in;
   flex-grow: 1;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+}
+
+#prefix-check .sidebar > form,
+#prefix-check .sidebar > div {
+  transition: all 250ms ease-in;
+  width: 100%;
+  max-width: 100%;
+}
+
+#prefix-check .results {
+  transition: all 250ms ease-in;
+}
+
+#prefix-check.initial .sidebar {
+  background: var(--white);
+}
+
+#prefix-check.searched .sidebar {
+  min-width: 20rem;
   background: var(--grey-98);
+}
+
+#prefix-check.initial .sidebar > form,
+#prefix-check.initial .sidebar > div {
+  width: 50rem;
+  max-width: 100%;
+  padding: 2rem !important;
 }
 
 #prefix-check .sidebar form {
@@ -89,6 +120,7 @@
   padding: 0 1rem 1rem 1rem;
   color: var(--dark);
   border-top: 1px solid var(--grey-light);
+  background: var(--grey-98);
 }
 
 #data-freshness table {

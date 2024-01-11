@@ -12,10 +12,16 @@
   font-weight: 500;
 }
 
-#prefix-check .results {
+#prefix-check.initial .results {
+  max-width: 0;
+  min-width: 0;
+}
+
+#prefix-check.searched .results {
   flex-grow: 1000;
   padding: 1rem;
   min-width: calc(540px - 2rem);
+  max-width: 100%;
 }
 
 #prefix-check .results > div {
@@ -118,6 +124,14 @@
   font-size: 0.9rem;
   margin-top: 0.5rem;
   color: var(--dark);
+}
+
+#prefix-check .results .no-results {
+  display: block;
+  margin: 2rem 0;
+  color: var(--dark);
+  border-left: 0.5rem solid var(--light);
+  padding-left: 1rem;
 }
 
 #prefix-check .results table td p {
