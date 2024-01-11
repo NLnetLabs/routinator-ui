@@ -168,7 +168,7 @@ export interface Member {
 
 export interface MemberWithAsn extends Member {
   key: string;
-  asn: string;
+  asn: string | null;
   isAllocated: boolean;
 }
 

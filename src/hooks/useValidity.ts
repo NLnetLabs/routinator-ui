@@ -5,7 +5,7 @@ import { API_ENDPOINT } from '../core/contants';
 
 export default function useValidity(
   prefix: string,
-  asn: string,
+  asn: string | null,
   setNotification: (message: Message | null) => void
 ) {
   const [result, setResult] = useState<null | ValidationResponse>(null);
@@ -14,6 +14,7 @@ export default function useValidity(
     if (!asn || !prefix) {
       return;
     }
+    
     fetch(`${API_ENDPOINT}/api/v1/validity/${asn}/${prefix}`)
       .then((response) => response.json())
       .then(setResult)

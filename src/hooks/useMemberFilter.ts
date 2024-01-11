@@ -40,7 +40,14 @@ export default function useMemberFilter(members: Member[]): MemberFilterResult {
               isAllocated: member.meta.some(
                 (m) => m.sourceType === 'rir-alloc'
               ),
-            })) || []
+            })) || [{
+              ...member,
+              asn: null,
+              key: member.prefix,
+              isAllocated: member.meta.some(
+                (m) => m.sourceType === 'rir-alloc'
+              ),
+            }]
         )
         .flat()
     )

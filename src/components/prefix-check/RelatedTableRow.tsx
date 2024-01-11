@@ -7,7 +7,7 @@ import Link from '../Link';
 export interface RelatedTableRowProps {
   index: number;
   prefix: string;
-  asn: string;
+  asn: string | null;
   isAllocated: boolean;
   highlightAsn: boolean;
   setNotification: (m: Message | null) => void;
@@ -43,7 +43,9 @@ export default function RelatedTableRow({
           {isAllocated && <span className="tag">Allocated</span>}
         </td>
         <td className={highlightAsn ? 'higlighted' : ''}>
-          <span>{asn}</span>
+          <span>{asn ? asn : (
+            <span className="tag">Not seen</span>
+          )}</span>
         </td>
         <td>
           {validity && <span className={validity.state}>{validity.state}</span>}
