@@ -29,14 +29,16 @@ export default function RelatedTableRow({
     <>
       <tr className={index % 2 === 0 ? 'even' : 'odd'}>
         <td className="button-container">
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className={expanded ? 'collapse' : 'expand'}
-          >
-            <span>
-              <span>{expanded ? 'collapse' : 'expand'}</span>
-            </span>
-          </button>
+          {validity && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className={expanded ? 'collapse' : 'expand'}
+            >
+              <span>
+                <span>{expanded ? 'collapse' : 'expand'}</span>
+              </span>
+            </button>
+          )}
         </td>
         <td className="prefix-container">
           <Link params={{ prefix, 'validate-bgp': 'true' }}>{prefix}</Link>

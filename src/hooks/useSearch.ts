@@ -198,6 +198,8 @@ export default function useSearch(): SearchProperties {
         if (asn) {
           nextAsn = asn[0];
           setAsn(nextAsn);
+        } else {
+          setNotification({ message: 'Can\'t find an Origin ASN in BGP for this Prefix', level: 'warning' });
         }
       }
 

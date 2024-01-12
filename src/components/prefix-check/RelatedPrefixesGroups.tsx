@@ -38,6 +38,7 @@ export default function RelatedPrefixesGroups({
       <RelatedTable
         members={[search.result]}
         highlight={highlight}
+        showAllocated={true}
         setNotification={setNotification}
         showFilter={false}
       />
@@ -46,6 +47,7 @@ export default function RelatedPrefixesGroups({
         label="more specific"
         param="related_more_specific"
         highlight={highlight}
+        showAllocated={true}
         relations={search.result.relations}
         setNotification={setNotification}
       />
@@ -54,6 +56,7 @@ export default function RelatedPrefixesGroups({
         label="less specific"
         param="related_less_specific"
         highlight={highlight}
+        showAllocated={true}
         relations={search.result.relations}
         setNotification={setNotification}
       />
@@ -62,6 +65,7 @@ export default function RelatedPrefixesGroups({
         label="allocated to the same organization"
         param="related_alloc"
         highlight={highlight}
+        showAllocated={false}
         relations={search.result.relations}
         setNotification={setNotification}
       />

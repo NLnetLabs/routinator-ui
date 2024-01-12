@@ -9,6 +9,7 @@ interface RelatedPrefixesProps {
   label: string;
   param: string;
   highlight: string;
+  showAllocated: boolean,
   relations: Relation[];
   setNotification: (m: Message | null) => void;
 }
@@ -18,6 +19,7 @@ export default function RelatedPrefixes({
   label,
   param,
   highlight,
+  showAllocated,
   relations,
   setNotification,
 }: RelatedPrefixesProps): JSX.Element | null {
@@ -43,6 +45,7 @@ export default function RelatedPrefixes({
       {show && (
         <RelatedTable
           highlight={highlight}
+          showAllocated={showAllocated}
           members={items.members}
           setNotification={setNotification}
           showFilter={true}

@@ -8,6 +8,7 @@ import useMemberFilter from '../../hooks/useMemberFilter';
 export interface RelatedTableProps {
   members: Member[];
   highlight: string;
+  showAllocated: boolean;
   showFilter: boolean;
   setNotification: (m: Message | null) => void;
 }
@@ -15,6 +16,7 @@ export interface RelatedTableProps {
 export default function RelatedTable({
   members,
   highlight,
+  showAllocated,
   showFilter,
   setNotification,
 }: RelatedTableProps): JSX.Element {
@@ -48,7 +50,7 @@ export default function RelatedTable({
               index={counter}
               prefix={member.prefix}
               asn={member.asn}
-              isAllocated={member.isAllocated}
+              isAllocated={showAllocated && member.isAllocated}
               highlightAsn={highlight === member.asn}
               setNotification={setNotification}
             />
