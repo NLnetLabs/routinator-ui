@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React, { JSX, useContext } from 'react';
 import SearchOptions from './prefix-check/SearchOptions';
 import DataFreshness from './prefix-check/DataFreshness';
 import SearchForm from './prefix-check/SearchForm';
@@ -6,28 +6,28 @@ import Notification from './prefix-check/Message';
 import RelatedPrefixesGroups from './prefix-check/RelatedPrefixesGroups';
 import useSearch from '../hooks/useSearch';
 import ValidationResult from './prefix-check/ValidationResult';
+import { RouterContext } from '../hooks/useRouter';
 
 export default function PrefixCheck(): JSX.Element {
+  const { params, navigate } = useContext(RouterContext);
   const {
     prefix,
     setPrefix,
-    validatePrefix,
-    setValidatePrefix,
     asn,
     setAsn,
-    notification,
-    setNotification,
+    validatePrefix,
+    setValidatePrefix,
     exactMatch,
     setExactMatch,
+    notification,
+    setNotification,
     onSubmit,
     searchResult,
     validationResult,
-  } = useSearch();
-
-  const searched = validationResult?.prefix || searchResult;
+  } = useSearch(params, navigate);
 
   return (
-    <div id="prefix-check" className={searched ? 'searched' : 'initial'}>
+    <div id="prefix-check" className={searchResult ? 'searched' : 'initial'}>
       <div className="sidebar">
         <SearchForm
           onSubmit={onSubmit}
@@ -54,19 +54,15 @@ export default function PrefixCheck(): JSX.Element {
         <DataFreshness />
       </div>
       <div className="results">
-        {validationResult && (
-          <ValidationResult
-            prefix={validationResult.prefix}
-            asn={validationResult.asn}
-            setNotification={setNotification}
-          />
-        )}
         {searchResult && (
-          <RelatedPrefixesGroups
-            highlight={validatePrefix ? asn : ''}
-            search={searchResult}
-            setNotification={setNotification}
-          />
+          <>
+            <ValidationResult validationResult={validationResult} />
+            <RelatedPrefixesGroups
+              highlight={validatePrefix ? asn : ''}
+              search={searchResult}
+              setNotification={setNotification}
+            />
+          </>
         )}
       </div>
     </div>

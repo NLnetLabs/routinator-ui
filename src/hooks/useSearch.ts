@@ -1,25 +1,28 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Message } from '../components/prefix-check/Message';
 import { isIp, parseIPAndPrefix } from '../core/ipRegex';
 import { isValidASN } from '../core/util';
-import { Search } from '../types';
-import { Navigate, RouteParams, RouterContext } from './useRouter';
-import { ROTO_ENDPOINT } from '../core/contants';
+import { Search, ValidationResponse } from '../types';
+import { Navigate, RouteParams } from './useRouter';
+import { API_ENDPOINT, ROTO_ENDPOINT } from '../core/contants';
 
-interface SearchProperties {
+interface SearchParams {
   prefix: string;
+  asn: string;
+}
+
+interface SearchProperties extends SearchParams {
   setPrefix: (v: string) => void;
+  setAsn: (v: string) => void;
   validatePrefix: boolean;
   setValidatePrefix: (v: boolean) => void;
-  asn: string;
-  setAsn: (v: string) => void;
-  notification: null | Message;
-  setNotification: (m: null | Message) => void;
   exactMatch: boolean;
   setExactMatch: (v: boolean) => void;
+  notification: null | Message;
+  setNotification: (m: null | Message) => void;
   onSubmit: () => void;
   searchResult: null | Search;
-  validationResult: null | { asn: string; prefix: string };
+  validationResult: null | ValidationResponse;
 }
 
 function updateNavigation(
@@ -30,26 +33,29 @@ function updateNavigation(
   validatePrefix: boolean,
   exactMatch: boolean
 ) {
-  params.prefix = prefix;
+  const newParams: RouteParams = {
+    ...params,
+    prefix,
+  };
 
   if (validatePrefix) {
-    params['validate-bgp'] = 'true';
+    newParams['validate-bgp'] = 'true';
   } else {
-    params.asn = asn;
-    delete params['validate-bgp'];
+    newParams.asn = asn;
+    delete newParams['validate-bgp'];
   }
 
   if (exactMatch) {
-    params['exact-match-only'] = 'true';
+    newParams['exact-match-only'] = 'true';
   } else {
-    delete params['exact-match-only'];
+    delete newParams['exact-match-only'];
   }
 
-  if (!params.asn) {
-    delete params.asn;
+  if (!newParams.asn) {
+    delete newParams.asn;
   }
 
-  navigate('prefix-check', params);
+  navigate('prefix-check', newParams);
 }
 
 function validate(
@@ -57,27 +63,13 @@ function validate(
   asn: string,
   validatePrefix: boolean,
   setNotification: (m: null | Message) => void
-): false | string {
-  setNotification(null);
-
-  let queryPrefix;
+): string | null {
   if (!prefix) {
     setNotification({
       message: 'Please enter a valid prefix',
       level: 'error',
     });
-    return false;
-  }
-
-  try {
-    const [ip, prefixLength] = parseIPAndPrefix(prefix);
-    queryPrefix = `${ip}/${prefixLength}`;
-  } catch (e) {
-    setNotification({
-      message: 'Please enter a valid prefix',
-      level: 'error',
-    });
-    return false;
+    return null;
   }
 
   if (!validatePrefix && !isValidASN(asn)) {
@@ -86,125 +78,110 @@ function validate(
         'Please enter a valid ASN or enable validating for an ASN found in BGP',
       level: 'error',
     });
-    return false;
+    return null;
   }
 
-  return queryPrefix;
+  const parsed = parseIPAndPrefix(prefix);
+
+  if (!parsed) {
+    setNotification({
+      message: 'Please enter a valid prefix',
+      level: 'error',
+    });
+    return null;
+  }
+
+  setNotification(null);
+
+  return parsed;
 }
 
-async function search(
-  prefix: string,
-  setSearchResult: (v: null | Search) => void,
-  setNotification: (m: null | Message) => void
-) {
-  fetch(`${ROTO_ENDPOINT}/api/v1/prefix/${prefix}/search`)
-    .then((response) =>
-      response.json().then((result) => [response.status, result])
-    )
-    .then(([status, result]) => {
-      if (status === 200) {
-        setSearchResult(result);
-      } else if (result.error_msg) {
-        setNotification({ message: result.error_msg, level: 'error' });
-      } else {
-        setNotification({ message: 'An error occurred', level: 'error' });
-      }
-    })
-    .catch(() =>
-      setNotification({ message: 'An error occurred', level: 'error' })
-    );
-}
-
-export default function useSearch(): SearchProperties {
-  const { params, navigate } = useContext(RouterContext);
-  const paramsSet = Object.keys(params).length > 0;
+export default function useSearch(
+  params: RouteParams,
+  navigate: Navigate
+): SearchProperties {
   const [prefix, setPrefix] = useState(params.prefix || '');
   const [asn, setAsn] = useState(params.asn || '');
   const [searchResult, setSearchResult] = useState<null | Search>(null);
   const [validatePrefix, setValidatePrefix] = useState(
-    paramsSet ? params['validate-bgp'] === 'true' : true
+    Object.keys(params).length > 0 ? params['validate-bgp'] === 'true' : true
   );
   const [exactMatch, setExactMatch] = useState(
     params['exact-match-only'] === 'true'
   );
-  const [validationResult, setValidationResult] = useState<null | {
-    asn: string;
-    prefix: string;
-  }>(null);
+  const [validationResult, setValidationResult] =
+    useState<null | ValidationResponse>(null);
   const [notification, setNotification] = useState<Message | null>(null);
+  const setError = (message = 'An error occurred') =>
+    setNotification({ message, level: 'error' });
 
-  // when the search form is submitted
-  const onSubmit = () => {
-    const queryPrefix = validate(prefix, asn, validatePrefix, setNotification);
+  // initial search if query params are set
+  // update state based in navigation
+  useEffect(() => {
+    if (params.prefix !== prefix) {
+      setPrefix(params.prefix || '');
+    }
+
+    if (params.asn !== asn) {
+      setAsn(params.asn || '');
+    }
+
+    if (!params.prefix) {
+      setSearchResult(null);
+      setValidationResult(null);
+      return;
+    }
+
+    const queryPrefix = validate(
+      params.prefix,
+      params.asn,
+      validatePrefix,
+      setNotification
+    );
 
     if (!queryPrefix) {
       return;
     }
 
-    updateNavigation(params, navigate, prefix, asn, validatePrefix, exactMatch);
-
-    search(queryPrefix, setSearchResult, setNotification);
-  };
-
-  // initial search if query params are set
-  // update state based in navigation
-  useEffect(() => {
-    if (paramsSet) {
-      let newPrefix = prefix;
-      let newAsn = asn;
-
-      if (params.prefix !== prefix) {
-        newPrefix = params.prefix || '';
-        setPrefix(newPrefix);
-      }
-
-      if (params.asn !== asn) {
-        newAsn = params.asn || '';
-        setAsn(newAsn);
-      }
-
-      const queryPrefix = validate(
-        newPrefix,
-        newAsn,
-        validatePrefix,
-        setNotification
+    const search = async () => {
+      const response = await fetch(
+        `${ROTO_ENDPOINT}/api/v1/prefix/${queryPrefix}/search`
       );
 
-      if (!queryPrefix) {
-        return;
+      if (response.status !== 200) {
+        return setError();
       }
 
-      search(queryPrefix, setSearchResult, setNotification);
-    } else if (prefix || asn) {
-      setPrefix('');
-      setAsn('');
-      setSearchResult(null);
-      setValidationResult(null);
-    }
+      const searchResult: Search = await response.json();
 
-  }, [params.asn, params.prefix]);
+      if (searchResult.error_msg) {
+        return setError(searchResult.error_msg);
+      }
 
-  // fill asn from search result
-  useEffect(() => {
-    let nextAsn = asn;
-    let nextPrefix = prefix;
+      setSearchResult(searchResult);
 
-    if (searchResult) {
+      let nextPrefix = params.prefix;
+      let nextAsn = params.asn;
+
+      // fill in the asn provided in the search result
       if (validatePrefix) {
-        const asn = searchResult.result.meta
-          .filter((m) => m.originASNs)
-          .map((m) => m.originASNs)[0];
+        const resultAsn = searchResult.result.meta
+          .map((m) => (m.originASNs ? m.originASNs[0] : null))
+          .find((asn) => asn);
 
-        if (asn) {
-          nextAsn = asn[0];
+        if (resultAsn) {
+          nextAsn = resultAsn;
           setAsn(nextAsn);
         } else {
-          setNotification({ message: 'Can\'t find an Origin ASN in BGP for this Prefix', level: 'warning' });
+          setNotification({
+            message: 'Could not find an Origin ASN in BGP for this Prefix',
+            level: 'warning',
+          });
         }
       }
 
-      if (isIp(prefix)) {
-        // in case the user entered an IP, but not a prefix, we have to use the prefix returned in the search result
+      // in case the user entered an IP, but not a prefix, we have to use the prefix returned in the search result
+      if (isIp(prefix) && searchResult.result.prefix) {
         nextPrefix = searchResult.result.prefix;
         setPrefix(nextPrefix);
         setNotification({
@@ -212,10 +189,23 @@ export default function useSearch(): SearchProperties {
           level: 'success',
         });
       }
-    }
 
-    setValidationResult({ asn: nextAsn, prefix: nextPrefix });
-  }, [searchResult]);
+      if (nextAsn) {
+        const validateResponse = await fetch(
+          `${API_ENDPOINT}/api/v1/validity/${nextAsn}/${nextPrefix}`
+        );
+        setValidationResult(await validateResponse.json());
+      } else {
+        setValidationResult(null);
+      }
+    };
+
+    search().catch(setError);
+  }, [params.prefix, params.asn]);
+
+  // when the search form is submitted
+  const onSubmit = () =>
+    updateNavigation(params, navigate, prefix, asn, validatePrefix, exactMatch);
 
   return {
     prefix,

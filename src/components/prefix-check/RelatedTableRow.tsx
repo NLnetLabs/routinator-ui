@@ -45,9 +45,7 @@ export default function RelatedTableRow({
           {isAllocated && <span className="tag">Allocated</span>}
         </td>
         <td className={highlightAsn ? 'higlighted' : ''}>
-          <span>{asn ? asn : (
-            <span className="tag">Not seen</span>
-          )}</span>
+          <span>{asn ? asn : <span className="tag">Not seen</span>}</span>
         </td>
         <td>
           {validity && <span className={validity.state}>{validity.state}</span>}

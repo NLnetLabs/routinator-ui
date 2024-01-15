@@ -14,7 +14,7 @@ export default function useValidity(
     if (!asn || !prefix) {
       return;
     }
-    
+
     fetch(`${API_ENDPOINT}/api/v1/validity/${asn}/${prefix}`)
       .then((response) => response.json())
       .then(setResult)

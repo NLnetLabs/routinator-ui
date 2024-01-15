@@ -9,7 +9,7 @@ interface RelatedPrefixesProps {
   label: string;
   param: string;
   highlight: string;
-  showAllocated: boolean,
+  showAllocated: boolean;
   relations: Relation[];
   setNotification: (m: Message | null) => void;
 }

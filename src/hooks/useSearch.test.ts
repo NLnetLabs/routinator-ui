@@ -1,6 +1,9 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import useSearch from './useSearch';
 import * as searchResult from '../test/searchResult.json';
+import * as validationResult from '../test/validationResult.json';
+import { RouteParams } from './useRouter';
+import { useState } from 'react';
 
 function fetchMock(url: string): Promise<Response> {
   return new Promise((resolve) =>
@@ -10,6 +13,10 @@ function fetchMock(url: string): Promise<Response> {
         json: async () => {
           if (url.endsWith('/search')) {
             return searchResult;
+          }
+
+          if (url.endsWith('/validity/AS15169/104.154.0.0/15')) {
+            return validationResult;
           }
 
           return null;
@@ -29,8 +36,13 @@ afterAll(() => {
   global.fetch.mockClear();
 });
 
-it('useStaleRefresh hook runs correctly', async () => {
-  const { result, waitForValueToChange } = renderHook(() => useSearch());
+it('useSearch hook runs correctly', async () => {
+  const { result, waitForValueToChange } = renderHook(() => {
+    const [params, setParams] = useState({});
+    const navigate = (route: string, p: RouteParams) => setParams(p);
+
+    return useSearch(params, navigate);
+  });
   const prefix = '104.154.0.0/15';
 
   act(() => {
@@ -46,6 +58,12 @@ it('useStaleRefresh hook runs correctly', async () => {
   expect(result.current.prefix).toEqual(prefix);
   expect(result.current.searchResult?.result.relations?.length).toEqual(3);
 
+  await waitForValueToChange(() => result.current.validationResult);
+
+  expect(
+    result.current.validationResult?.validated_route.route.origin_asn
+  ).toEqual('AS15169');
+
   act(() => {
     result.current.setValidatePrefix(false);
   });
@@ -59,6 +77,7 @@ it('useStaleRefresh hook runs correctly', async () => {
   });
 
   expect(result.current.validatePrefix).toEqual(false);
-  expect(result.current.notification?.message).toEqual('Please enter a valid ASN or enable validating for an ASN found in BGP');
-  expect(result.current.validationResult?.asn).toEqual('AS15169');
+  expect(result.current.notification?.message).toEqual(
+    'Please enter a valid ASN or enable validating for an ASN found in BGP'
+  );
 });
