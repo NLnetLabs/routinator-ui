@@ -32,28 +32,31 @@ export default function useMemberFilter(members: Member[]): MemberFilterResult {
     .map((member) => {
       const withAsn = member.meta
         .filter((meta) => meta.originASNs)
-        .map((meta) => meta.originASNs?.map((asn) => ({
-          ...member,
-          asn,
-          key: member.prefix + asn,
-          isAllocated: member.meta.some(
-            (m) => m.sourceType === 'rir-alloc'
-          ),
-        })) || [])
+        .map(
+          (meta) =>
+            meta.originASNs?.map((asn) => ({
+              ...member,
+              asn,
+              key: member.prefix + asn,
+              isAllocated: member.meta.some(
+                (m) => m.sourceType === 'rir-alloc'
+              ),
+            })) || []
+        )
         .flat();
 
       if (withAsn.length > 0) {
         return withAsn;
       }
 
-      return [{
-        ...member,
-        asn: null,
-        key: member.prefix,
-        isAllocated: member.meta.some(
-          (m) => m.sourceType === 'rir-alloc'
-        ),
-      }];
+      return [
+        {
+          ...member,
+          asn: null,
+          key: member.prefix,
+          isAllocated: member.meta.some((m) => m.sourceType === 'rir-alloc'),
+        },
+      ];
     })
     .flat();
 

@@ -29,27 +29,31 @@ const v6exact = new RegExp(`^${v6}$`);
  * @param s
  * @exception Error if the input is not a valid IPv4 or IPv6 address or prefix
  */
-export function parseIPAndPrefix(s: string): [string, number] {
+export function parseIPAndPrefix(s: string): string | null {
   const parts = s.trim().split('/').filter(Boolean);
+
   if (parts.length == 1) {
     if (v4exact.test(parts[0])) {
-      return [parts[0], 32];
+      return `${parts[0]}/32`;
     }
     if (v6exact.test(parts[0])) {
-      return [parts[0], 128];
+      return `${parts[0]}/128`;
     }
   } else if (parts.length == 2) {
     if (v46Exact.test(parts[0])) {
-      return [parts[0], parseInt(parts[1], 10)];
+      return `${parts[0]}/${parseInt(parts[1], 10)}`;
     }
   }
-  throw Error('Invalid IP or prefix');
+
+  return null;
 }
 
 export function isIp(ip: string): boolean {
-  ip = ip.trim();
-  if (ip.endsWith('/')) {
-    return v46Exact.test(ip.slice(0, -1));
+  const trimmedIp = ip.trim();
+
+  if (trimmedIp.endsWith('/')) {
+    return v46Exact.test(trimmedIp.slice(0, -1));
   }
-  return v46Exact.test(ip);
+
+  return v46Exact.test(trimmedIp);
 }

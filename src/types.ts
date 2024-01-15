@@ -113,6 +113,7 @@ export interface Tals {
 
 /** https://github.com/NLnetLabs/roto-api#response **/
 export interface Search {
+  error_msg?: string;
   prefix: string;
   type: MatchType;
   result: SearchResult;

@@ -134,6 +134,15 @@
   padding-left: 1rem;
 }
 
+#prefix-check .results #validation-results {
+  margin-bottom: 2rem;
+}
+
+#prefix-check .results #validation-results h4 {
+  color: var(--dark);
+  margin: 0.5rem 0;
+}
+
 #prefix-check .results table td p {
   text-align: left;
   margin-top: 0.5rem;

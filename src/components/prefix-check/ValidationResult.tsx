@@ -1,23 +1,26 @@
 import React, { JSX } from 'react';
 import ValidationResultTables from './ValidationResultTables';
-import { Message } from './Message';
-import useValidity from '../../hooks/useValidity';
+import { ValidationResponse } from '../../types';
 
 export interface ValidationResultProps {
-  prefix: string;
-  asn: string;
-  setNotification: (m: Message | null) => void;
+  validationResult: ValidationResponse | null;
 }
 
 export default function ValidationResult({
-  prefix,
-  asn,
-  setNotification,
+  validationResult,
 }: ValidationResultProps): JSX.Element | null {
-  const validationResult = useValidity(prefix, asn, setNotification);
-
   if (!validationResult) {
-    return null;
+    return (
+      <div id="validation-results">
+        <h3>Validation</h3>
+        <h4>No Origin ASN found for this Prefix in BGP.</h4>
+        <p>
+          <em>
+            You can enter an ASN to validate this prefix against and try again.
+          </em>
+        </p>
+      </div>
+    );
   }
 
   const { route, validity } = validationResult.validated_route;

@@ -17,10 +17,10 @@ export default function RelatedPrefixesGroups({
 }: RelatedPrefixesGroupsProps): JSX.Element {
   if (!search.result.relations) {
     return (
-      <span className="no-results">
+      <div className="no-results">
         No less or more specific prefixes in either Allocations and BGP, or
         prefixes for the same organisation were found.
-      </span>
+      </div>
     );
   }
 
