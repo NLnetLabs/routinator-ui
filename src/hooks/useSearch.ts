@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Message } from '../components/prefix-check/Message';
 import { isIp, parseIPAndPrefix } from '../core/ipRegex';
 import { isValidASN } from '../core/util';
 import { Search, ValidationResponse } from '../types';
-import { Navigate, RouteParams, RouterContext } from './useRouter';
+import { Navigate, RouteParams } from './useRouter';
 import { API_ENDPOINT, ROTO_ENDPOINT } from '../core/contants';
 
 interface SearchParams {
