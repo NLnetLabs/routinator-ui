@@ -56,13 +56,36 @@ yarn test
 
 ## Resources
 
-### Endpoints used:
+## Specify API hosts
 
-* https://routinator.do.nlnetlabs.nl/api/v1/status
-* https://rest.bgp-api.net/api/v1/
+The API hosts to use can be specified at runtime or at build time. By default
+the current host is used for the Routinator API endpoints and https://rest.bgp-api.net
+for the Roto API.
 
+### Runtime
 
-## endpoint documentation
+The `index.html` file contains the following fragment:
+
+```javascript
+    window.ROTO_API_HOST = 'ROTO_API_HOST_PLACEHOLDER';
+    window.ROUTINATOR_API_HOST = 'ROUTINATOR_API_HOST_PLACEHOLDER';
+```
+
+The respective endpoints can be configured by replacing the string
+`ROTO_API_HOST_PLACEHOLDER` and/or the string `ROUTINATOR_API_HOST_PLACEHOLDER`
+before serving the content of `index.html`. If these are not configured at runtime
+the build time variables or the defaults will be used.
+
+### Build time
+
+By specifying `ROTO_API_HOST` and/or `ROUTINATOR_API_HOST` as environment variables
+these can be configured at build time. For example:
+
+```sh
+ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.do.nlnetlabs.nl yarn build
+```
+
+## Endpoint documentation
 
 * https://routinator.docs.nlnetlabs.nl/en/stable/monitoring.html
 * https://routinator.docs.nlnetlabs.nl/en/stable/json-metrics.html
