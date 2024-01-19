@@ -3,13 +3,13 @@ import ValidationResultTables from './ValidationResultTables';
 import { ValidationResponse } from '../../types';
 
 export interface ValidationResultProps {
-  validationResult: ValidationResponse | null;
+  validationResults: ValidationResponse[] | null;
 }
 
 export default function ValidationResult({
-  validationResult,
+  validationResults,
 }: ValidationResultProps): JSX.Element | null {
-  if (!validationResult) {
+  if (!validationResults) {
     return (
       <div id="validation-results">
         <h3>Validation</h3>
@@ -23,25 +23,28 @@ export default function ValidationResult({
     );
   }
 
-  const { route, validity } = validationResult.validated_route;
-
   return (
     <div id="validation-results">
       <h3>Validation</h3>
-      <p>
-        Results for {route.prefix} - {route.origin_asn}
-        <span className={validity.state}>{validity.state}</span>
-      </p>
-      <p>
-        <em>
-          {validity.reason} {validity.description}
-        </em>
-      </p>
-      <ValidationResultTables
-        matched={validity.VRPs.matched}
-        unmatched_as={validity.VRPs.unmatched_as}
-        unmatched_length={validity.VRPs.unmatched_length}
-      />
+      {validationResults.map((validationResult) => {
+        const { route, validity } = validationResult.validated_route;
+        return (
+          <>
+            <p>
+              Results for {route.prefix} - {route.origin_asn}
+              <span className={validity.state}>{validity.state}</span>
+            </p>
+            <p>
+              <em>{validity.description}</em>
+            </p>
+            <ValidationResultTables
+              matched={validity.VRPs.matched}
+              unmatched_as={validity.VRPs.unmatched_as}
+              unmatched_length={validity.VRPs.unmatched_length}
+            />
+          </>
+        );
+      })}
     </div>
   );
 }

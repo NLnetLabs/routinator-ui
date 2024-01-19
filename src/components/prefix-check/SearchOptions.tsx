@@ -6,7 +6,7 @@ export interface SearchOptionsProps {
   setValidatePrefix: (b: boolean) => void;
   exactMatch: boolean;
   setExactMatch: (b: boolean) => void;
-  setAsn: (b: string) => void;
+  setAsnString: (b: string) => void;
 }
 
 export default function SearchOptions({
@@ -14,7 +14,7 @@ export default function SearchOptions({
   setExactMatch,
   setValidatePrefix,
   validatePrefix,
-  setAsn,
+  setAsnString,
 }: SearchOptionsProps): JSX.Element {
   return (
     <div id="search-options">
@@ -35,7 +35,7 @@ export default function SearchOptions({
             checked={validatePrefix}
             onChange={(e) => {
               if (e.target.checked) {
-                setAsn('');
+                setAsnString('');
               }
               setValidatePrefix(e.target.checked);
             }}

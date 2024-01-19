@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Message } from '../components/prefix-check/Message';
 import { isIp, parseIPAndPrefix } from '../core/ipRegex';
-import { isValidASN } from '../core/util';
+import {
+  arrayFromCommaSeperated,
+  arrayToCommaSeperated,
+  isValidASN,
+} from '../core/util';
 import { Search, ValidationResponse } from '../types';
 import { Navigate, RouteParams } from './useRouter';
 import { API_ENDPOINT, ROTO_ENDPOINT } from '../core/contants';
 
 interface SearchParams {
   prefix: string;
-  asn: string;
+  asnString: string;
 }
 
 interface SearchProperties extends SearchParams {
   setPrefix: (v: string) => void;
-  setAsn: (v: string) => void;
+  setAsnString: (v: string) => void;
   validatePrefix: boolean;
   setValidatePrefix: (v: boolean) => void;
   exactMatch: boolean;
@@ -22,14 +26,14 @@ interface SearchProperties extends SearchParams {
   setNotification: (m: null | Message) => void;
   onSubmit: () => void;
   searchResult: null | Search;
-  validationResult: null | ValidationResponse;
+  validationResults: null | ValidationResponse[];
 }
 
 function updateNavigation(
   params: RouteParams,
   navigate: Navigate,
   prefix: string,
-  asn: string,
+  asns: string[],
   validatePrefix: boolean,
   exactMatch: boolean
 ) {
@@ -41,7 +45,7 @@ function updateNavigation(
   if (validatePrefix) {
     newParams['validate-bgp'] = 'true';
   } else {
-    newParams.asn = asn;
+    newParams.asns = arrayToCommaSeperated(asns);
     delete newParams['validate-bgp'];
   }
 
@@ -51,8 +55,8 @@ function updateNavigation(
     delete newParams['exact-match-only'];
   }
 
-  if (!newParams.asn) {
-    delete newParams.asn;
+  if (!newParams.asns) {
+    delete newParams.asns;
   }
 
   navigate('prefix-check', newParams);
@@ -60,7 +64,7 @@ function updateNavigation(
 
 function validate(
   prefix: string,
-  asn: string,
+  asns: string[],
   validatePrefix: boolean,
   setNotification: (m: null | Message) => void
 ): string | null {
@@ -72,13 +76,22 @@ function validate(
     return null;
   }
 
-  if (!validatePrefix && !isValidASN(asn)) {
-    setNotification({
-      message:
-        'Please enter a valid ASN or enable validating for an ASN found in BGP',
-      level: 'error',
-    });
-    return null;
+  if (!validatePrefix) {
+    let valid = true;
+    for (const asn of asns) {
+      if (!isValidASN(asn)) {
+        valid = false;
+        break;
+      }
+    }
+    if (!valid || asns.length == 0) {
+      setNotification({
+        message:
+          'Please enter a valid ASN or enable validating for an ASN found in BGP',
+        level: 'error',
+      });
+      return null;
+    }
   }
 
   const parsed = parseIPAndPrefix(prefix);
@@ -101,7 +114,7 @@ export default function useSearch(
   navigate: Navigate
 ): SearchProperties {
   const [prefix, setPrefix] = useState(params.prefix || '');
-  const [asn, setAsn] = useState(params.asn || '');
+  const [asnString, setAsnString] = useState(params.asns || '');
   const [searchResult, setSearchResult] = useState<null | Search>(null);
   const [validatePrefix, setValidatePrefix] = useState(
     Object.keys(params).length > 0 ? params['validate-bgp'] === 'true' : true
@@ -109,8 +122,9 @@ export default function useSearch(
   const [exactMatch, setExactMatch] = useState(
     params['exact-match-only'] === 'true'
   );
-  const [validationResult, setValidationResult] =
-    useState<null | ValidationResponse>(null);
+  const [validationResults, setValidationResults] = useState<
+    null | ValidationResponse[]
+  >(null);
   const [notification, setNotification] = useState<Message | null>(null);
   const setError = (message = 'An error occurred') =>
     setNotification({ message, level: 'error' });
@@ -122,19 +136,19 @@ export default function useSearch(
       setPrefix(params.prefix || '');
     }
 
-    if (params.asn !== asn) {
-      setAsn(params.asn || '');
+    if (params.asns !== asnString) {
+      setAsnString(params.asns || '');
     }
 
     if (!params.prefix) {
       setSearchResult(null);
-      setValidationResult(null);
+      setValidationResults(null);
       return;
     }
 
     const queryPrefix = validate(
       params.prefix,
-      params.asn,
+      arrayFromCommaSeperated(params.asns),
       validatePrefix,
       setNotification
     );
@@ -149,6 +163,8 @@ export default function useSearch(
       );
 
       if (response.status !== 200) {
+        // TODO as soon as we get a JSON error message via https://github.com/NLnetLabs/routinator/issues/925
+        //  we should display them to the user
         return setError();
       }
 
@@ -161,17 +177,17 @@ export default function useSearch(
       setSearchResult(searchResult);
 
       let nextPrefix = params.prefix;
-      let nextAsn = params.asn;
+      let nextAsns = arrayFromCommaSeperated(params.asns);
 
       // fill in the asn provided in the search result
       if (validatePrefix) {
-        const resultAsn = searchResult.result.meta
-          .map((m) => (m.originASNs ? m.originASNs[0] : null))
-          .find((asn) => asn);
+        const resultAsns = searchResult.result.meta
+          .map((m) => (m.originASNs ? m.originASNs : null))
+          .find((asns) => asns);
 
-        if (resultAsn) {
-          nextAsn = resultAsn;
-          setAsn(nextAsn);
+        if (resultAsns) {
+          nextAsns = resultAsns;
+          setAsnString(arrayToCommaSeperated(nextAsns));
         } else {
           setNotification({
             message: 'Could not find an Origin ASN in BGP for this Prefix',
@@ -190,36 +206,45 @@ export default function useSearch(
         });
       }
 
-      if (nextAsn) {
+      setValidationResults(null);
+      const res: ValidationResponse[] = [];
+      for (const asn of nextAsns) {
+        // FIXME
         const validateResponse = await fetch(
-          `${API_ENDPOINT}/api/v1/validity/${nextAsn}/${nextPrefix}`
+          `${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix}`
         );
-        setValidationResult(await validateResponse.json());
-      } else {
-        setValidationResult(null);
+        res.push(await validateResponse.json());
       }
+      setValidationResults(res);
     };
 
     search().catch(setError);
-  }, [params.prefix, params.asn]);
+  }, [params.prefix, params.asns]);
 
   // when the search form is submitted
   const onSubmit = () =>
-    updateNavigation(params, navigate, prefix, asn, validatePrefix, exactMatch);
+    updateNavigation(
+      params,
+      navigate,
+      prefix,
+      arrayFromCommaSeperated(asnString),
+      validatePrefix,
+      exactMatch
+    );
 
   return {
     prefix,
     setPrefix,
     validatePrefix,
     setValidatePrefix,
-    asn,
-    setAsn,
+    asnString,
+    setAsnString,
     notification,
     setNotification,
     exactMatch,
     setExactMatch,
     onSubmit,
     searchResult,
-    validationResult,
+    validationResults,
   };
 }

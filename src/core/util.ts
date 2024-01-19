@@ -27,6 +27,25 @@ export function isValidASN(asn: string): boolean {
   return false;
 }
 
+export function arrayFromCommaSeperated(commaSeparated: string): string[] {
+  if (!commaSeparated) {
+    return [];
+  }
+  return commaSeparated.split(',').reduce((arr: string[], asn) => {
+    if (asn.trim()) {
+      arr.push(asn.trim());
+    }
+    return arr;
+  }, []);
+}
+
+export function arrayToCommaSeperated(arr: string[]): string {
+  if (arr.length == 0) {
+    return '';
+  }
+  return arr.reduce((sum, str) => `${sum},${str}`);
+}
+
 export function tryFormatNumber(
   v: string | number | boolean | null | undefined
 ) {

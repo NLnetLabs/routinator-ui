@@ -58,18 +58,20 @@ it('useSearch hook runs correctly', async () => {
   expect(result.current.prefix).toEqual(prefix);
   expect(result.current.searchResult?.result.relations?.length).toEqual(3);
 
-  await waitForValueToChange(() => result.current.validationResult);
+  await waitForValueToChange(() => result.current.validationResults);
 
-  expect(
-    result.current.validationResult?.validated_route.route.origin_asn
-  ).toEqual('AS15169');
+  if (result.current.validationResults) {
+    expect(
+      result.current.validationResults[0].validated_route.route.origin_asn
+    ).toEqual('AS15169');
+  }
 
   act(() => {
     result.current.setValidatePrefix(false);
   });
 
   act(() => {
-    result.current.setAsn('incorrect-asn');
+    result.current.setAsnString('incorrect-asn');
   });
 
   act(() => {

@@ -1,5 +1,8 @@
 function getRotoEndpoint() {
-  if (typeof window !== 'undefined' && window.ROTO_API_HOST !== 'ROTO_API_HOST_PLACEHOLDER') {
+  if (
+    typeof window !== 'undefined' &&
+    window.ROTO_API_HOST !== 'ROTO_API_HOST_PLACEHOLDER'
+  ) {
     return window.ROTO_API_HOST;
   }
 
@@ -12,7 +15,10 @@ function getRotoEndpoint() {
 
 // public endpoint: https://routinator.do.nlnetlabs.nl
 function getApiEndpoint() {
-  if (typeof window !== 'undefined' && window.ROUTINATOR_API_HOST !== 'ROUTINATOR_API_HOST_PLACEHOLDER') {
+  if (
+    typeof window !== 'undefined' &&
+    window.ROUTINATOR_API_HOST !== 'ROUTINATOR_API_HOST_PLACEHOLDER'
+  ) {
     return window.ROUTINATOR_API_HOST;
   }
 

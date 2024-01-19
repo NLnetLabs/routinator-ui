@@ -5,7 +5,7 @@ import SearchForm from './prefix-check/SearchForm';
 import Notification from './prefix-check/Message';
 import RelatedPrefixesGroups from './prefix-check/RelatedPrefixesGroups';
 import useSearch from '../hooks/useSearch';
-import ValidationResult from './prefix-check/ValidationResult';
+import ValidationResults from './prefix-check/ValidationResult';
 import { RouterContext } from '../hooks/useRouter';
 
 export default function PrefixCheck(): JSX.Element {
@@ -13,8 +13,8 @@ export default function PrefixCheck(): JSX.Element {
   const {
     prefix,
     setPrefix,
-    asn,
-    setAsn,
+    asnString,
+    setAsnString,
     validatePrefix,
     setValidatePrefix,
     exactMatch,
@@ -23,7 +23,7 @@ export default function PrefixCheck(): JSX.Element {
     setNotification,
     onSubmit,
     searchResult,
-    validationResult,
+    validationResults,
   } = useSearch(params, navigate);
 
   return (
@@ -33,8 +33,8 @@ export default function PrefixCheck(): JSX.Element {
           onSubmit={onSubmit}
           setPrefix={setPrefix}
           prefix={prefix}
-          setAsn={setAsn}
-          asn={asn}
+          setAsnString={setAsnString}
+          asnString={asnString}
           validatePrefix={validatePrefix}
           setValidatePrefix={setValidatePrefix}
         />
@@ -49,16 +49,17 @@ export default function PrefixCheck(): JSX.Element {
           setExactMatch={setExactMatch}
           validatePrefix={validatePrefix}
           setValidatePrefix={setValidatePrefix}
-          setAsn={setAsn}
+          setAsnString={setAsnString}
         />
         <DataFreshness />
       </div>
       <div className="results">
         {searchResult && (
           <>
-            <ValidationResult validationResult={validationResult} />
+            <ValidationResults validationResults={validationResults} />
             <RelatedPrefixesGroups
-              highlight={validatePrefix ? asn : ''}
+              // FIXME
+              highlight={''}
               search={searchResult}
               setNotification={setNotification}
             />
