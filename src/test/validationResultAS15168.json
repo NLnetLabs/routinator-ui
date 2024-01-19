@@ -1,0 +1,27 @@
+{
+  "validated_route": {
+    "route": {
+      "origin_asn": "AS15168",
+      "prefix": "104.154.0.0/15"
+    },
+    "validity": {
+      "state": "invalid",
+      "reason": "as",
+      "description": "At least one VRP Covers the Route Prefix, but no VRP ASN matches the route origin ASN",
+      "VRPs": {
+        "matched": [
+        ],
+        "unmatched_as": [
+          {
+            "asn": "AS15169",
+            "prefix": "104.154.0.0/15",
+            "max_length": "15"
+          }
+        ],
+        "unmatched_length": [
+        ]
+      }
+    }
+  },
+  "generatedTime": "2024-01-19T10:26:00Z"
+}

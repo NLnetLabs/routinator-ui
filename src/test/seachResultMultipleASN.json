@@ -1,0 +1,18 @@
+{
+  "type": "longest-match",
+  "prefix": "104.154.0.0/17",
+  "result": {
+    "prefix": "104.154.0.0/17",
+    "meta": [
+      {
+        "sourceType": "bgp",
+        "sourceID": "riswhois",
+        "originASNs": [
+          "AS15169",
+          "AS396982"
+        ],
+        "type": "less-specific"
+      }
+    ]
+  }
+}

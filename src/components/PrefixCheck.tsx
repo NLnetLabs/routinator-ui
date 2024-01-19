@@ -51,6 +51,7 @@ export default function PrefixCheck(): JSX.Element {
           validatePrefix={validatePrefix}
           setValidatePrefix={setValidatePrefix}
           setAsnString={setAsnString}
+          onSubmit={onSubmit}
         />
         <DataFreshness />
       </div>
