@@ -7,7 +7,7 @@ import useMemberFilter from '../../hooks/useMemberFilter';
 
 export interface RelatedTableProps {
   members: Member[];
-  highlight: string;
+  highlight: string[];
   showAllocated: boolean;
   showFilter: boolean;
   setNotification: (m: Message | null) => void;
@@ -21,6 +21,14 @@ export default function RelatedTable({
   setNotification,
 }: RelatedTableProps): JSX.Element {
   const { membersWithAsn, filter, setFilter } = useMemberFilter(members);
+
+  const highlightAsn = (search: string): boolean => {
+    return highlight.some((asn) => {
+      asn = asn.toLowerCase().trim().replace('as', '');
+      search = search.toLowerCase().trim().replace('as', '');
+      return asn === search;
+    });
+  };
 
   return (
     <>
@@ -51,7 +59,7 @@ export default function RelatedTable({
               prefix={member.prefix}
               asn={member.asn}
               isAllocated={showAllocated && member.isAllocated}
-              highlightAsn={highlight === member.asn}
+              highlightAsn={highlightAsn(member.asn || '')}
               setNotification={setNotification}
             />
           ))}

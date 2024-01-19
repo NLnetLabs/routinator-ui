@@ -4,8 +4,8 @@ interface SearchFormProps {
   onSubmit: () => void;
   setPrefix: (v: string) => void;
   prefix: string;
-  setAsn: (v: string) => void;
-  asn: string;
+  setAsnString: (v: string) => void;
+  asnString: string;
   validatePrefix: boolean;
   setValidatePrefix: (v: boolean) => void;
 }
@@ -14,8 +14,8 @@ export default function SearchForm({
   onSubmit,
   setPrefix,
   prefix,
-  setAsn,
-  asn,
+  setAsnString,
+  asnString,
   validatePrefix,
   setValidatePrefix,
 }: SearchFormProps): JSX.Element {
@@ -42,8 +42,8 @@ export default function SearchForm({
         <label htmlFor="asn">Origin ASN (optional)</label>
         <input
           type="text"
-          onChange={(e) => setAsn(e.target.value)}
-          value={asn}
+          onChange={(e) => setAsnString(e.target.value)}
+          value={asnString}
           id="asn"
           placeholder={placeholder}
           readOnly={validatePrefix}
