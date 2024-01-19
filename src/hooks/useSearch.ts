@@ -201,7 +201,7 @@ export default function useSearch(
     };
 
     search().catch(setError);
-  }, [params.prefix, params.asn]);
+  }, [params.prefix, params.asn, validatePrefix]);
 
   // when the search form is submitted
   const onSubmit = () =>
