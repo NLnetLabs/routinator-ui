@@ -8,7 +8,7 @@ interface RelatedPrefixesProps {
   type: RelationType;
   label: string;
   param: string;
-  highlight: string;
+  highlight: string[];
   showAllocated: boolean;
   relations: Relation[];
   setNotification: (m: Message | null) => void;

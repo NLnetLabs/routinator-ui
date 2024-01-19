@@ -209,7 +209,6 @@ export default function useSearch(
       setValidationResults(null);
       const res: ValidationResponse[] = [];
       for (const asn of nextAsns) {
-        // FIXME
         const validateResponse = await fetch(
           `${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix}`
         );

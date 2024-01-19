@@ -7,6 +7,7 @@ import RelatedPrefixesGroups from './prefix-check/RelatedPrefixesGroups';
 import useSearch from '../hooks/useSearch';
 import ValidationResults from './prefix-check/ValidationResult';
 import { RouterContext } from '../hooks/useRouter';
+import { arrayFromCommaSeperated } from '../core/util';
 
 export default function PrefixCheck(): JSX.Element {
   const { params, navigate } = useContext(RouterContext);
@@ -58,8 +59,7 @@ export default function PrefixCheck(): JSX.Element {
           <>
             <ValidationResults validationResults={validationResults} />
             <RelatedPrefixesGroups
-              // FIXME
-              highlight={''}
+              highlight={arrayFromCommaSeperated(asnString)}
               search={searchResult}
               setNotification={setNotification}
             />

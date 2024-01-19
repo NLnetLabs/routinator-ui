@@ -6,7 +6,7 @@ import RelatedPrefixes from './RelatedPrefixes';
 
 export interface RelatedPrefixesGroupsProps {
   search: Search;
-  highlight: string;
+  highlight: string[];
   setNotification: (m: Message | null) => void;
 }
 

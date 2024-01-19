@@ -189,7 +189,7 @@ export interface Route {
 }
 
 export interface Validity {
-  state: 'valid' | 'not-found' | 'invalid'; // TODO check
+  state: 'valid' | 'not-found' | 'invalid';
   description: string;
   reason?: string;
   VRPs: Vrps;
