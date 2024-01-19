@@ -37,7 +37,7 @@ function fetchMock(url: string): Promise<Response> {
           return null;
         },
       } as Response);
-    }, Math.random() * 100)
+    }, Math.random() * 100),
   );
 }
 
@@ -77,7 +77,7 @@ it('useSearch hook runs correctly', async () => {
 
   if (result.current.validationResults) {
     expect(
-      result.current.validationResults[0].validated_route.route.origin_asn
+      result.current.validationResults[0].validated_route.route.origin_asn,
     ).toEqual('AS15169');
   }
 
@@ -95,7 +95,7 @@ it('useSearch hook runs correctly', async () => {
 
   expect(result.current.validatePrefix).toEqual(false);
   expect(result.current.notification?.message).toEqual(
-    'Please enter a valid ASN or enable validating for an ASN found in BGP'
+    'Please enter a valid ASN or enable validating for an ASN found in BGP',
   );
 });
 
@@ -140,10 +140,10 @@ it('BGP based ASN fill works after manual change', async () => {
   expect(result.current.validatePrefix).toEqual(false);
   if (!result.current.validationResults) return;
   expect(
-    result.current.validationResults[0].validated_route.validity.state
+    result.current.validationResults[0].validated_route.validity.state,
   ).toEqual('invalid');
   expect(
-    result.current.validationResults[0].validated_route.validity.reason
+    result.current.validationResults[0].validated_route.validity.reason,
   ).toEqual('as');
 
   act(() => {
@@ -157,7 +157,7 @@ it('BGP based ASN fill works after manual change', async () => {
   expect(result.current.validatePrefix).toEqual(true);
   if (!result.current.validationResults) return;
   expect(
-    result.current.validationResults[0].validated_route.validity.state
+    result.current.validationResults[0].validated_route.validity.state,
   ).toEqual('valid');
 });
 
@@ -181,6 +181,10 @@ it('Automatically infer prefix length', async () => {
   await waitForValueToChange(() => result.current.searchResult);
 
   expect(result.current.prefix).toEqual(prefix);
+  expect(result.current.notification?.message).toEqual(
+    'The prefix length was automatically inferred',
+  );
+  expect(result.current.notification?.level).toEqual('success');
 });
 
 it('Validate two ASNs', async () => {
@@ -206,4 +210,26 @@ it('Validate two ASNs', async () => {
   expect(result.current.asnString).toEqual('AS15169,AS396982');
   await waitForValueToChange(() => result.current.validationResults);
   expect(result.current.validationResults?.length).toEqual(2);
+});
+
+it('show error on invalid prefix', () => {
+  const { result } = renderHook(() => {
+    const [params, setParams] = useState({});
+    const navigate = (route: string, p: RouteParams) => setParams(p);
+
+    return useSearch(params, navigate);
+  });
+  const prefix = '104.154.0/17'; // intentionally invalid
+
+  act(() => {
+    result.current.setPrefix(prefix);
+  });
+
+  act(() => {
+    result.current.onSubmit();
+  });
+  expect(result.current.notification?.level).toEqual('error');
+  expect(result.current.notification?.message).toEqual(
+    'Please enter a valid prefix',
+  );
 });

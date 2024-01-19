@@ -7,6 +7,7 @@ export interface SearchOptionsProps {
   exactMatch: boolean;
   setExactMatch: (b: boolean) => void;
   setAsnString: (b: string) => void;
+  onSubmit: () => void;
 }
 
 export default function SearchOptions({
@@ -15,7 +16,9 @@ export default function SearchOptions({
   setValidatePrefix,
   validatePrefix,
   setAsnString,
+  onSubmit,
 }: SearchOptionsProps): JSX.Element {
+  const disabled = validatePrefix ? '' : 'disabled';
   return (
     <div id="search-options">
       <h2>
@@ -38,6 +41,8 @@ export default function SearchOptions({
                 setAsnString('');
               }
               setValidatePrefix(e.target.checked);
+              setExactMatch(false);
+              onSubmit();
             }}
           />
           <span>Validate Prefixes for ASN found in BGP</span>
@@ -58,20 +63,28 @@ export default function SearchOptions({
           <p>of the requested prefix.</p>
         </Help>
       </h2>
-      <p>
+      <p className={disabled}>
         <label className="checkbox radio">
           <input
             type="radio"
-            checked={exactMatch}
-            onChange={() => setExactMatch(true)}
+            checked={!exactMatch}
+            onChange={() => {
+              setExactMatch(false);
+              onSubmit();
+            }}
+            disabled={!validatePrefix}
           />
           <span>Longest Matching Prefix</span>
         </label>
         <label className="checkbox radio">
           <input
             type="radio"
-            checked={!exactMatch}
-            onChange={() => setExactMatch(false)}
+            checked={exactMatch}
+            onChange={() => {
+              setExactMatch(true);
+              onSubmit();
+            }}
+            disabled={!validatePrefix}
           />
           <span>Exact Match only</span>
         </label>

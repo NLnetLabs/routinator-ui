@@ -44,12 +44,13 @@ function updateNavigation(
 
   if (validatePrefix) {
     newParams['validate-bgp'] = 'true';
+    delete newParams['asns'];
   } else {
     newParams.asns = arrayToCommaSeperated(asns);
     delete newParams['validate-bgp'];
   }
 
-  if (exactMatch) {
+  if (exactMatch && validatePrefix) {
     newParams['exact-match-only'] = 'true';
   } else {
     delete newParams['exact-match-only'];
@@ -185,7 +186,10 @@ export default function useSearch(
           .map((m) => (m.originASNs ? m.originASNs : null))
           .find((asns) => asns);
 
-        if (resultAsns) {
+        if (
+          resultAsns &&
+          (searchResult.result.type === 'exact-match' || !exactMatch)
+        ) {
           nextAsns = resultAsns;
           setAsnString(arrayToCommaSeperated(nextAsns));
         } else {
@@ -193,6 +197,8 @@ export default function useSearch(
             message: 'Could not find an Origin ASN in BGP for this Prefix',
             level: 'warning',
           });
+          setValidationResults(null);
+          return;
         }
       }
 
@@ -206,7 +212,6 @@ export default function useSearch(
         });
       }
 
-      setValidationResults(null);
       const res: ValidationResponse[] = [];
       for (const asn of nextAsns) {
         const validateResponse = await fetch(
@@ -218,7 +223,7 @@ export default function useSearch(
     };
 
     search().catch(setError);
-  }, [params.prefix, params.asns, validatePrefix]);
+  }, [params.prefix, params.asns, validatePrefix, exactMatch]);
 
   // when the search form is submitted
   const onSubmit = () =>

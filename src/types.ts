@@ -127,6 +127,7 @@ export interface SearchResult {
   prefix: string;
   meta: SearchResultMeta[];
   relations?: Relation[];
+  type: MatchType;
 }
 
 export type SourceID =
@@ -142,7 +143,6 @@ export interface SearchResultMeta {
   sourceType: 'rir-alloc' | 'bgp';
   sourceID: SourceID;
   originASNs?: string[];
-  type?: 'less-specific' | 'exact-match';
 }
 
 export type RelationType =
