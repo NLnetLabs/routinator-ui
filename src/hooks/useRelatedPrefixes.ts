@@ -24,8 +24,9 @@ export default function useRelatedPrefixes({
   const items = relations?.find((r) => r.type == type);
   const include = params.include?.split(',') || [];
   const show = include.includes(param);
-  const rir = items?.members[0]?.meta.find((r) => r.sourceType === 'rir-alloc')
-    ?.sourceID;
+  const rir = items?.members[0]?.meta.find(
+    (r) => r.sourceType === 'rir-alloc'
+  )?.sourceID;
   const toggle = show
     ? include.filter((p) => p !== param)
     : [...include, param];
