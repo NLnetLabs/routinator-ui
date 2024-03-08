@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build --outDir public",
+    "dev": "ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.do.nlnetlabs.nl vite",
+    "build": "tsc && vite build --outDir public --mode production",
     "lint": "eslint && tsc --noEmit",
     "format": "prettier --write \"**/*.(ts|tsx|css)\"",
     "test": "jest"
