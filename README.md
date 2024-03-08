@@ -36,6 +36,23 @@ yarn
 yarn build
 ```
 
+Note that small [images are inlined](https://vitejs.dev/guide/assets) in scripts
+or stylesheets for performance reasons.
+
+The resulting `index.html` will include static assets using absolute paths.
+By default the assets are included from `/assets/*`. Change this path using
+the `--assetsDir` option, see [the build oprtions](https://vitejs.dev/guide/cli.html#options-1);
+
+To change the path prefix, specify the `--base` option during a build, e.g.:
+
+```sh
+yarn build --base /static
+```
+
+In that case assets will be included from `/static/assets/*`,
+but the output directory structure wil not change.
+See [the documentation on base](https://vitejs.dev/config/shared-options.html#base);
+
 ## Linting
 
 ```sh
