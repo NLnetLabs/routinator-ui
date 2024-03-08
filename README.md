@@ -45,7 +45,7 @@ yarn lint
 ## Formatting
 
 ```sh
-npx format
+yarn format
 ```
 
 ## Unit tests
