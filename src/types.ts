@@ -207,9 +207,3 @@ export interface RouteIdent {
   max_length: string;
 }
 
-declare global {
-  interface Window {
-    ROUTINATOR_API_HOST: string;
-    ROTO_API_HOST: string;
-  }
-}
