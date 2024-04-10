@@ -35,9 +35,4 @@ jobs:
           echo "## Release Checksums" > ReleaseNotes.md
           echo "\`$(openssl dgst -sha3-256 release.tar.gz)\`" >> ReleaseNotes.md
           echo "\`$(openssl dgst -sha256 release.tar.gz)\`" >> ReleaseNotes.md
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          body_path: ReleaseNotes.md
-          files: release.tar.gz
+
