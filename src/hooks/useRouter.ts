@@ -20,22 +20,22 @@ export const routes = [
   {
     name: 'prefix_check',
     label: 'Prefix Check',
-    path: '/',
+    path: './',
   },
   {
     name: 'metrics',
     label: 'Metrics',
-    path: '/metrics',
+    path: './foo',
   },
   {
     name: 'repositories',
     label: 'Repositories',
-    path: '/repositories',
+    path: './repositories',
   },
   {
     name: 'connections',
     label: 'Connections',
-    path: '/connections',
+    path: './connections',
   },
 ];
 
