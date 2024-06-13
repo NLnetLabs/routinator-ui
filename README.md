@@ -83,7 +83,7 @@ By specifying `ROTO_API_HOST` and/or `ROUTINATOR_API_HOST` as environment variab
 these can be configured at build time. For example:
 
 ```sh
-ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.do.nlnetlabs.nl yarn build
+ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.nlnetlabs.nl yarn build
 ```
 
 ## Endpoint documentation

@@ -40,7 +40,7 @@ export const routes = [
 ];
 
 export function matchPath(path: string): Route {
-  return routes.find((r) => r.path === path) || routes[0];
+  return routes.slice(0).reverse().find((r) => path.endsWith(r.path)) || routes[0];
 }
 
 export function matchName(name: RouteName): Route {
@@ -83,7 +83,7 @@ export default function useRouter(): RouterContextProps {
 
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams(params);
-      const fullPath = `${newRoute.path}?${searchParams}`;
+      const fullPath = `.${newRoute.path}?${searchParams}`;
       window.history.pushState(
         { routeName: name, routeParams: params },
         '',
@@ -95,7 +95,7 @@ export default function useRouter(): RouterContextProps {
       window.history.pushState(
         { routeName: name, routeParams: {} },
         '',
-        newRoute.path
+        `.${newRoute.path}`
       );
       setRoute(newRoute);
       setParams({});
