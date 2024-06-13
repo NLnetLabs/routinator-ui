@@ -8,5 +8,13 @@ export default defineConfig({
     ROUTINATOR_API_HOST: JSON.stringify(process.env.ROUTINATOR_API_HOST),
     ROTO_API_HOST: JSON.stringify(process.env.ROTO_API_HOST),
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://routinator.nlnetlabs.nl',
+        changeOrigin: true,
+      },
+    },
+  },
   plugins: [react()],
 });

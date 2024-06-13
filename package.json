@@ -4,33 +4,34 @@
   "version": "0.4.0",
   "type": "module",
   "scripts": {
-    "dev": "ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.do.nlnetlabs.nl vite",
+    "dev": "ROTO_API_HOST=https://rest.bgp-api.net vite",
     "build": "tsc && vite build --outDir public --mode production",
     "lint": "eslint && tsc --noEmit",
     "format": "prettier --write \"**/*.(ts|tsx|css)\"",
     "test": "jest"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.11",
-    "@types/node": "^20.10.5",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@typescript-eslint/eslint-plugin": "^7.0.1",
-    "@typescript-eslint/parser": "^7.0.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react": "^7.33.2",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
     "jest": "^29.7.0",
-    "prettier": "^3.1.1",
-    "react-test-renderer": "^18.2.0",
-    "ts-jest": "^29.1.1",
+    "prettier": "^3.3.2",
+    "react-test-renderer": "^18.3.1",
+    "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "typescript": "^5.4.5",
+    "vite": "^5.2.13"
   }
 }
