@@ -1,5 +1,16 @@
 # Change Log
 
+## Unreleased next version
+
+Breaking changes
+
+New
+
+Bug fixes
+
+Other fixes
+
+
 ## 0.4.1
 
 Released 2024-06-13.
