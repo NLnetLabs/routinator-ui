@@ -40,9 +40,10 @@ export default function Link({
     }
     navigate(targetRouteName, targetParams);
   };
+  const displayPath = `.${route.path}`;
 
   return (
-    <a {...props} href={route.path} className={fullClassName} onClick={click}>
+    <a {...props} href={displayPath} className={fullClassName} onClick={click}>
       {props.children || route.label}
     </a>
   );
