@@ -1,18 +1,14 @@
 # Change Log
 
-## Unreleased next version
+## 0.4.2
 
-Breaking changes
-
-New
+Released 2024-06-17.
 
 Bug fixes
 
 * Improve header links. ([#62]
 
 [#62]: https://github.com/NLnetLabs/routinator-ui/pull/62
-
-Other fixes
 
 
 ## 0.4.1
