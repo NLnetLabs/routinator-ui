@@ -8,6 +8,10 @@ New
 
 Bug fixes
 
+* Improve header links. ([#62]
+
+[#62]: https://github.com/NLnetLabs/routinator-ui/pull/62
+
 Other fixes
 
 
