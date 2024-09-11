@@ -8,7 +8,14 @@ New
 
 Bug fixes
 
+* Fixed the label for the HTTP connection status metrics. ([#65] by
+  [@beatjoerg])
+
 Other changes
+
+[#65]: https://github.com/NLnetLabs/routinator-ui/pull/65
+[@beatjoerg]: https://github.com/beatjoerg
+
 
 
 ## 0.4.2
