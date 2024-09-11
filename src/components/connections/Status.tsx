@@ -30,7 +30,7 @@ export default function Status() {
           <dd>{status.rtr.bytesWritten.toLocaleString('en')}</dd>
         </dl>
       </dd>
-      <dt>RTR</dt>
+      <dt>HTTP</dt>
       <dd>
         <dl>
           <dt>{t('connections.totalconnections')}</dt>
