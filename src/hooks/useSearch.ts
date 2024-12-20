@@ -177,7 +177,7 @@ export default function useSearch(
 
       setSearchResult(searchResult);
 
-      let nextPrefix = params.prefix;
+      let nextPrefix = params.prefix.trim();
       let nextAsns = arrayFromCommaSeperated(params.asns);
 
       // fill in the asn provided in the search result
