@@ -6,6 +6,8 @@ Breaking changes
 
 New
 
+* Show the freshness of all RIRs on the prefix check page
+
 Bug fixes
 
 * Fixed the label for the HTTP connection status metrics. ([#65] by

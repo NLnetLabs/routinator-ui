@@ -24,7 +24,7 @@ export interface RotoSource {
   type: string;
   id: string;
   serial: number;
-  lastUpdated: Date;
+  lastUpdated: string;
 }
 
 export interface HTTP {
