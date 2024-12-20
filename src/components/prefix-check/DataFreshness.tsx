@@ -69,7 +69,7 @@ export default function DataFreshness(): JSX.Element {
             <th scope="row">RPKI</th>
             <td>
               <pre>{formatDate(status.lastUpdateDone)}</pre>
-              <span className="ago">({timeAgo(status.lastUpdateDone)})</span>
+              <div className="ago">({timeAgo(status.lastUpdateDone)})</div>
             </td>
           </tr>
           {bgpStatus && (
@@ -77,7 +77,7 @@ export default function DataFreshness(): JSX.Element {
               <th scope="row">BGP</th>
               <td>
                 <pre>{formatDate(bgpStatus)}</pre>
-                <span className="ago">({timeAgo(bgpStatus)})</span>
+                <div className="ago">({timeAgo(bgpStatus)})</div>
               </td>
             </tr>
           )}
@@ -85,7 +85,7 @@ export default function DataFreshness(): JSX.Element {
             <tr>
               <th scope="row">RIR</th>
               <td>
-                {ra.map(r => (<span key={r.id}><span>{r.id.toUpperCase()}</span> <pre>{formatDate(r.lastUpdated)}</pre></span>))}
+                {ra.map(r => (<p key={r.id}><span className='rir'>{r.id.toUpperCase()}</span> <pre>{formatDate(r.lastUpdated)}</pre></p>))}
                 <span className="ago">({timeAgo(ra[ra.length - 1].lastUpdated)})</span>
               </td>
             </tr>
