@@ -10,10 +10,12 @@ Bug fixes
 
 * Fixed the label for the HTTP connection status metrics. ([#65] by
   [@beatjoerg])
+* Trim whitespace in prefix input fields. ([#69])
 
 Other changes
 
 [#65]: https://github.com/NLnetLabs/routinator-ui/pull/65
+[#69]: https://github.com/NLnetLabs/routinator-ui/pull/69
 [@beatjoerg]: https://github.com/beatjoerg
 
 
