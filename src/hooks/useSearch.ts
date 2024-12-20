@@ -217,6 +217,10 @@ export default function useSearch(
         const validateResponse = await fetch(
           `${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix}`
         );
+        if (validateResponse.status >= 400) {
+          console.warn(`Fetching ${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix} failed`);
+          continue;
+        }
         res.push(await validateResponse.json());
       }
       setValidationResults(res);
