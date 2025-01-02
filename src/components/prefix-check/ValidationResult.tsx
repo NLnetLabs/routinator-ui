@@ -23,6 +23,11 @@ export default function ValidationResult({
     );
   }
 
+  if (validationResults.length == 0) {
+    // This is the case when we only check for ASNs without prefix
+    return (<div id="validation results" />);
+  }
+
   return (
     <div id="validation-results">
       <h3>Validation</h3>

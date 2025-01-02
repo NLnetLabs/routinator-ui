@@ -5,6 +5,7 @@ import {
   arrayFromCommaSeperated,
   arrayToCommaSeperated,
   isValidASN,
+  parseASN,
 } from '../core/util';
 import { Search, ValidationResponse } from '../types';
 import { Navigate, RouteParams } from './useRouter';
@@ -69,15 +70,15 @@ function validate(
   validatePrefix: boolean,
   setNotification: (m: null | Message) => void
 ): string | null {
-  if (!prefix) {
+  if (!prefix && asns.length == 0) {
     setNotification({
-      message: 'Please enter a valid prefix',
+      message: 'Please enter a valid prefix or ASN',
       level: 'error',
     });
     return null;
   }
 
-  if (!validatePrefix) {
+  if (prefix && !validatePrefix) {
     let valid = true;
     for (const asn of asns) {
       if (!isValidASN(asn)) {
@@ -97,7 +98,7 @@ function validate(
 
   const parsed = parseIPAndPrefix(prefix);
 
-  if (!parsed) {
+  if (!parsed && asns.length == 0) {
     setNotification({
       message: 'Please enter a valid prefix',
       level: 'error',
@@ -141,7 +142,7 @@ export default function useSearch(
       setAsnString(params.asns || '');
     }
 
-    if (!params.prefix) {
+    if (!params.prefix && !params.asns) {
       setSearchResult(null);
       setValidationResults(null);
       return;
@@ -154,14 +155,18 @@ export default function useSearch(
       setNotification
     );
 
-    if (!queryPrefix) {
+    if (!queryPrefix && !params.asns) {
       return;
     }
 
     const search = async () => {
-      const response = await fetch(
-        `${ROTO_ENDPOINT}/api/v1/prefix/${queryPrefix}/search`
-      );
+      const response = queryPrefix ? 
+        await fetch(
+          `${ROTO_ENDPOINT}/api/v1/prefix/${queryPrefix}/search`
+        ) :
+        await fetch(
+          `${ROTO_ENDPOINT}/api/v1/asn/${arrayFromCommaSeperated(params.asns).map(parseASN).join()}/search`
+        );
 
       if (response.status !== 200) {
         // TODO as soon as we get a JSON error message via https://github.com/NLnetLabs/routinator/issues/925
@@ -173,6 +178,10 @@ export default function useSearch(
 
       if (searchResult.error_msg) {
         return setError(searchResult.error_msg);
+      }
+
+      if (searchResult.result.meta == null) {
+        searchResult.result.meta = [];
       }
 
       setSearchResult(searchResult);
@@ -213,11 +222,13 @@ export default function useSearch(
       }
 
       const res: ValidationResponse[] = [];
-      for (const asn of nextAsns) {
-        const validateResponse = await fetch(
-          `${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix}`
-        );
-        res.push(await validateResponse.json());
+      if (queryPrefix) {
+        for (const asn of nextAsns) {
+          const validateResponse = await fetch(
+            `${API_ENDPOINT}/api/v1/validity/${asn}/${nextPrefix}`
+          );
+          res.push(await validateResponse.json());
+        }
       }
       setValidationResults(res);
     };
