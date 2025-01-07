@@ -41,7 +41,7 @@ export default function RelatedTableRow({
           )}
         </td>
         <td className="prefix-container">
-          <Link params={{ prefix, 'validate-bgp': 'true' }}>{prefix}</Link>
+          <Link params={{ prefix, 'validate-bgp': 'true', 'asns': asn ?? "" }}>{prefix}</Link>
           {isAllocated && <span className="tag">Allocated</span>}
         </td>
         <td className={highlightAsn ? 'higlighted' : ''}>

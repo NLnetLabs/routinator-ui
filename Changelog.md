@@ -6,6 +6,7 @@ Breaking changes
 
 New
 
+* Search by ASN only. Entering a prefix is now optional. ([#71])
 * Show the freshness of all RIRs on the prefix check page
 
 Bug fixes
@@ -18,6 +19,7 @@ Other changes
 
 [#65]: https://github.com/NLnetLabs/routinator-ui/pull/65
 [#69]: https://github.com/NLnetLabs/routinator-ui/pull/69
+[#71]: https://github.com/NLnetLabs/routinator-ui/pull/71
 [@beatjoerg]: https://github.com/beatjoerg
 
 

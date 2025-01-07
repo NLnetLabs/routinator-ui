@@ -27,6 +27,13 @@ export function isValidASN(asn: string): boolean {
   return false;
 }
 
+export function parseASN(asn: string): number {
+  if (asn.toLowerCase().startsWith('as')) {
+    return parseInt(asn.slice(2), 10);
+  }
+  return parseInt(asn, 10);
+}
+
 export function arrayFromCommaSeperated(commaSeparated: string): string[] {
   if (!commaSeparated) {
     return [];

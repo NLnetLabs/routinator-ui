@@ -149,7 +149,7 @@ export type RelationType =
   | 'same-org'
   | 'more-specific'
   | 'less-specific'
-  | 'bgp-origin-as';
+  | 'bgp-origin-asn';
 
 export interface Relation {
   type: RelationType;
