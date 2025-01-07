@@ -7,6 +7,7 @@ Breaking changes
 New
 
 * Search by ASN only. Entering a prefix is now optional. ([#71])
+* Show the freshness of all RIRs on the prefix check page
 
 Bug fixes
 

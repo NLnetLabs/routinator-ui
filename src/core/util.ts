@@ -11,7 +11,7 @@ export function snakeToCamel(input: string): string {
   return input.replace(/(_[a-z])/g, (g) => g.toUpperCase().replace('_', ''));
 }
 
-export function formatDate(date: Date): string {
+export function formatDate(date: Date|string): string {
   return (
     new Date(date).toISOString().substring(0, 19).split('T').join(' ') + ' UTC'
   );

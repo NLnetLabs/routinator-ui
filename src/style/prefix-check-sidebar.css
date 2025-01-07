@@ -149,8 +149,14 @@
 #prefix-check #data-freshness pre {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
+  display: inline-block;
 }
 
 #prefix-check #data-freshness .ago {
   opacity: 0.7;
+}
+
+#prefix-check .rir {
+  margin: 0 0.4rem;
 }
