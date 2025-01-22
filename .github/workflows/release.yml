@@ -19,7 +19,8 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn build --base /ui
+      - run: zip -r public.zip public/
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: public/**
+          files: public.zip
