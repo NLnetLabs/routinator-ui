@@ -29,7 +29,7 @@ export default function SearchForm({
       }}
     >
       <p>
-        <label htmlFor="prefix">Prefix or IP Address</label>
+        <label htmlFor="prefix">Prefix or IP Address (optional)</label>
         <input
           type="text"
           onChange={(e) => setPrefix(e.target.value)}

@@ -24,7 +24,7 @@ export interface RotoSource {
   type: string;
   id: string;
   serial: number;
-  lastUpdated: Date;
+  lastUpdated: string;
 }
 
 export interface HTTP {
@@ -149,7 +149,7 @@ export type RelationType =
   | 'same-org'
   | 'more-specific'
   | 'less-specific'
-  | 'bgp-origin-as';
+  | 'bgp-origin-asn';
 
 export interface Relation {
   type: RelationType;

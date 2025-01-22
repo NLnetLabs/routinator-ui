@@ -8,8 +8,7 @@ export default function DataFreshness(): JSX.Element {
   const bgpStatus = roto?.sources.find((s) => s.type === 'bgp')?.lastUpdated;
   const ra = roto?.sources
     .filter((s) => s.type === 'rir-alloc')
-    .map((s) => s.lastUpdated)
-    .sort();
+    .sort((a, b) => a.lastUpdated.localeCompare(b.lastUpdated));
 
   return (
     <div id="data-freshness">
@@ -70,7 +69,7 @@ export default function DataFreshness(): JSX.Element {
             <th scope="row">RPKI</th>
             <td>
               <pre>{formatDate(status.lastUpdateDone)}</pre>
-              <span className="ago">({timeAgo(status.lastUpdateDone)})</span>
+              <div className="ago">({timeAgo(status.lastUpdateDone)})</div>
             </td>
           </tr>
           {bgpStatus && (
@@ -78,7 +77,7 @@ export default function DataFreshness(): JSX.Element {
               <th scope="row">BGP</th>
               <td>
                 <pre>{formatDate(bgpStatus)}</pre>
-                <span className="ago">({timeAgo(bgpStatus)})</span>
+                <div className="ago">({timeAgo(bgpStatus)})</div>
               </td>
             </tr>
           )}
@@ -86,9 +85,8 @@ export default function DataFreshness(): JSX.Element {
             <tr>
               <th scope="row">RIR</th>
               <td>
-                <pre>{formatDate(ra[0])}</pre>
-                <pre>{formatDate(ra[ra.length - 1])}</pre>
-                <span className="ago">({timeAgo(ra[ra.length - 1])})</span>
+                {ra.map(r => (<p key={r.id}><span className='rir'>{r.id.toUpperCase()}</span> <pre>{formatDate(r.lastUpdated)}</pre></p>))}
+                <span className="ago">({timeAgo(ra[ra.length - 1].lastUpdated)})</span>
               </td>
             </tr>
           )}

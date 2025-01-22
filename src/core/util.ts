@@ -11,7 +11,7 @@ export function snakeToCamel(input: string): string {
   return input.replace(/(_[a-z])/g, (g) => g.toUpperCase().replace('_', ''));
 }
 
-export function formatDate(date: Date): string {
+export function formatDate(date: Date|string): string {
   return (
     new Date(date).toISOString().substring(0, 19).split('T').join(' ') + ' UTC'
   );
@@ -25,6 +25,13 @@ export function isValidASN(asn: string): boolean {
     return !Number.isNaN(parseInt(asn, 10));
   }
   return false;
+}
+
+export function parseASN(asn: string): number {
+  if (asn.toLowerCase().startsWith('as')) {
+    return parseInt(asn.slice(2), 10);
+  }
+  return parseInt(asn, 10);
 }
 
 export function arrayFromCommaSeperated(commaSeparated: string): string[] {

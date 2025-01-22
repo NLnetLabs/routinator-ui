@@ -33,15 +33,16 @@ export default function RelatedPrefixesGroups({
       <h3>Related Prefixes</h3>
       <p>
         Best Matching Prefix in Allocations and/or BGP
-        <span className="tag">Region {rir}</span>
+        {rir && <span className="tag">Region {rir}</span>}
       </p>
+      {search.result.prefix && 
       <RelatedTable
         members={[search.result]}
         highlight={highlight}
         showAllocated={true}
         setNotification={setNotification}
         showFilter={false}
-      />
+      />}
       <RelatedPrefixes
         type="more-specific"
         label="more specific"
@@ -64,6 +65,15 @@ export default function RelatedPrefixesGroups({
         type="same-org"
         label="allocated to the same organization"
         param="related_alloc"
+        highlight={highlight}
+        showAllocated={false}
+        relations={search.result.relations}
+        setNotification={setNotification}
+      />
+      <RelatedPrefixes
+        type="bgp-origin-asn"
+        label="same origin ASN"
+        param="related_asn"
         highlight={highlight}
         showAllocated={false}
         relations={search.result.relations}
