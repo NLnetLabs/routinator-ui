@@ -2,7 +2,11 @@
 
 ## Unreleased next version
 
-Breaking changes
+
+
+## 0.4.3
+
+Released 2024-01-22.
 
 New
 
