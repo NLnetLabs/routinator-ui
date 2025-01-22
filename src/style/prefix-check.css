@@ -32,7 +32,7 @@
 
 #prefix-check .results a {
   color: var(--dark);
-  text-decoration: none;
+  text-decoration-style: dotted;
 }
 
 #prefix-check .results a:hover {
@@ -104,9 +104,9 @@
 }
 
 #prefix-check .results .invalid {
-  color: var(--warning);
-  background: var(--warning-bg);
-  border: 1px solid var(--warning-border);
+  color: var(--error);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
 }
 
 #prefix-check .results .not-found,
