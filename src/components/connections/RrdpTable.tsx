@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { t, tryFormatNumber } from '../../core/util';
 import { Rrdp } from '../../types';
 import Duration from './Duration';
@@ -19,6 +19,19 @@ const RRDP_FIELDS: RrdpKey[] = [
 
 export default function RrdpTable() {
   const { status } = useContext(StatusContext);
+  const [sort, setSort] = useState<RrdpKey | null>(null);
+  let values = Object.entries(status.rrdp);
+  values = values.sort((a, b) => {
+    if (sort === null) {
+      return a[0].localeCompare(b[0]);
+    } else if (typeof a[1][sort] === "number") {
+      return ((b[1][sort] as number) || 0) - ((a[1][sort] as number) || 0);
+    } else {
+      return ("" + a[1][sort]).localeCompare("" + b[1][sort])
+    }
+  });
+
+
   const maxDuration = Object.values(status.rrdp).reduce(
     (acc, i) => Math.max(acc, i.duration),
     0
@@ -30,14 +43,20 @@ export default function RrdpTable() {
         <table>
           <thead>
             <tr>
-              <th>URL</th>
+              <th
+                onClick={() => setSort(null)}
+                className={`${sort === null ? 'active' : ''}`}                
+              >URL</th>
               {RRDP_FIELDS.map((key) => (
-                <th key={key}>{t(`connections.${key}`)}</th>
+                <th key={key}
+                  onClick={() => setSort(key)}
+                  className={`${sort === key ? 'active' : ''}`}
+>{t(`connections.${key}`)}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {Object.entries(status.rrdp).map(([key, rrdp]: [string, Rrdp]) => (
+            {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>
                   <a href={key} target="_blank" rel="noreferrer">
