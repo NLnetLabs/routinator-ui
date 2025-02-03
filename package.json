@@ -1,7 +1,7 @@
 {
   "name": "routinator-ui",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.4",
   "type": "module",
   "scripts": {
     "dev": "ROTO_API_HOST=https://rest.bgp-api.net vite",
