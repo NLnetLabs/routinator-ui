@@ -3,10 +3,30 @@
 ## Unreleased next version
 
 
+# 0.4.4
+
+Released 2025-02-03.
+
+New
+
+* Allow sorting of RRDP/rsync tables by clicking on the columns ([#72])
+
+Bug fixes
+
+Other changes
+
+* Improve the styling to make it clearer what is clickable, and make 
+  errors uniform ([#73])
+
+[#72]: https://github.com/NLnetLabs/routinator-ui/pull/72
+[#73]: https://github.com/NLnetLabs/routinator-ui/pull/73
+
+
+
 
 ## 0.4.3
 
-Released 2024-01-22.
+Released 2025-01-22.
 
 New
 
