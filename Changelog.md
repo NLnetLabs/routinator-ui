@@ -3,6 +3,15 @@
 ## Unreleased next version
 
 
+# 0.4.5
+
+Released 2025-03-04
+
+Bug fixes
+
+* Retrieve data from proper source
+
+
 # 0.4.4
 
 Released 2025-02-03.
@@ -20,7 +29,6 @@ Other changes
 
 [#72]: https://github.com/NLnetLabs/routinator-ui/pull/72
 [#73]: https://github.com/NLnetLabs/routinator-ui/pull/73
-
 
 
 
