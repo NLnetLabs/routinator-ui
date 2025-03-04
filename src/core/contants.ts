@@ -4,5 +4,5 @@ export const ROTO_ENDPOINT =
     : ROTO_API_HOST;
 export const API_ENDPOINT =
   typeof ROUTINATOR_API_HOST === 'undefined'
-    ? 'https://nate.nlnetlabs.nl'
+    ? ''
     : ROUTINATOR_API_HOST;
