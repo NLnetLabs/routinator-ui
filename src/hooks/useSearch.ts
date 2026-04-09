@@ -237,7 +237,7 @@ export default function useSearch(
       setValidationResults(res);
     };
 
-    search().catch(setError);
+    search().catch(err => setError(err + ""));
   }, [params.prefix, params.asns, validatePrefix, exactMatch]);
 
   // when the search form is submitted
