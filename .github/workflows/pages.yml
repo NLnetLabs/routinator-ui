@@ -1,3 +1,5 @@
+name: Deploy to Cloudflare Pages
+
 on: [push]
 jobs:
     deploy:
@@ -5,7 +7,7 @@ jobs:
         permissions:
             contents: read
             deployments: write
-        name: Deploy to Cloudflare Pages
+        name: deploy
         steps:
             - name: Checkout
               uses: actions/checkout@v4
