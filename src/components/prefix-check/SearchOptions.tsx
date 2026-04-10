@@ -29,7 +29,7 @@ export default function SearchOptions({
   return (
     <div id="search-options">
       {!roto && <div className='warning-message'>
-        rest.bgp-api.net is unresponsive. Some features may not be available.
+        The Roto API is unresponsive. Some features may not be available.
       </div>}
       <h2>
         ASN Lookup
