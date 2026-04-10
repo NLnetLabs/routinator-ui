@@ -1,0 +1,26 @@
+name: Deploy to Cloudflare Pages
+
+on: [push]
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            deployments: write
+        name: deploy
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - uses: actions/setup-node@v3
+              with:
+                node-version: '20'
+                cache: 'yarn'
+            - run: yarn install --frozen-lockfile
+            - run: ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.nlnetlabs.nl yarn build
+            - name: Deploy
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: pages deploy public/ --project-name=routinator
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
