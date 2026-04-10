@@ -159,22 +159,41 @@ export default function useSearch(
       return;
     }
 
-    const search = async () => {
-      const response = queryPrefix ? 
-        await fetch(
-          `${ROTO_ENDPOINT}/api/v1/prefix/${queryPrefix}/search`
-        ) :
-        await fetch(
-          `${ROTO_ENDPOINT}/api/v1/asn/${arrayFromCommaSeperated(params.asns).map(parseASN).join()}/search`
-        );
+    const retrieve = async (): Promise<Search> => {
+      try {
+        const response = queryPrefix ? 
+          await fetch(
+            `${ROTO_ENDPOINT}/api/v1/prefix/${queryPrefix}/search`
+          ) :
+          await fetch(
+            `${ROTO_ENDPOINT}/api/v1/asn/${arrayFromCommaSeperated(params.asns).map(parseASN).join()}/search`
+          );
 
-      if (response.status !== 200) {
-        // TODO as soon as we get a JSON error message via https://github.com/NLnetLabs/routinator/issues/925
-        //  we should display them to the user
-        return setError();
+        if (response.status !== 200) {
+          // TODO as soon as we get a JSON error message via https://github.com/NLnetLabs/routinator/issues/925
+          //  we should display them to the user
+          throw new Error(response.statusText);
+        }
+
+        const searchResult: Search = await response.json();
+        return searchResult;
+      } catch (err) {
+        setNotification({message: "bgp-api responded with the following error:\n" + err, level: "error"});
       }
+      const searchResult: Search = {
+        prefix: queryPrefix || "",
+        type: "empty-match",
+        result: {
+          prefix: queryPrefix || "",
+          meta: [],
+          type: "empty-match"
+        }
+      };
+      return searchResult;
+    }
 
-      const searchResult: Search = await response.json();
+    const search = async () => {
+      const searchResult: Search = await retrieve();
 
       if (searchResult.error_msg) {
         return setError(searchResult.error_msg);
