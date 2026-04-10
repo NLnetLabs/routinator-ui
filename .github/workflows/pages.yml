@@ -16,7 +16,7 @@ jobs:
                 node-version: '20'
                 cache: 'yarn'
             - run: yarn install --frozen-lockfile
-            - run: ROTO_API_HOST=https://rest.bgp-api.net ROUTINATOR_API_HOST=https://routinator.nlnetlabs.nl yarn build
+            - run: ROTO_API_HOST=https://example.org ROUTINATOR_API_HOST=https://routinator.nlnetlabs.nl yarn build
             - name: Deploy
               uses: cloudflare/wrangler-action@v3
               with:
