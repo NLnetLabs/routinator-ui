@@ -195,6 +195,8 @@ export default function useSearch(
     const search = async () => {
       const searchResult: Search = await retrieve();
 
+      const bgpApiError = searchResult.type == 'empty-match';
+
       if (searchResult.error_msg) {
         return setError(searchResult.error_msg);
       }
@@ -209,7 +211,7 @@ export default function useSearch(
       let nextAsns = arrayFromCommaSeperated(params.asns);
 
       // fill in the asn provided in the search result
-      if (validatePrefix) {
+      if (validatePrefix && !bgpApiError) {
         const resultAsns = searchResult.result.meta
           .map((m) => (m.originASNs ? m.originASNs : null))
           .find((asns) => asns);
