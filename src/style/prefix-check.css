@@ -289,3 +289,12 @@
 #prefix-check .matched {
   border-left: 0.5rem solid var(--success-border);
 }
+
+#prefix-check .warning-message {
+  color: var(--warning);
+  background-color: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  margin: 0.5rem 0;
+}

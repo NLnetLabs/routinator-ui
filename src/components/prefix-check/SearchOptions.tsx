@@ -28,6 +28,9 @@ export default function SearchOptions({
   const disabled = validatePrefix ? '' : 'disabled';
   return (
     <div id="search-options">
+      {!roto && <div className='warning-message'>
+        rest.bgp-api.net is unresponsive. Some features may not be available.
+      </div>}
       <h2>
         ASN Lookup
         <Help>
