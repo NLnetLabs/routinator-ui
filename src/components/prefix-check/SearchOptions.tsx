@@ -1,5 +1,6 @@
-import React, { JSX } from 'react';
+import React, { JSX, useContext } from 'react';
 import Help from '../Help';
+import { StatusContext } from '../../hooks/useStatus';
 
 export interface SearchOptionsProps {
   validatePrefix: boolean;
@@ -18,6 +19,12 @@ export default function SearchOptions({
   setAsnString,
   onSubmit,
 }: SearchOptionsProps): JSX.Element {
+  const { roto } = useContext(StatusContext);
+
+  if (!roto) {
+    setValidatePrefix(false);
+  }
+  
   const disabled = validatePrefix ? '' : 'disabled';
   return (
     <div id="search-options">
@@ -31,10 +38,11 @@ export default function SearchOptions({
           </p>
         </Help>
       </h2>
-      <p>
+      <p className={roto ? "" : "disabled"}>
         <label className="checkbox">
           <input
             type="checkbox"
+            disabled={!roto}
             checked={validatePrefix}
             onChange={(e) => {
               if (e.target.checked) {
