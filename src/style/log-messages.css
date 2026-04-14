@@ -68,6 +68,7 @@
 
 .log-messages td:first-child {
     text-align: right;
+    width: 1%;
 }
 
 .log-messages .label {
