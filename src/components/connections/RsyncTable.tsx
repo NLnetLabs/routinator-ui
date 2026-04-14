@@ -3,6 +3,7 @@ import { t, tryFormatNumber } from '../../core/util';
 import { Rsync } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
+import LogMessages from '../LogMessages';
 
 type RsyncKey = keyof Rsync;
 
@@ -52,9 +53,18 @@ export default function RsyncTable() {
               ([key, rsync]: [string, Rsync]) => (
                 <tr key={key}>
                   <th role="column" title={key}>
-                    <a href={key} target="_blank" rel="noreferrer">
-                      {key}
-                    </a>
+                    {!rsync.issues && <span>{key}</span>}
+                    {rsync.issues && <LogMessages text={key}>
+                      <h2>rsync log messages</h2>
+                      <table className='log-messages'>
+                        <tbody>
+                          {rsync.issues.map(issue => <tr>
+                            <td><span className={`label ${issue.level}`}>{issue.level}</span></td>
+                            <td><span className='message'>{issue.messages}</span></td>
+                          </tr>)}
+                        </tbody>
+                      </table>
+                    </LogMessages>}
                   </th>
                   <td>
                     <Duration value={rsync.duration} max={maxDuration} />

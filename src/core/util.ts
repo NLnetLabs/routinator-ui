@@ -54,7 +54,7 @@ export function arrayToCommaSeperated(arr: string[]): string {
 }
 
 export function tryFormatNumber(
-  v: string | number | boolean | null | undefined
+  v: string | number | boolean | any | null | undefined
 ) {
   return Number.isInteger(v) ? (v || 0).toLocaleString('en') : v;
 }

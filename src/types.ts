@@ -90,11 +90,18 @@ export interface Rrdp {
   session?: null | string;
   delta?: boolean;
   snapshot_reason?: null;
+  issues?: Issue[];
 }
 
 export interface Rsync {
   status: number;
   duration: number;
+  issues: Issue[];
+}
+
+export interface Issue {
+  level: string;
+  messages: string;
 }
 
 export interface Rtr {

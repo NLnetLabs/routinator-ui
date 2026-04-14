@@ -3,6 +3,7 @@ import { t, tryFormatNumber } from '../../core/util';
 import { Rrdp } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
+import LogMessages from '../LogMessages';
 
 type RrdpKey = keyof Rrdp;
 
@@ -59,9 +60,18 @@ export default function RrdpTable() {
             {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>
-                  <a href={key} target="_blank" rel="noreferrer">
-                    {key}
-                  </a>
+                  {!rrdp.issues && <span>{key}</span>}
+                  {rrdp.issues && <LogMessages text={key}>
+                    <h2>RRDP log messages</h2>
+                    <table className='log-messages'>
+                      <tbody>
+                        {rrdp.issues.map(issue => <tr>
+                          <td><span className={`label ${issue.level}`}>{issue.level}</span></td>
+                          <td><span className='message'>{issue.messages}</span></td>
+                        </tr>)}
+                      </tbody>
+                    </table>
+                  </LogMessages>}
                 </th>
                 <td>
                   <Duration value={rrdp.duration} max={maxDuration} />
