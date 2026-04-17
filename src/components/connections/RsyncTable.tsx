@@ -53,18 +53,11 @@ export default function RsyncTable() {
               ([key, rsync]: [string, Rsync]) => (
                 <tr key={key}>
                   <th role="column" title={key}>
-                    {!rsync.issues && <span>{key}</span>}
-                    {rsync.issues && <LogMessages text={key}>
-                      <h2>rsync log messages</h2>
-                      <table className='log-messages'>
-                        <tbody>
-                          {rsync.issues.map(issue => <tr>
-                            <td><span className={`label ${issue.level}`}>{issue.level}</span></td>
-                            <td><span className='message'>{issue.messages}</span></td>
-                          </tr>)}
-                        </tbody>
-                      </table>
-                    </LogMessages>}
+                    {rsync.issues.length == 0 && <span>{key}</span>}
+                    {rsync.issues.length > 0 && <LogMessages 
+                      text={key} 
+                      issues={rsync.issues} 
+                      type='rsync' />}
                   </th>
                   <td>
                     <Duration value={rsync.duration} max={maxDuration} />

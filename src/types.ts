@@ -90,7 +90,7 @@ export interface Rrdp {
   session?: null | string;
   delta?: boolean;
   snapshot_reason?: null;
-  issues?: Issue[];
+  issues: Issue[];
 }
 
 export interface Rsync {

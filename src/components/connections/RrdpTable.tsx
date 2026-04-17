@@ -60,18 +60,11 @@ export default function RrdpTable() {
             {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>
-                  {!rrdp.issues && <span>{key}</span>}
-                  {rrdp.issues && <LogMessages text={key}>
-                    <h2>RRDP log messages</h2>
-                    <table className='log-messages'>
-                      <tbody>
-                        {rrdp.issues.map(issue => <tr>
-                          <td><span className={`label ${issue.level}`}>{issue.level}</span></td>
-                          <td><span className='message'>{issue.messages}</span></td>
-                        </tr>)}
-                      </tbody>
-                    </table>
-                  </LogMessages>}
+                  {rrdp.issues.length == 0 && <span>{key}</span>}
+                  {rrdp.issues.length > 0 && <LogMessages 
+                    text={key} 
+                    issues={rrdp.issues} 
+                    type='RRDP' />}
                 </th>
                 <td>
                   <Duration value={rrdp.duration} max={maxDuration} />
