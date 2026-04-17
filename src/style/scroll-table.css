@@ -64,6 +64,10 @@
   background-color: var(--grey-99);
 }
 
+.scroll-table td p {
+  text-align: center;
+}
+
 .scroll-table tr:nth-child(even) td {
   background-color: var(--grey-98);
 }

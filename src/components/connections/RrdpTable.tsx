@@ -65,6 +65,9 @@ export default function RrdpTable({ level }: RrdpTableProps) {
             </tr>
           </thead>
           <tbody>
+            {values.length == 0 && <tr>
+              <td colSpan={9}><p>No entries match the filter</p></td>
+            </tr>}
             {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>

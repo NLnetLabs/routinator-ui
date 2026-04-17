@@ -55,6 +55,9 @@ export default function RsyncTable({ level }: RsyncTableProps) {
             </tr>
           </thead>
           <tbody>
+            {values.length == 0 && <tr>
+              <td colSpan={3}><p>No entries match the filter</p></td>
+            </tr>}
             {values.map(
               ([key, rsync]: [string, Rsync]) => (
                 <tr key={key}>
