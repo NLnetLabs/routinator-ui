@@ -14,8 +14,8 @@ export default function App() {
   const { status, roto } = useStatus();
   const routeName = routerState.route.name;
 
-  if (!status || (status && status.error)) {
-    return <Loading error={status?.error} />
+  if (status && status.error) {
+    return <Loading status={status} />
   }
 
   return (
