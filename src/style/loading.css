@@ -16,3 +16,13 @@
 #loading img {
     max-width: 40rem;
 }
+
+#loading p {
+    animation: pulsate 2s infinite;
+}
+
+@keyframes pulsate {
+  from { opacity: 1; }
+  50% { opacity: 0; }
+  to { opacity: 1; }
+}
