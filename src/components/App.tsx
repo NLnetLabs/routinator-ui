@@ -7,11 +7,16 @@ import Metrics from './Metrics';
 import useStatus, { StatusContext } from '../hooks/useStatus';
 import Repositories from './Repositories';
 import Connections from './Connections';
+import Loading from './Loading';
 
 export default function App() {
   const routerState = useRouter();
   const { status, roto } = useStatus();
   const routeName = routerState.route.name;
+
+  if (status && status.error) {
+    return <Loading status={status} />
+  }
 
   return (
     <RouterContext.Provider value={routerState}>
