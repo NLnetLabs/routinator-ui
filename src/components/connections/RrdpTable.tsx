@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { t, tryFormatNumber } from '../../core/util';
+import { lowestLogLevel, t, tryFormatNumber } from '../../core/util';
 import { Rrdp } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
@@ -18,7 +18,11 @@ const RRDP_FIELDS: RrdpKey[] = [
   'session',
 ];
 
-export default function RrdpTable() {
+interface RrdpTableProps {
+  level: number;
+}
+
+export default function RrdpTable({ level }: RrdpTableProps) {
   const { status } = useContext(StatusContext);
   const [sort, setSort] = useState<RrdpKey | null>(null);
   let values = Object.entries(status.rrdp);
@@ -31,6 +35,8 @@ export default function RrdpTable() {
       return ("" + a[1][sort]).localeCompare("" + b[1][sort])
     }
   });
+
+  values = values.filter(x => lowestLogLevel(x[1].issues).level <= level);
 
 
   const maxDuration = Object.values(status.rrdp).reduce(

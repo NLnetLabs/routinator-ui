@@ -13,8 +13,12 @@
   margin: 1rem 0 0 0;
 }
 
+#connections label input {
+  margin-right: 0.3rem;
+}
+
 #rrdp {
-  max-height: 20rem;
+  max-height: 30rem;
   max-width: 120rem;
 }
 

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { t, tryFormatNumber } from '../../core/util';
+import { lowestLogLevel, t, tryFormatNumber } from '../../core/util';
 import { Rsync } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
@@ -9,7 +9,11 @@ type RsyncKey = keyof Rsync;
 
 const RSYNC_FIELDS: RsyncKey[] = ['duration', 'status'];
 
-export default function RsyncTable() {
+interface RsyncTableProps {
+  level: number;
+}
+
+export default function RsyncTable({ level }: RsyncTableProps) {
   const { status } = useContext(StatusContext);
   const [sort, setSort] = useState<RsyncKey | null>(null);
   let values = Object.entries(status.rsync);
@@ -23,7 +27,8 @@ export default function RsyncTable() {
     }
   });
 
-  
+  values = values.filter(x => lowestLogLevel(x[1].issues).level <= level);
+
 
   const maxDuration = Object.values(status.rsync).reduce(
     (acc, i) => Math.max(acc, i.duration),

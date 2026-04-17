@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Issue } from '../types';
+import { lowestLogLevel } from '../core/util';
 
 interface LogMessagesProps {
   text: string;
@@ -11,16 +12,12 @@ interface LogMessagesProps {
 export default function LogMessages({ text, issues, type }: LogMessagesProps) {
   const [show, setShow] = useState<boolean>(false);
 
-  // Please make sure you check that issues.length > 0
-  const logLevels = ["ERROR", "WARN", "INFO", "DEBUG", "TRACE", "NONE"];
-  let logLevel = Math.min(...issues.map(issue => logLevels.indexOf(issue.level)));
-  let logLevelText = logLevels[logLevel];
-
+  let logLevel = lowestLogLevel(issues);
   return (
     <>
       <span onClick={() => setShow(!show)}>  
         <div className='log-label-container'>
-          <span className={`log-label ${logLevelText}`}>{logLevelText.slice(0, 1)}</span>
+          <span className={`log-label ${logLevel.text}`}>{logLevel.text.slice(0, 1)}</span>
         </div>
         <a href='#'>
           {text}
