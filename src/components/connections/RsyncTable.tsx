@@ -27,8 +27,9 @@ export default function RsyncTable({ level }: RsyncTableProps) {
     }
   });
 
-  values = values.filter(x => lowestLogLevel(x[1].issues).level <= level);
-
+  if (level !== 5) {
+    values = values.filter(x => x[1].issues && lowestLogLevel(x[1].issues).level <= level);
+  }
 
   const maxDuration = Object.values(status.rsync).reduce(
     (acc, i) => Math.max(acc, i.duration),
@@ -58,8 +59,8 @@ export default function RsyncTable({ level }: RsyncTableProps) {
               ([key, rsync]: [string, Rsync]) => (
                 <tr key={key}>
                   <th role="column" title={key}>
-                    {rsync.issues.length == 0 && <span>{key}</span>}
-                    {rsync.issues.length > 0 && <LogMessages 
+                    {!rsync.issues && <span>{key}</span>}
+                    {rsync.issues && <LogMessages 
                       text={key} 
                       issues={rsync.issues} 
                       type='rsync' />}

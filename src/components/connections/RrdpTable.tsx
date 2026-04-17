@@ -36,7 +36,9 @@ export default function RrdpTable({ level }: RrdpTableProps) {
     }
   });
 
-  values = values.filter(x => lowestLogLevel(x[1].issues).level <= level);
+  if (level !== 5) {
+    values = values.filter(x => x[1].issues && lowestLogLevel(x[1].issues).level <= level);
+  }
 
 
   const maxDuration = Object.values(status.rrdp).reduce(
@@ -66,8 +68,8 @@ export default function RrdpTable({ level }: RrdpTableProps) {
             {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>
-                  {rrdp.issues.length == 0 && <span>{key}</span>}
-                  {rrdp.issues.length > 0 && <LogMessages 
+                  {!rrdp.issues && <span>{key}</span>}
+                  {rrdp.issues && <LogMessages 
                     text={key} 
                     issues={rrdp.issues} 
                     type='RRDP' />}
