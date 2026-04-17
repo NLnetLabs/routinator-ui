@@ -1,4 +1,5 @@
 export interface RoutinatorStatus {
+  error?: string;
   version: string;
   serial: number;
   now: Date;
