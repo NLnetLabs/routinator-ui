@@ -57,6 +57,24 @@
   margin-bottom: 1rem;
 }
 
+.log-column {
+  display: inline-flex;
+  width: 100%;
+}
+
+.log-column > div:nth-child(1) {
+  flex: 0 0 1rem;
+}
+
+.log-column > div:nth-child(2) {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.log-column > div:nth-child(3) {
+  flex: 0 0 3rem;
+}
 
 .log-messages {
     width: 100%;    

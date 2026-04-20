@@ -15,14 +15,21 @@ export default function LogMessages({ text, issues, type }: LogMessagesProps) {
   let logLevel = lowestLogLevel(issues);
   return (
     <>
-      <span onClick={() => setShow(!show)}>  
+      <div className='log-column' onClick={() => setShow(!show)}>  
         <div className='log-label-container'>
           <span className={`log-label ${logLevel.text}`}>{logLevel.text.slice(0, 1)}</span>
         </div>
-        <a href='#'>
-          {text}
+        <div>
+        {text}
+        </div>
+        <div>
+        <a href='#' style={{
+          float: 'right'
+        }}>
+          (open logs)
         </a>
-      </span>
+        </div>
+      </div>
       {createPortal(
         <>
           <div
@@ -30,7 +37,7 @@ export default function LogMessages({ text, issues, type }: LogMessagesProps) {
             onClick={() => setShow(false)}
           >
             <div className="bar">{show && <>
-              <h2>{type} log messages</h2> 
+              <h2>{type} log messages for {text}</h2> 
               <div className='log-messages'>
               {issues.map(issue => <div className=''>
                 <div className='log-label-container'>
