@@ -11,6 +11,13 @@ const METRICS = [
     },
   },
   {
+    group: 'tal-detailed.ASPAs',
+    fields: {
+      'tal-detailed.valid': 'validASPAs',
+      'tal-detailed.invalid': 'invalidASPAs',
+    },
+  },
+  {
     group: 'tal-detailed.VRPs',
     fields: {
       'tal-detailed.total': 'vrpsTotal',
