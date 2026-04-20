@@ -13,8 +13,19 @@
   margin: 1rem 0 0 0;
 }
 
+#connections .help {
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--grey-dark);
+  margin-top: -0.2rem;
+}
+
+#connections label input {
+  margin-right: 0.3rem;
+}
+
 #rrdp {
-  max-height: 20rem;
+  max-height: 30rem;
   max-width: 120rem;
 }
 

@@ -11,6 +11,7 @@ export interface RoutinatorStatus {
   vrpsAddedLocally: number;
   rsync: { [key: string]: Rsync };
   rrdp: { [key: string]: Rrdp };
+  pubPointIssues: { [key: string]: PubPointIssue[] }
   rtr: Rtr;
   http: HTTP;
 }
@@ -90,11 +91,23 @@ export interface Rrdp {
   session?: null | string;
   delta?: boolean;
   snapshot_reason?: null;
+  issues?: Issue[];
 }
 
 export interface Rsync {
   status: number;
   duration: number;
+  issues?: Issue[];
+}
+
+export interface Issue {
+  level: string;
+  messages: string;
+}
+
+export interface PubPointIssue {
+  level: string;
+  message: string;
 }
 
 export interface Rtr {

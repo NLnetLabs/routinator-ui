@@ -1,14 +1,19 @@
 import React, { useContext, useState } from 'react';
-import { t, tryFormatNumber } from '../../core/util';
+import { lowestLogLevel, t, tryFormatNumber } from '../../core/util';
 import { Rsync } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
+import LogMessages from '../LogMessages';
 
 type RsyncKey = keyof Rsync;
 
 const RSYNC_FIELDS: RsyncKey[] = ['duration', 'status'];
 
-export default function RsyncTable() {
+interface RsyncTableProps {
+  level: number;
+}
+
+export default function RsyncTable({ level }: RsyncTableProps) {
   const { status } = useContext(StatusContext);
   const [sort, setSort] = useState<RsyncKey | null>(null);
   let values = Object.entries(status.rsync);
@@ -22,7 +27,9 @@ export default function RsyncTable() {
     }
   });
 
-  
+  if (level !== 5) {
+    values = values.filter(x => x[1].issues && lowestLogLevel(x[1].issues).level <= level);
+  }
 
   const maxDuration = Object.values(status.rsync).reduce(
     (acc, i) => Math.max(acc, i.duration),
@@ -48,13 +55,18 @@ export default function RsyncTable() {
             </tr>
           </thead>
           <tbody>
+            {values.length == 0 && <tr>
+              <td colSpan={3}><p>No entries match the filter</p></td>
+            </tr>}
             {values.map(
               ([key, rsync]: [string, Rsync]) => (
                 <tr key={key}>
                   <th role="column" title={key}>
-                    <a href={key} target="_blank" rel="noreferrer">
-                      {key}
-                    </a>
+                    {!rsync.issues && <span>{key}</span>}
+                    {rsync.issues && <LogMessages 
+                      text={key} 
+                      issues={rsync.issues} 
+                      type='rsync' />}
                   </th>
                   <td>
                     <Duration value={rsync.duration} max={maxDuration} />
