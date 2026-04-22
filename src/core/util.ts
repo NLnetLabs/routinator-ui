@@ -1,5 +1,5 @@
 import en from '../locales/en.json';
-import { Issue, PubPointIssue } from '../types';
+import { Issue } from '../types';
 
 export function t(key: string): string {
   return (
@@ -60,13 +60,6 @@ export function tryFormatNumber(
   return Number.isInteger(v) ? (v || 0).toLocaleString('en') : v;
 }
 
-export function pubPointIssueToIssue(input: PubPointIssue): Issue {
-  return {
-    level: input.level,
-    messages: input.message
-  }
-}
-
 export function lowestLogLevel(input: Issue[]) {
   const logLevels = ["ERROR", "WARN", "INFO", "DEBUG", "TRACE", "NONE"];
   if (input.length == 0) {
@@ -75,7 +68,9 @@ export function lowestLogLevel(input: Issue[]) {
       text: logLevels[5]
     }
   }
-  let logLevel = Math.min(...input.map(issue => logLevels.indexOf(issue.level)));
+  let logLevel = Math.min(...input.map(issue => 
+    logLevels.indexOf(issue.repository_level)
+  ));
   let logLevelText = logLevels[logLevel];
   return {
     level: logLevel,

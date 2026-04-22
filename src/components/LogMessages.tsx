@@ -41,7 +41,9 @@ export default function LogMessages({ text, issues, type }: LogMessagesProps) {
               <div className='log-messages'>
               {issues.map(issue => <div className=''>
                 <div className='log-label-container'>
-                  <span className={`log-label ${issue.level}`}>{issue.level}</span>
+                  <span className={`log-label ${issue.repository_level}`}>
+                    {issue.repository_level}
+                  </span>
                 </div>
                 <span className='message'>{issue.messages}</span>
               </div>)}
