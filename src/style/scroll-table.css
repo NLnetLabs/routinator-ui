@@ -6,7 +6,7 @@
 }
 
 .scroll-table > div {
-  padding: 1rem;
+  padding: 0.5rem;
   position: relative;
 }
 
@@ -62,6 +62,10 @@
   border-left: 1px solid var(--grey-95);
   border-top: 1px solid var(--grey-93);
   background-color: var(--grey-99);
+}
+
+.scroll-table td p {
+  text-align: center;
 }
 
 .scroll-table tr:nth-child(even) td {

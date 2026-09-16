@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { t, tryFormatNumber } from '../../core/util';
+import { lowestLogLevel, t, tryFormatNumber } from '../../core/util';
 import { Rrdp } from '../../types';
 import Duration from './Duration';
 import { StatusContext } from '../../hooks/useStatus';
+import LogMessages from '../LogMessages';
 
 type RrdpKey = keyof Rrdp;
 
@@ -17,7 +18,11 @@ const RRDP_FIELDS: RrdpKey[] = [
   'session',
 ];
 
-export default function RrdpTable() {
+interface RrdpTableProps {
+  level: number;
+}
+
+export default function RrdpTable({ level }: RrdpTableProps) {
   const { status } = useContext(StatusContext);
   const [sort, setSort] = useState<RrdpKey | null>(null);
   let values = Object.entries(status.rrdp);
@@ -30,6 +35,10 @@ export default function RrdpTable() {
       return ("" + a[1][sort]).localeCompare("" + b[1][sort])
     }
   });
+
+  if (level !== 5) {
+    values = values.filter(x => x[1].issues && lowestLogLevel(x[1].issues).level <= level);
+  }
 
 
   const maxDuration = Object.values(status.rrdp).reduce(
@@ -56,12 +65,17 @@ export default function RrdpTable() {
             </tr>
           </thead>
           <tbody>
+            {values.length == 0 && <tr>
+              <td colSpan={9}><p>No entries match the filter</p></td>
+            </tr>}
             {values.map(([key, rrdp]: [string, Rrdp]) => (
               <tr key={key}>
                 <th role="column" title={key}>
-                  <a href={key} target="_blank" rel="noreferrer">
-                    {key}
-                  </a>
+                  {!rrdp.issues && <span>{key}</span>}
+                  {rrdp.issues && <LogMessages 
+                    text={key} 
+                    issues={rrdp.issues} 
+                    type='RRDP' />}
                 </th>
                 <td>
                   <Duration value={rrdp.duration} max={maxDuration} />

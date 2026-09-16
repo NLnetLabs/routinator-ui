@@ -1,4 +1,5 @@
 import en from '../locales/en.json';
+import { Issue } from '../types';
 
 export function t(key: string): string {
   return (
@@ -54,9 +55,27 @@ export function arrayToCommaSeperated(arr: string[]): string {
 }
 
 export function tryFormatNumber(
-  v: string | number | boolean | null | undefined
+  v: string | number | boolean | any | null | undefined
 ) {
   return Number.isInteger(v) ? (v || 0).toLocaleString('en') : v;
+}
+
+export function lowestLogLevel(input: Issue[]) {
+  const logLevels = ["ERROR", "WARN", "INFO", "DEBUG", "TRACE", "NONE"];
+  if (input.length == 0) {
+    return {
+      level: 5,
+      text: logLevels[5]
+    }
+  }
+  let logLevel = Math.min(...input.map(issue => 
+    logLevels.indexOf(issue.repository_level)
+  ));
+  let logLevelText = logLevels[logLevel];
+  return {
+    level: logLevel,
+    text: logLevelText
+  }
 }
 
 export function timeAgo(input: Date | string) {
