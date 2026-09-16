@@ -20,6 +20,7 @@
   },
   "tal-detailed": {
     "ROAs": "ROAs",
+    "ASPAs": "ASPAs",
     "valid": "Valid",
     "invalid": "Invalid",
     "VRPs": "VRPs",
