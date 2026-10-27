@@ -1,0 +1,126 @@
+.log-overlay {
+  visibility: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 200ms ease-in-out;
+  opacity: 0;
+}
+
+.log-overlay.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.log-overlay .bar {
+  position: absolute;
+  right: -100%;
+  width: 85vw;
+  height: 100%;
+  max-width: 90%;
+  line-height: 1.4;
+  background: var(--white);
+  padding: 1.5rem;
+  color: var(--dark);
+  overflow-y: auto;
+  transition: all 200ms ease-in-out;
+}
+
+.log-overlay.visible .bar {
+  right: 0;
+}
+
+.log-overlay .bar h3,
+.log-overlay .bar h2 {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.log-overlay .bar h2 {
+  font-size: 1.2rem;
+}
+
+.log-overlay .bar p {
+  margin-bottom: 0.5rem;
+}
+
+.log-overlay .bar ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.log-column {
+  display: inline-flex;
+  width: 100%;
+}
+
+.log-column > div:nth-child(1) {
+  flex: 0 0 1rem;
+}
+
+.log-column > div:nth-child(2) {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.log-column > div:nth-child(3) {
+  flex: 0 0 3rem;
+}
+
+.log-messages {
+    width: 100%;    
+}
+
+.log-messages div {
+    padding: 0.1rem 0;
+}
+
+.log-label {
+    border-radius: 0.3rem;
+    padding: 0.2rem 0.4rem;
+    font-weight: bold;
+    font-family: monospace, monospace;
+}
+
+.log-label-container {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.log-label.TRACE {
+    background-color: white;
+    color: black;
+}
+
+.log-label.DEBUG {
+    background-color: #EEEEEE;
+    color: black;
+}
+
+.log-label.INFO {
+    background-color: #1976D2;
+    color: white;
+}
+
+.log-label.WARN {
+    background-color: #FFA000;
+    color: white;
+}
+
+.log-label.ERROR {
+    background-color: #E64A19;
+    color: white;
+}
+
+.log-messages .message {
+    font-family: monospace;
+}
