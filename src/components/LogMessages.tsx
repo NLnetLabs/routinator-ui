@@ -45,7 +45,7 @@ export default function LogMessages({ text, issues, type }: LogMessagesProps) {
                     {issue.repository_level}
                   </span>
                 </div>
-                <span className='message'>{issue.messages}</span>
+                <span className='message'>{issue.message}</span>
               </div>)}
               </div>
             </>}

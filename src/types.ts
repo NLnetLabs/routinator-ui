@@ -104,7 +104,7 @@ export interface Rsync {
 export interface Issue {
   level: string;
   repository_level: string;
-  messages: string;
+  message: string;
 }
 
 export interface Rtr {
