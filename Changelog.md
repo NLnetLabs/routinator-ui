@@ -1,6 +1,31 @@
 # Change Log
 
-## Unreleased next version
+## 0.5.2
+
+Released 2026-10-29
+
+Bug fixes
+
+* Fix logo on initialisation screen
+
+## 0.5.1
+
+Released 2026-10-27
+
+Bug fixes
+
+* Rename `messages` to `message` in issue struct due to Routinator API change
+
+## 0.5.0
+
+Released 2026-10-27
+
+New
+
+* Add screen when Routinator is not initialised yet 
+* Don't show a white page when a network or CORS failure occurs
+* Add ASPA to the metrics 
+* Add repository log messages to UI
 
 
 # 0.4.5
