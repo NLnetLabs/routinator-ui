@@ -3,6 +3,8 @@ import useStatus from "../hooks/useStatus";
 import { RoutinatorStatus } from "../types";
 import { API_ENDPOINT } from "../core/contants";
 
+import logo from '../img/routinator_logo_white.svg';
+
 interface LoadingProps {
     status: RoutinatorStatus | null;
 }
@@ -30,7 +32,7 @@ export default function Loading({ status }: LoadingProps) {
     return (
         <div id="loading">
             <div>
-            <img src='/src/img/routinator_logo_white.svg' alt='Routinator logo' />
+            <img src={logo} alt='Routinator logo' />
             <br />
             <p>{status?.error || "Something went wrong"}</p>
             </div>
